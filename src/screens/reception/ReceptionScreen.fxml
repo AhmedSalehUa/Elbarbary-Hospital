@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1360.0" stylesheets="@../../assets/styles/darkMode.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.reception.ReceptionScreenController">
+   <children>
+      <TabPane prefHeight="700.0" prefWidth="1360.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab fx:id="admissionPane" text="تذاكر الدخول" />
+            <Tab fx:id="dailyExpenses" text="المصاريف اليومية" />
+            <Tab fx:id="orderShorts" text="طلب نواقص" />
+            <Tab fx:id="collectYield" text="تحصيل مبلغ" />
+            <Tab fx:id="exportYield" text="توريد مبلغ للخزنة" />
+         </tabs>
+      </TabPane>
+      <JFXDrawer fx:id="drawer" defaultDrawerSize="250.0" direction="RIGHT" prefHeight="563.0" prefWidth="251.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <JFXHamburger fx:id="hamburg" layoutX="1332.0" layoutY="12.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="12.0" />
+   </children>
+</AnchorPane>
