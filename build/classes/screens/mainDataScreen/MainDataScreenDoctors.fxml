@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1360.0" stylesheets="@../../assets/styles/darkMode.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.mainDataScreen.MainDataScreenDoctorsController">
+    <children>
+        <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox fx:id="doctorBox" alignment="CENTER" spacing="25.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox spacing="15.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <JFXTextField fx:id="search" focusColor="BLACK" labelFloat="true" maxHeight="-Infinity" maxWidth="-Infinity" onKeyPressed="#search" onKeyReleased="#search" onKeyTyped="#search" prefHeight="25.0" prefWidth="184.0" promptText="Search" VBox.vgrow="ALWAYS" />
+                                <TableView id="doctorTable" fx:id="doctorTable" prefHeight="308.0" prefWidth="893.0" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn prefWidth="407.0" text="رقم الموبايل">
+                                            <columns>
+                                                <TableColumn fx:id="doctorTabTele2" editable="false" prefWidth="150.0" text="رقم 2" />
+                                                <TableColumn fx:id="doctorTabTele1" editable="false" prefWidth="150.0" text="رقم 1" />
+                                            </columns>
+                                        </TableColumn>
+                                        <TableColumn fx:id="doctorTabAge" editable="false" minWidth="0.0" prefWidth="70.0" text="السن" />
+                                        <TableColumn fx:id="doctorTabQualification" editable="false" minWidth="0.0" prefWidth="70.0" text="المؤهل" />
+                                        <TableColumn fx:id="doctorTabName" editable="false" prefWidth="300.0" text="الاسم" />
+                                        <TableColumn fx:id="doctorTabId" editable="false" minWidth="0.0" prefWidth="48.0" text="م" />
+                                    </columns>
+                                    <columnResizePolicy>
+                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                    </columnResizePolicy>
+                                </TableView>
+                            </children>
+                        </VBox>
+                        <VBox alignment="BOTTOM_CENTER" spacing="15.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <GridPane prefHeight="258.0" prefWidth="399.0" vgap="10.0" VBox.vgrow="ALWAYS">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="246.0" minWidth="10.0" prefWidth="246.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="153.0" minWidth="10.0" prefWidth="134.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="99.0" minHeight="0.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefHeight="25.0" text="الرقم التعريفي" GridPane.columnIndex="1">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <Label id="doctorId" fx:id="doctorId" alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="247.0" text="0" textAlignment="CENTER">
+                                            <font>
+                                                <Font size="26.0" />
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="80.0" text="الاسم" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField id="doctorFields" fx:id="doctorName" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="1" />
+                                        <Label alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="80.0" text="السن" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="135.0" text="رقم التليفون 1" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="133.0" text="رقم التليفون 2" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField id="doctorFields" fx:id="doctorAge" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="2" /> 
+                                        <HBox alignment="CENTER" spacing="5.0" GridPane.rowIndex="3">
+                                            <children>
+                                                <MaterialDesignIconView fx:id="qualificationNameAdd" glyphName="PLUS" onMouseClicked="#qualificationNameAdd" size="30" />
+                                                <ComboBox fx:id="qualificationName" nodeOrientation="RIGHT_TO_LEFT" prefHeight="34.0" prefWidth="215.0" />
+                                            </children>
+                                        </HBox>
+                                        <TextField id="doctorFields" fx:id="doctorTele1" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="4" />
+                                        <TextField id="doctorFields" fx:id="doctorTele2" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="5" />
+                             
+                                        <Label alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="80.0" text="التخصص" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </GridPane>
+                                <HBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <ProgressIndicator fx:id="progress" prefHeight="42.0" prefWidth="43.0" />
+                                        <Button id="doctorNew" fx:id="doctorNew" mnemonicParsing="false" onAction="#doctorNew" prefHeight="42.0" prefWidth="88.0" text="جديد" />
+                                        <Button id="doctorDelete" fx:id="doctorDelete" mnemonicParsing="false" onAction="#doctorDelete" prefHeight="42.0" prefWidth="88.0" text="حذف" />
+                                        <Button id="doctorEdite" fx:id="doctorEdite" mnemonicParsing="false" onAction="#doctorEdite" prefHeight="42.0" prefWidth="88.0" text="تعديل" />
+                                        <Button id="doctorAdd" fx:id="doctorAdd" mnemonicParsing="false" onAction="#doctorAdd" prefHeight="42.0" prefWidth="88.0" text="اضافة" />
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets top="10.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox fx:id="serviceBox" alignment="CENTER" prefWidth="1336.0" spacing="25.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <TableView id="doctorTable" fx:id="serviceTable" prefHeight="178.0" prefWidth="893.0" HBox.hgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="serviceTabCost" editable="false" prefWidth="300.0" text="التكلفة" />
+                                <TableColumn fx:id="serviceTabName" editable="false" minWidth="0.0" prefWidth="48.0" text="الخدمة" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                        <VBox alignment="BOTTOM_CENTER" spacing="15.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <GridPane prefHeight="107.0" prefWidth="399.0" vgap="10.0" VBox.vgrow="ALWAYS">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="246.0" minWidth="10.0" prefWidth="246.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="153.0" minWidth="10.0" prefWidth="134.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints maxHeight="99.0" minHeight="0.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="45.0" vgrow="ALWAYS" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="80.0" text="الخدمة" GridPane.columnIndex="1">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField id="doctorFields" fx:id="serviceCost" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="1" />
+                                        <Label alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="80.0" text="التكلفة" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <HBox alignment="CENTER" spacing="5.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                            <children>
+                                                <MaterialDesignIconView fx:id="serviceNameAdd" glyphName="PLUS" onMouseClicked="#serviceNameAdd" size="30" />
+                                                <ComboBox fx:id="serviceName" nodeOrientation="RIGHT_TO_LEFT" prefHeight="34.0" prefWidth="215.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </GridPane>
+                                <HBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <ProgressIndicator fx:id="serviceProgress" prefHeight="42.0" prefWidth="43.0" />
+                                        <Button id="doctorNew" fx:id="serviceNew" mnemonicParsing="false" onAction="#serviceNew" prefHeight="42.0" prefWidth="88.0" text="جديد" />
+                                        <Button id="doctorDelete" fx:id="serviceDelete" mnemonicParsing="false" onAction="#serviceDelete" prefHeight="42.0" prefWidth="88.0" text="حذف" />
+                                        <Button id="doctorEdite" fx:id="serviceEdite" mnemonicParsing="false" onAction="#serviceEdite" prefHeight="42.0" prefWidth="88.0" text="تعديل" />
+                                        <Button id="doctorAdd" fx:id="serviceAdd" mnemonicParsing="false" onAction="#serviceAdd" prefHeight="42.0" prefWidth="88.0" text="اضافة" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </children>
+</AnchorPane>
