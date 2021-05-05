@@ -17,9 +17,12 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import de.jensd.fx.glyphs.materialicons.MaterialIconView;
 import elbarbary.hospital.ElBarbaryHospital;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
@@ -52,6 +55,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -60,6 +64,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
+import javax.imageio.ImageIO;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.controlsfx.control.textfield.TextFields;
 import screens.admission.assets.Admission;
 import screens.admission.assets.AdmissionSpacfication;
@@ -162,6 +174,8 @@ public class AdmissionScreenController implements Initializable {
     private Tab admissionMedicineTab;
     @FXML
     private Tab admissionSurgMedTab;
+    @FXML
+    private ImageView print;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -374,10 +388,10 @@ public class AdmissionScreenController implements Initializable {
         AdmissionScreenMedicineController controlle4 = l4.getController();
         controlle4.initData(ad);
         controlle4.setParentController(this);
-        
+
         FXMLLoader l5 = new FXMLLoader(getClass().getResource("/screens/admission/AdmissionScreenSurMed.fxml"));
         admissionSurgMedTab.setContent(l5.load());
-        AdmissionScreenSurMedController controlle6 = l5.getController(); 
+        AdmissionScreenSurMedController controlle6 = l5.getController();
         controlle6.initData(ad);
         controlle6.setParentController(this);
     }
@@ -881,7 +895,7 @@ public class AdmissionScreenController implements Initializable {
             if (a.getId() == admission.getId()) {
 
                 admissionTable.getSelectionModel().clearSelection();
-                admissionTable.getSelectionModel().select(a); 
+                admissionTable.getSelectionModel().select(a);
 
             }
         }
@@ -1060,6 +1074,68 @@ public class AdmissionScreenController implements Initializable {
 
     public void setrecptionController(ReceptionScreenController receptionScreenController) {
         this.receptionScreenController = receptionScreenController;
+    }
+
+    @FXML
+    private void print(MouseEvent event) {
+        if (admissionTable.getSelectionModel().getSelectedIndex() == -1) {
+            AlertDialogs.showError("اختار التذكرة اولا");
+        } else {
+
+            Service<Void> service = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+
+                         
+
+                            return null;
+                        }
+                    };
+
+                }
+
+                @Override
+                protected void succeeded() {
+
+                    super.succeeded();
+                }
+            };
+            service.start();
+               try {
+                                Admission pa = admissionTable.getSelectionModel().getSelectedItem();
+                                HashMap hash = new HashMap();
+                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                                hash.put("logo", image);
+                                hash.put("admissionId", pa.getId());
+                                hash.put("reptype", true);
+                                  InputStream clincRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsClincs.jasper");
+                                hash.put("clincRep", clincRep);
+                                InputStream contractRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsContract.jasper");
+                                hash.put("contractRep", contractRep);
+                                InputStream medicineRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsMedicines.jasper");
+                                hash.put("medicineRep", medicineRep);
+                                InputStream serviceRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsServices.jasper");
+                                hash.put("serviceRep", serviceRep);
+                                InputStream surmedRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurMed.jasper");
+                                hash.put("surmedRep", surmedRep);
+                                InputStream surgiresRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurgires.jasper");
+                                hash.put("surgiresRep", surgiresRep);
+                               
+                                InputStream a = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetails.jrxml");
+                                JasperDesign design = JRXmlLoader.load(a);
+                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                                JasperViewer.viewReport(jasperprint, false);
+
+                            } catch (Exception ex) {
+                                AlertDialogs.showErrors(ex);
+                            } finally {
+
+                            }
+        }
     }
 
 }

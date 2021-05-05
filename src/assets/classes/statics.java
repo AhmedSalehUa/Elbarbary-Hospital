@@ -29,6 +29,8 @@ public class statics {
 
     public static String RECEPTION_ACC_ID = "resption_id";
     public static String MAIN_ACC_ID = "main_acc_id";
+    public static String DRUGS_ACCOUNT_ID = "drugs_acc_id";
+    public static String DRUGS_BRANCH_ACCOUNT_ID = "drugs_branch_acc_id";
 
     public static String PYTHON_PATH = "py_path";
 //    public static String PYTHON_PATH_DEFAULT = "python D:\\Downloads\\zk\\pyzk-master\\pyzk-master\\";
@@ -39,7 +41,7 @@ public class statics {
     public static String AccountsScreenYields = "/screens/accounts/AccountsScreenYields.fxml";
     public static String AccountsScreenCompany = "/screens/accounts/AccountsScreenCompany.fxml";
     public static String AccountsScreenContract = "/screens/accounts/AccountsScreenContract.fxml";
-
+ public static String AccountsScreenReport = "/screens/accounts/AccountsScreenReports.fxml";
     //hr screens 
     //main screen
     public static String HrScreenMainScreen = "/screens/hr/HrScreenMainScreen.fxml";
@@ -74,7 +76,7 @@ public class statics {
     //sub screens
     public static String HrScreenReports = "/screens/hr/HrScreenReports.fxml";
     public static String HrScreenIndividualReport = "/screens/hr/HrScreenIndividualReport.fxml";
-     public static String HrScreenCalcAttend = "/screens/hr/HrScreenCalcAttend.fxml";
+    public static String HrScreenCalcAttend = "/screens/hr/HrScreenCalcAttend.fxml";
 
     //operations
     public static String HrScreenMainUploadData = "/screens/hr/HrScreenMainUploadData.fxml";

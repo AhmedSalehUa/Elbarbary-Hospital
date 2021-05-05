@@ -1,10 +1,14 @@
 package screens.drugs.assets;
 
+import static assets.classes.statics.DRUGS_ACCOUNT_ID;
 import db.get;
+import elbarbary.hospital.ElBarbaryHospital;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.prefs.Preferences;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import screens.accounts.assets.AccountTransactions;
 
 public class DrugsMoneyOut {
 
@@ -74,9 +78,11 @@ public class DrugsMoneyOut {
     }
 
     public boolean Add() throws Exception {
+        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
         int acc_id = Integer.parseInt(get.getTableData("SELECT `id` FROM `drg_accounts` WHERE `patient_id`='" + this.patient_id + "'").getValueAt(0, 0).toString());
         DrugsAccounts.addToTotalSpended(acc_id, this.amount);
         DrugsAccounts.removeFromRemaining(acc_id, this.amount);
+        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_ACCOUNT_ID, "3")), this.amount);
 
         PreparedStatement ps = get.Prepare("INSERT INTO `drg_money_out`(`id`, `patient_id`, `escort_id`, `amount`, `date`) VALUES (?,?,?,?,?)");
         ps.setInt(1, this.id);
@@ -89,9 +95,12 @@ public class DrugsMoneyOut {
     }
 
     public boolean Edite() throws Exception {
+        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
         int acc_id = Integer.parseInt(get.getTableData("SELECT `id` FROM `drg_accounts` WHERE `patient_id`='" + this.patient_id + "'").getValueAt(0, 0).toString());
-        DrugsAccounts.removeFromTotalSpended(acc_id, this.amount);
-        DrugsAccounts.addToRemaining(acc_id, this.amount);
+        String oldAmount = get.getTableData("SELECT `amount` FROM `drg_money_out` WHERE `id` ='" + this.id + "'").getValueAt(0, 0).toString();
+        DrugsAccounts.removeFromTotalSpended(acc_id, oldAmount);
+        DrugsAccounts.addToRemaining(acc_id, oldAmount);
+        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_ACCOUNT_ID, "3")), oldAmount);
 
         PreparedStatement ps = get.Prepare("UPDATE `drg_money_out` SET `patient_id`=?,`escort_id`=?,`amount`=?,`date`=? WHERE `id`=?");
         ps.setInt(5, this.id);
@@ -101,15 +110,19 @@ public class DrugsMoneyOut {
         ps.setString(4, this.date);
         DrugsAccounts.addToTotalSpended(acc_id, this.amount);
         DrugsAccounts.removeFromRemaining(acc_id, this.amount);
+        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_ACCOUNT_ID, "3")), this.amount);
 
         ps.execute();
         return true;
     }
 
     public boolean Delete() throws Exception {
+      Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
         int acc_id = Integer.parseInt(get.getTableData("SELECT `id` FROM `drg_accounts` WHERE `patient_id`='" + this.patient_id + "'").getValueAt(0, 0).toString());
-        DrugsAccounts.removeFromTotalSpended(acc_id, this.amount);
-        DrugsAccounts.addToRemaining(acc_id, this.amount);
+        String oldAmount = get.getTableData("SELECT `amount` FROM `drg_money_out` WHERE `id` ='" + this.id + "'").getValueAt(0, 0).toString();
+        DrugsAccounts.removeFromTotalSpended(acc_id, oldAmount);
+        DrugsAccounts.addToRemaining(acc_id, oldAmount);
+        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_ACCOUNT_ID, "3")), oldAmount);
 
         PreparedStatement ps = get.Prepare("DELETE FROM `drg_money_out` WHERE `id`=?");
         ps.setInt(1, this.id);

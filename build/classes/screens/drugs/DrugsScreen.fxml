@@ -33,6 +33,7 @@
                      <font>
                         <Font size="7.0" />
                      </font></Button>
+                  <Button id="mainDataBtn" fx:id="AccShow" layoutX="-66.0" layoutY="480.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="192.0" rotate="-90.0" text="كشف حساب" />
                </children>
             </AnchorPane>
          </left>

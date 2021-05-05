@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9b1136b2-d074-43fc-8151-de88ada3b7fc">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="16"/>
+	<queryString>
+		<![CDATA[SELECT * FROM `stores_medicines`]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="store_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="medicine_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="invoice_id" class="java.lang.Integer">s
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost_of_sell" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<group name="storeGroup">
+		<groupExpression><![CDATA[$F{store_id}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement x="217" y="0" width="79" height="20" uuid="9b600550-c987-4773-b99b-19449df8cb67"/>
+					<textFieldExpression><![CDATA[$F{store_id}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="296" y="0" width="79" height="20" uuid="30984605-d2ae-44a7-a531-3c90318c3aea"/>
+					<text><![CDATA[store_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="30" width="79" height="20" uuid="43c6c193-4b18-4f48-8f0a-983e6088deb0"/>
+					<text><![CDATA[id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="79" y="30" width="79" height="20" uuid="685fa253-5e6d-49cb-9acb-15c7ef5c0356"/>
+					<text><![CDATA[store_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="158" y="30" width="79" height="20" uuid="35e33374-1ab4-4d56-9860-9583bdbeaae6"/>
+					<text><![CDATA[medicine_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="237" y="30" width="79" height="20" uuid="51ebf8ec-bf83-49c9-8ccf-5822b9afa0f4"/>
+					<text><![CDATA[invoice_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="316" y="30" width="79" height="20" uuid="82a6fd24-775f-4f38-8754-45b5143f730c"/>
+					<text><![CDATA[amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="395" y="30" width="79" height="20" uuid="3e7c6041-beeb-4568-90c7-e0ec285e3e00"/>
+					<text><![CDATA[cost]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="474" y="30" width="79" height="20" uuid="382d4dcc-ffec-4e7d-aef4-795932953ddc"/>
+					<text><![CDATA[cost_of_sell]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="medicineGroup">
+		<groupExpression><![CDATA[$F{medicine_id}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement x="217" y="0" width="79" height="20" uuid="7f922d26-a102-415e-865b-c2225156f889"/>
+					<textFieldExpression><![CDATA[$F{medicine_id}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="296" y="0" width="79" height="20" uuid="dd12ef9a-b3c8-40b2-8562-0ce4a0a35fc1"/>
+					<text><![CDATA[medicine_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="20" width="79" height="20" uuid="2023eff2-4500-4581-88cc-f62c1b6a721a"/>
+					<text><![CDATA[id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="79" y="20" width="79" height="20" uuid="697667b7-0b4c-4d24-a0ff-c580a49d3da7"/>
+					<text><![CDATA[store_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="158" y="20" width="79" height="20" uuid="4fb8e453-624f-449f-a159-c1546dd38b01"/>
+					<text><![CDATA[medicine_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="237" y="20" width="79" height="20" uuid="0ed2254a-8f82-42f3-aa4b-d32eab25f828"/>
+					<text><![CDATA[invoice_id]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="316" y="20" width="79" height="20" uuid="178cc503-ca73-4f05-9241-646526ddf735"/>
+					<text><![CDATA[amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="395" y="20" width="79" height="20" uuid="016f77c1-39cd-4fd9-89a1-caa54f34a582"/>
+					<text><![CDATA[cost]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="474" y="20" width="79" height="20" uuid="1a9b157f-3002-4045-8b19-aa8790173618"/>
+					<text><![CDATA[cost_of_sell]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="79" height="20" uuid="f0d57653-45a3-419d-85cb-e2a17c758d2f"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="0" width="79" height="20" uuid="8822c390-9ef4-4f54-8be2-8836716b866a"/>
+				<textFieldExpression><![CDATA[$F{store_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="158" y="0" width="79" height="20" uuid="7ee0cc56-5001-4b24-af29-4820bd80bf48"/>
+				<textFieldExpression><![CDATA[$F{medicine_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="0" width="79" height="20" uuid="72f99936-9b8b-4aee-b7a7-beb19f493b73"/>
+				<textFieldExpression><![CDATA[$F{invoice_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="316" y="0" width="79" height="20" uuid="45c07e49-cd80-4122-bf02-ea817e2c1788"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="395" y="0" width="79" height="20" uuid="2dbd1ceb-0633-46cb-901d-4b44abc65928"/>
+				<textFieldExpression><![CDATA[$F{cost}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="474" y="0" width="79" height="20" uuid="941eea69-c17d-47ef-a8e8-829d2c640503"/>
+				<textFieldExpression><![CDATA[$F{cost_of_sell}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="YiedsAdmission" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d0648fa2-08e4-470c-9081-273d5275913e">
+	<property name="ireport.zoom" value="3.1384283767210035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontSize="14">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="date_from" class="java.lang.String"/>
+	<parameter name="date_to" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT `yields`.`id`, `yields`.`admission_id`, `yields`.`acc_id`, `users`.`user_name`, `yields`.`date`, `yields`.`amount` FROM `yields`,`users` WHERE `users`.`id`=`yields`.`user_id` and `yields`.`date`>=$P{date_from}  and `yields`.`date`<=$P{date_to}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="user_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="acc_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="admission_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="222" y="0" width="100" height="20" uuid="eea5e322-51e6-4858-bba2-8f1d6be8607d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ايرادات التذاكر]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="385" y="20" width="100" height="20" uuid="89847d1b-efdf-49cd-89a2-2fe3f2979b04"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[الفترة من]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="20" width="100" height="20" uuid="30de1f2d-65bf-4b91-84e4-897444eac7ba"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[الفترة الي]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="285" y="20" width="100" height="20" uuid="8cc22d64-7ab7-4456-9389-1c1d3e8a6bf2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{date_from}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="82" y="20" width="100" height="20" uuid="ae4a64e3-b8c5-4fed-b3b2-822931cb4231"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{date_to}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="111" height="20" uuid="0b61a6a7-1a28-4149-8764-4ebb3483d7f5"/>
+				<text><![CDATA[amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="111" y="0" width="111" height="20" uuid="776114a7-af7d-44f0-b165-fcb643a44b19"/>
+				<text><![CDATA[date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="222" y="0" width="111" height="20" uuid="de49cd03-f305-4c1b-b05e-0c5951c6f882"/>
+				<text><![CDATA[user_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="333" y="0" width="111" height="20" uuid="8ed93320-ac2d-4f23-830a-ae26c2097909"/>
+				<text><![CDATA[acc_id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="444" y="0" width="111" height="20" uuid="3dcae044-e7bd-4e31-947c-64e3d7a9f2e6"/>
+				<text><![CDATA[admission_id]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="0" y="0" width="111" height="20" uuid="9d2dbe09-4d61-4059-9ef5-ffa5cb0807da"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="111" y="0" width="111" height="20" uuid="2b1de895-b5eb-440e-907a-97751d487bcc"/>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="222" y="0" width="111" height="20" uuid="0d255538-cf13-4cd9-b8a0-7e7a2b3898b9"/>
+				<textFieldExpression><![CDATA[$F{user_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="333" y="0" width="111" height="20" uuid="63fa9d49-37ef-45dc-95d3-20af2f5335aa"/>
+				<textFieldExpression><![CDATA[$F{acc_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="444" y="0" width="111" height="20" uuid="36580fc9-f049-43b9-8483-8a74c1aebb68"/>
+				<textFieldExpression><![CDATA[$F{admission_id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20">
+			<staticText>
+				<reportElement style="style2" x="111" y="0" width="111" height="20" uuid="2aeafdef-17b6-4e0c-9187-1ec8fe34830f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[الاجمالي]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style1" x="0" y="0" width="111" height="20" uuid="3a46f23e-fabc-4d41-981c-7a48eecb9973"/>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

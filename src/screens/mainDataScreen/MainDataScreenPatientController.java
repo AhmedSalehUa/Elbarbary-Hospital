@@ -14,6 +14,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import de.jensd.fx.glyphs.materialicons.MaterialIconView;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -21,6 +22,7 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
@@ -63,6 +65,15 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import javax.imageio.ImageIO;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import screens.mainDataScreen.assets.Contract;
 import screens.mainDataScreen.assets.Doctors;
 import screens.mainDataScreen.assets.Patients;
@@ -188,6 +199,8 @@ public class MainDataScreenPatientController implements Initializable {
     private FontAwesomeIconView ham;
     @FXML
     private JFXDrawer drawer;
+    @FXML
+    private ImageView print;
 
     /**
      * Initializes the controller class.
@@ -1264,6 +1277,88 @@ public class MainDataScreenPatientController implements Initializable {
                     AlertDialogs.showErrors(ex);
                 }
             }
+        }
+    }
+
+    @FXML
+    private void print(MouseEvent event) {
+        if (patientTable.getSelectionModel().getSelectedIndex() == -1) {
+            AlertDialogs.showError("اختار المريض اولا");
+        } else {
+
+            Service<Void> service = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+
+                          
+
+                            return null;
+                        }
+                    };
+
+                }
+
+                @Override
+                protected void succeeded() {
+
+                    super.succeeded();
+                }
+            };
+            service.start();
+  try {
+                                Patients pa = patientTable.getSelectionModel().getSelectedItem();
+                                HashMap hash = new HashMap();
+                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                                hash.put("logo", image);
+                                hash.put("patient_id", Integer.toString(pa.getId()));
+                                hash.put("name", pa.getName());
+                                hash.put("government", pa.getGovernment());
+                                hash.put("adress", pa.getAddress());
+                                hash.put("nationalId", pa.getNational_id());
+                                hash.put("trans", pa.getTranportOrg());
+                                hash.put("disasea", pa.getDiagnosis());
+                                hash.put("doctor", pa.getDoctor_name());
+                                hash.put("date_of_birth", pa.getDateOfBirth());
+                                hash.put("gender", pa.getGender());
+                                hash.put("age", pa.getAge());
+                                hash.put("tele1", pa.getTele1());
+                                hash.put("tele2", pa.getTele2());
+                               
+                                InputStream admissionReport = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetails.jasper");
+                                hash.put("admissionReport", admissionReport);
+                              
+                                InputStream clincRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsClincs.jasper");
+                                hash.put("clincRep", clincRep);
+                               
+                                InputStream contractRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsContract.jasper");
+                                hash.put("contractRep", contractRep);
+                               
+                                InputStream medicineRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsMedicines.jasper");
+                                hash.put("medicineRep", medicineRep);
+                              
+                                InputStream serviceRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsServices.jasper");
+                                hash.put("serviceRep", serviceRep);
+                               
+                                InputStream surmedRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurMed.jasper");
+                                hash.put("surmedRep", surmedRep);
+                               
+                                InputStream surgiresRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurgires.jasper");
+                                hash.put("surgiresRep", surgiresRep);
+                               
+                                InputStream a = getClass().getResourceAsStream("/screens/mainDataScreen/reports/PatientFile.jrxml");
+                                JasperDesign design = JRXmlLoader.load(a);
+                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                                JasperViewer.viewReport(jasperprint, false);
+
+                            } catch (Exception ex) {
+                                AlertDialogs.showErrors(ex);
+                            } finally {
+
+                            }
         }
     }
 

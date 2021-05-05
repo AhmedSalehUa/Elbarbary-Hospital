@@ -1,8 +1,10 @@
 package screens.drugs;
 
 import assets.classes.AlertDialogs;
+import static assets.classes.statics.NoPermission;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import db.User;
 import db.get;
 import elbarbary.hospital.ElBarbaryHospital;
 import java.io.IOException;
@@ -227,7 +229,10 @@ public class DrugsScreenPatienrAccountsController
     private TableColumn<DrugsRoom, String> roomTabDate;
     @FXML
     private TableColumn<DrugsRoom, String> roomTabId;
+    @FXML
+    private AnchorPane MoneyTransactions;
 
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
@@ -385,6 +390,17 @@ public class DrugsScreenPatienrAccountsController
             DrugsScreenMoneyOutController controllers = b.getController();
             controllers.setParents(DrugsScreenPatienrAccountsController.this);
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(NoPermission));
+            if (User.canAccess("drugsMoneyTransaction")) {
+                loader = new FXMLLoader(getClass().getResource("DrugsScreenMoneyTransactions.fxml"));
+                MoneyTransactions.getChildren().clear();
+                MoneyTransactions.getChildren().add(loader.load());
+                DrugsScreenMoneyTransactionsController tarnsControllers = loader.getController();
+                tarnsControllers.setParents(DrugsScreenPatienrAccountsController.this);
+            } else {
+                MoneyTransactions.getChildren().clear();
+                MoneyTransactions.getChildren().add(loader.load());
+            }
         } catch (IOException ex) {
             AlertDialogs.showErrors(ex);
         }
@@ -682,11 +698,22 @@ public class DrugsScreenPatienrAccountsController
                 }
             });
             this.dailyCategory.setCellFactory(cell -> new ListCell<DrugsCategeroy>() {
-                GridPane gridPane;
+                GridPane gridPane = new GridPane();
+                Label lblid = new Label();
+                Label lblName = new Label();
 
-                Label lblid;
+                // Static block to configure our layout
+                {
+                    // Ensure all our column widths are constant
+                    gridPane.getColumnConstraints().addAll(
+                            new ColumnConstraints(50, 50, 50),
+                            new ColumnConstraints(150, 150, 150)
+                    );
 
-                Label lblName;
+                    gridPane.add(lblid, 0, 1);
+                    gridPane.add(lblName, 1, 1);
+
+                }
 
                 protected void updateItem(DrugsCategeroy person, boolean empty) {
                     super.updateItem(person, empty);
@@ -718,13 +745,24 @@ public class DrugsScreenPatienrAccountsController
             }
         });
         this.admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
-            GridPane gridPane;
+            GridPane gridPane = new GridPane();
+            Label lblid = new Label();
+            Label lblName = new Label();
+            Label lblCost = new Label();
 
-            Label lblid;
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
+                        new ColumnConstraints(100, 100, 100)
+                );
 
-            Label lblName;
+                gridPane.add(lblid, 0, 1);
+                gridPane.add(lblName, 1, 1);
+                gridPane.add(lblCost, 2, 1);
 
-            Label lblCost;
+            }
 
             protected void updateItem(StoreProdcts person, boolean empty) {
                 super.updateItem(person, empty);
@@ -951,19 +989,29 @@ public class DrugsScreenPatienrAccountsController
             }
         });
         admissionMedicineStore.setCellFactory(cell -> new ListCell<Stores>() {
-            GridPane gridPane;
+            GridPane gridPane = new GridPane();
+            Label lblid = new Label();
+            Label lblName = new Label();
 
-            Label lblName;
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(100, 100, 100));
 
-            Label lblCost;
+                gridPane.add(lblid, 0, 1);
+                gridPane.add(lblName, 1, 1);
+
+            }
 
             protected void updateItem(Stores person, boolean empty) {
                 super.updateItem(person, empty);
 
                 if (!empty && person != null) {
 
-                    lblName.setText("اسم المخزن: " + person.getName());
-                    lblCost.setText("النوع: " + person.getType());
+                    lblid.setText("اسم المخزن: " + person.getName());
+                    lblName.setText("النوع: " + person.getType());
 
                     setGraphic((Node) gridPane);
                 } else {
@@ -1099,7 +1147,7 @@ public class DrugsScreenPatienrAccountsController
                 {
                     // Ensure all our column widths are constant
                     gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                            new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
                             new ColumnConstraints(100, 100, 100)
                     );
 

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="16f301e0-37ad-454d-84d3-7a5892e9655c">
+	<property name="ireport.zoom" value="1.2100000000000009"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="630"/>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\projects\\Implementation for institutions\\Elbarbary-Hospital\\src\\screens\\mainDataScreen\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="patient_id" class="java.lang.String"/>
+	<parameter name="name" class="java.lang.String"/>
+	<parameter name="government" class="java.lang.String"/>
+	<parameter name="adress" class="java.lang.String"/>
+	<parameter name="nationalId" class="java.lang.String"/>
+	<parameter name="trans" class="java.lang.String"/>
+	<parameter name="disasea" class="java.lang.String"/>
+	<parameter name="doctor" class="java.lang.String"/>
+	<parameter name="date_of_birth" class="java.lang.String"/>
+	<parameter name="gender" class="java.lang.String"/>
+	<parameter name="age" class="java.lang.String"/>
+	<parameter name="tele1" class="java.lang.String"/>
+	<parameter name="tele2" class="java.lang.String"/>
+	<parameter name="admissionReport" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="clincRep" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="contractRep" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="medicineRep" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="serviceRep" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="surmedRep" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="surgiresRep" class="java.io.InputStream" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT `id` FROM `admission` WHERE `patient_id`=$P{patient_id}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="725" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="79" uuid="87981f4e-4680-4a7b-8f27-87aceb80fe42"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="433" y="33" width="122" height="32" uuid="e9d0143f-3660-4e70-a2be-b6670aed6875"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ElBarbary Hospital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="0" width="122" height="33" uuid="b76bbc3d-8c65-483c-85d0-198d7e543041"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[مستشفي البربري التخصصي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="100" width="200" height="30" uuid="2625cbdd-48b2-4e38-bce8-3ce68e8ec449"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[الاسم]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="269" width="200" height="30" uuid="4f75a222-aa84-4ba5-9556-5b90d67e1861"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[المحافظة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="313" width="200" height="30" uuid="ff89127d-409b-4f5d-8226-fb90f2357edb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[العنوان]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="222" width="200" height="30" uuid="17a09911-8c83-4e1a-8492-fd80aa90eed2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[الرقم القومي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="409" width="200" height="30" uuid="3e64d561-c67f-4887-981c-c21ad2dffcb8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[جهة التحويل]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="451" width="200" height="30" uuid="e79f9e55-9bca-46b7-9c03-266979708f98"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[التشخيص]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="489" width="200" height="30" uuid="0654ff71-5630-492d-847c-e3ad3e797ec9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[الطبيب المعالج]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="364" width="200" height="30" uuid="feb7f4fb-889f-43cc-900b-ecc2326a72fd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[تاريخ الميلاد]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="142" width="200" height="30" uuid="2dd6a3cf-42c1-4ad7-8bf3-52c784db30aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[النوع]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="180" width="200" height="30" uuid="b5f620f1-a457-43d2-b256-cfdaf3e8dcf0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[السن]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="533" width="200" height="30" uuid="0602902e-4839-4b1f-87d7-cadc9ec18d49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[رقم الموبايل 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="577" width="200" height="30" uuid="db7e5b8b-064f-4866-866d-bda4bde8cab4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[رقم الموبايل 2]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="128" y="100" width="200" height="30" uuid="add73019-7ba8-4692-8818-468cbba6e713"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="268" width="200" height="30" uuid="bb3b0b76-6170-4dac-a7f1-51a7f531993a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{government}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="313" width="200" height="30" uuid="7a4b4b23-41c2-4ab9-81c7-87fa84747937"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{adress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="222" width="200" height="30" uuid="0f1ba872-9eee-448f-8695-40b8c428418a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nationalId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="409" width="200" height="30" uuid="19769284-8dda-4108-948e-2cf9309bdcfe"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{trans}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="489" width="200" height="30" uuid="bc9d1dc1-0ded-4949-9a10-181e8a57a43a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{doctor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="363" width="200" height="30" uuid="71354d63-37f3-4248-9361-add9a39ac249"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{date_of_birth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="181" width="200" height="30" uuid="bcb6f57f-8534-4617-9df7-0bd56bb54b51"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{age}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="143" width="200" height="30" uuid="c6cf89e8-83b6-4758-b0b2-432b75343d6c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{gender}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="530" width="200" height="30" uuid="d552fc23-2f0e-40bd-bcaf-1d191b620fab"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tele1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="577" width="200" height="30" uuid="88769572-8adc-4531-8712-0ff8366323ac"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tele2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="450" width="200" height="30" uuid="c20e19b3-f414-4bb3-8925-b3f7185e301c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{disasea}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="228" y="693" width="100" height="20" uuid="673b8b5a-d784-4218-8ac0-f8fcaeebeca1"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[تذاكر الدخول]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="120" isRemoveLineWhenBlank="true" uuid="666202b8-d1e8-4157-85aa-fc3bc19df870"/>
+				<subreportParameter name="medicineRep">
+					<subreportParameterExpression><![CDATA[$P{medicineRep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="surgiresRep">
+					<subreportParameterExpression><![CDATA[$P{surgiresRep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="contractRep">
+					<subreportParameterExpression><![CDATA[$P{contractRep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="clincRep">
+					<subreportParameterExpression><![CDATA[$P{clincRep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reptype">
+					<subreportParameterExpression><![CDATA[false]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logo">
+					<subreportParameterExpression><![CDATA[$P{logo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="serviceRep">
+					<subreportParameterExpression><![CDATA[$P{serviceRep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="surmedRep">
+					<subreportParameterExpression><![CDATA[$P{surmedRep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{admissionReport}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

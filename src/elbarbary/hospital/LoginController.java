@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
@@ -148,8 +149,10 @@ public class LoginController implements Initializable {
                                             prefs.put(USER_ID, Integer.toString(us.getId()));
                                             prefs.put(USER_NAME, us.getName());
                                             prefs.put(USER_ROLE, us.getRole());
-                                            prefs.put(RECEPTION_ACC_ID, db.get.getTableData("SELECT `value` FROM `static_values` WHERE `attribute`='RECEPTION_ACC_ID'").getValueAt(0, 0).toString());
-                                            prefs.put(MAIN_ACC_ID, db.get.getTableData("SELECT `value` FROM `static_values` WHERE `attribute`='MAIN_ACC_ID'").getValueAt(0, 0).toString());
+                                            ResultSet rs = db.get.getReportCon().createStatement().executeQuery("select attribute,value from static_values");
+                                            while (rs.next()) {
+                                                prefs.put(rs.getString(1), rs.getString(2));
+                                            }
 
                                             Parent mainMember = FXMLLoader.load(getClass().getResource("/Navigator/Home.fxml"));
 

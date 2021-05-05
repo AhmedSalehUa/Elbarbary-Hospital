@@ -78,6 +78,7 @@ public class DrugsScreenMoneyInController
     @FXML
     private ProgressIndicator progress;
 
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.progress.setVisible(true);
         Service<Void> service = new Service<Void>() {

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AdmissionDetailsClincs" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="eb85a89a-d592-4f5c-b447-25edd4552e3a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontSize="14">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="admissionId" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT `examinations`.`id`,`clincs`.`name`, `doctors`.`name` ,  `examinations`.`type`, `examinations`.`cost` FROM `examinations`,`clincs`,`doctors` WHERE  `examinations`.`clinc_id`=`clincs`.`id` and `examinations`.`admission_id`=$P{admissionId} and `examinations`.`doctor_id`=`doctors`.`id`]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="237" y="0" width="100" height="20" uuid="18754a3f-1af3-4000-a5cd-fc72d7e1b292"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[كشوفات خارجية]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="185" height="20" uuid="455008ac-3363-4cf0-aeaa-28de70bb5ab5"/>
+				<text><![CDATA[التكلفة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="185" y="0" width="185" height="20" uuid="ee220937-1ceb-4a2c-844a-965c701894bc"/>
+				<text><![CDATA[النوع]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="370" y="0" width="185" height="20" uuid="b9de85a7-e84c-43c7-b013-a810d163cc23"/>
+				<text><![CDATA[الكشف]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="0" y="0" width="185" height="20" uuid="3412e74e-5a97-470b-9c2e-08fbc13d0d41"/>
+				<textFieldExpression><![CDATA[$F{cost}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="185" y="0" width="185" height="20" uuid="f4fc70ea-0bc8-415c-bf51-e73402b77e7e"/>
+				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="370" y="0" width="185" height="20" uuid="eb687a6f-b2b8-4a99-a46c-0354ef379250"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

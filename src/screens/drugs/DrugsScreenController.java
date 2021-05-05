@@ -42,12 +42,14 @@ public class DrugsScreenController
     @FXML
     private JFXHamburger hamburg;
     Preferences prefs;
+    @FXML
+    private Button AccShow;
 
     public void initialize(URL url, ResourceBundle rb) {
         this.prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
 
         (new ZoomInLeft((Node) this.dailyExpenses)).play();
-        (new ZoomInRight((Node) this.patient)).play();
+        (new ZoomInRight((Node) this.patient)).play(); (new ZoomInRight((Node) this.AccShow)).play();
 
         Service<Void> service = new Service<Void>() {
             protected Task<Void> createTask() {
@@ -83,6 +85,7 @@ public class DrugsScreenController
             this.patient.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 try {
                     this.patient.setStyle(" -fx-background-color: -mainColor-dark; ");
+                    this.AccShow.setStyle(" -fx-background-color: -mainColor-light; ");
 
                     this.dailyExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
                     Parent node = (Parent) FXMLLoader.load(getClass().getResource(statics.NoPermission));
@@ -98,11 +101,29 @@ public class DrugsScreenController
             this.dailyExpenses.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 try {
                     this.dailyExpenses.setStyle(" -fx-background-color: -mainColor-dark; ");
+                    this.AccShow.setStyle(" -fx-background-color: -mainColor-light; ");
 
                     this.patient.setStyle(" -fx-background-color: -mainColor-light; ");
                     Parent node = (Parent) FXMLLoader.load(getClass().getResource(statics.NoPermission));
                     if (User.canAccess("DrugsScreenPatient")) {
                         node = (Parent) FXMLLoader.load(getClass().getResource("DrugsScreenPatienrAccounts.fxml"));
+                    }
+                    this.borderpane.setCenter((Node) node);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+
+                    AlertDialogs.showErrors(ex);
+                }
+            });
+            AccShow.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                try {
+                    this.AccShow.setStyle(" -fx-background-color: -mainColor-dark; ");
+
+                    this.patient.setStyle(" -fx-background-color: -mainColor-light; ");
+                    this.dailyExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
+                    Parent node = (Parent) FXMLLoader.load(getClass().getResource(statics.NoPermission));
+                    if (User.canAccess("DrugsScreenShowAcc")) {
+                        node = (Parent) FXMLLoader.load(getClass().getResource("DrugsScreenShowAcc.fxml"));
                     }
                     this.borderpane.setCenter((Node) node);
                 } catch (IOException ex) {

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eb6ba0e-ffb7-4142-86b5-3d4150ce6e56">
+	<property name="ireport.zoom" value="2.853116706110003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontSize="14">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="date_from" class="java.lang.String"/>
+	<parameter name="date_to" class="java.lang.String"/>
+	<parameter name="subrepo" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name` as 'group', `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`date`>=$P{date_from} and `expenses`.`date`<=$P{date_to}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="group" class="java.lang.String"/>
+	<field name="date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="user_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="notes" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="cat">
+		<groupExpression><![CDATA[$F{group}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<staticText>
+					<reportElement style="style1" x="66" y="30" width="111" height="20" uuid="8b3d06e9-daa4-434f-afa8-f5b1be74c2e8"/>
+					<text><![CDATA[مصروف من]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="style1" x="177" y="30" width="111" height="20" uuid="bcf6cca9-b43f-47fc-8e2d-56164d0b32ef"/>
+					<text><![CDATA[ملاحظات]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="style1" x="288" y="30" width="111" height="20" uuid="efb8f37f-eea9-4e53-919e-31b465df4bc4"/>
+					<text><![CDATA[المبلغ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="style1" x="399" y="30" width="111" height="20" uuid="47b48cbd-ff9b-4d71-9596-2f15ed917af4"/>
+					<text><![CDATA[التاريخ]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="style2" x="243" y="10" width="100" height="20" uuid="ed2ac843-f5d4-4a6d-b069-51dac4fe0e52"/>
+					<textFieldExpression><![CDATA[$F{group}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="79" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{subrepo}]]></printWhenExpression>
+			<staticText>
+				<reportElement x="433" y="33" width="122" height="32" uuid="5524e7da-a2ea-4594-b61a-fbd0c68216fb"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ElBarbary Hospital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="0" width="122" height="33" uuid="a7c793de-dc7d-48c1-8f1a-52f16d3f1958"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[مستشفي البربري التخصصي]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="79" uuid="23920388-ef80-4920-83e6-ad0432384ec1"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement x="433" y="0" width="100" height="20" uuid="54005852-d53f-43d2-9494-4d402859358c"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[المصروفات]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="229" y="0" width="100" height="20" uuid="3da13f53-261e-450f-819a-58be123a3d1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{date_from}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="329" y="0" width="100" height="20" uuid="18c68e31-2092-4c2a-9891-dfc357a6548b"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[الفترة من]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="126" y="0" width="100" height="20" uuid="5133a0cf-640b-484d-b76e-f72f5190d343"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[الفترة الي]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="26" y="0" width="100" height="20" uuid="bb24fe9a-25eb-49a3-8e5f-51947c6df720"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{date_to}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="66" y="0" width="111" height="20" uuid="6e00a136-b8b4-45b7-9ff3-b9d94677a8be"/>
+				<textFieldExpression><![CDATA[$F{user_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="177" y="0" width="111" height="20" uuid="74c48c8b-5d5f-4aa7-b0f4-a0a11691bb30"/>
+				<textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="288" y="0" width="111" height="20" uuid="e8b252ff-12c5-4b2b-94f2-bf84ca5e99c7"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="399" y="0" width="111" height="20" uuid="54bdbcb4-cb07-4e5b-8168-1a73f74a1d77"/>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="36">
+			<staticText>
+				<reportElement style="style1" x="399" y="16" width="111" height="20" uuid="8ae493ef-1420-4801-af95-8ddcb56576a0"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[الاجمالي]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style2" x="288" y="16" width="111" height="20" uuid="ded5ae55-631d-4fc4-a3df-eebf6a7cfc30"/>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -87,6 +87,7 @@ public class template {
          * 
          * CREATE TABLE `elbarbary_hospital`.`drg_patient_medicine` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `acc_id` INT(11) NOT NULL , `medicine_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `cost_for_one` VARCHAR(700) NOT NULL , `total_cost` VARCHAR(700) NOT NULL , PRIMARY KEY (`id`), INDEX (`patient_id`), INDEX (`acc_id`), INDEX (`medicine_id`)) ENGINE = InnoDB;
          * 
+         * CREATE TABLE `elbarbary_hospital`.`drg_accounts_transactions` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `acc_id_from` INT(11) NOT NULL , `acc_id_to` INT(11) NOT NULL , `user_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `date` DATE NOT NULL , PRIMARY KEY (`id`), INDEX (`acc_id_from`), INDEX (`acc_id_to`), INDEX (`user_id`)) ENGINE = InnoDB;
          * 
 
             *   
@@ -97,7 +98,7 @@ public class template {
         d.add("");
         d.add("");
         d.add("");
-        d.add("");
+        d.add(""); 
         d.add("");
         d.add("");
 

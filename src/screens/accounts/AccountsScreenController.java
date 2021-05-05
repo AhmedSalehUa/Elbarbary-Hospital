@@ -115,7 +115,7 @@ public class AccountsScreenController implements Initializable {
                 accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
                 Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
-                if (User.canAccess("accounts")) {
+                if (User.canAccess("AllAccounts")) {
                     node = FXMLLoader.load(getClass().getResource("AccountsScreenAccounts.fxml"));
                 }
                 borderpane.setCenter(node);
@@ -197,6 +197,25 @@ public class AccountsScreenController implements Initializable {
                 Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
                 if (User.canAccess("accountMedicineCompany")) {
                     node = FXMLLoader.load(getClass().getResource(AccountsScreenCompany));
+                }
+                borderpane.setCenter(node);
+            } catch (IOException ex) {
+
+                AlertDialogs.showErrors(ex);
+            }
+
+        }); accountReports.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+
+            try {
+                accountReports.setStyle(" -fx-background-color: -mainColor-dark; ");
+                accountContracts.setStyle(" -fx-background-color: -mainColor-light; ");
+                accounts.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
+                Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
+                if (User.canAccess("AccountsScreenReports")) {
+                    node = FXMLLoader.load(getClass().getResource(AccountsScreenReport)); 
                 }
                 borderpane.setCenter(node);
             } catch (IOException ex) {

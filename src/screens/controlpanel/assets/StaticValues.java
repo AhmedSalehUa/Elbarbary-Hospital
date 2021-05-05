@@ -61,7 +61,7 @@ public class StaticValues {
     }
 
     public boolean Edite() throws Exception {
-        PreparedStatement ps = db.get.Prepare("UPDATE `static_values` SET `attribute`=?,`value`=? WHERE `attribute``=?");
+        PreparedStatement ps = db.get.Prepare("UPDATE `static_values` SET `attribute`=?,`value`=? WHERE `attribute`=?");
         ps.setString(1, attribute);
         ps.setString(2, valus);
         ps.setString(3, oldAttribute);

@@ -10,9 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javax.swing.JTable;
-import screens.accounts.assets.AccountTransactions;
-import screens.store.assets.StoreProdcts;
+import javax.swing.JTable;  
 
 public class DrugsRoom {
 

@@ -1,12 +1,13 @@
 package screens.drugs.assets;
 
 import db.get;
+import elbarbary.hospital.ElBarbaryHospital;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.prefs.Preferences;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javax.swing.JTable;
-import screens.accounts.assets.AccountTransactions;
+import javax.swing.JTable; 
 
 public class DrugsServices {
 
@@ -112,9 +113,10 @@ public class DrugsServices {
     }
 
     public boolean Add() throws Exception {
+        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
+
         DrugsAccounts.removeFromRemaining(Integer.parseInt(getPatientAccId(this.patient_id)), this.cost);
         DrugsAccounts.addToTotalSpended(Integer.parseInt(getPatientAccId(this.patient_id)), this.cost);
-        AccountTransactions.addAmountToAccount(this.acc_id, this.cost);
         PreparedStatement ps = get.Prepare("INSERT INTO `drg_patient_service`(`id`, `patient_id`, `acc_id`, `doctor_id`, `service_id`, `cost`, `date`) VALUES (?,?,?,?,?,?,?)");
         ps.setInt(1, this.id);
         ps.setInt(2, this.patient_id);
@@ -128,10 +130,11 @@ public class DrugsServices {
     }
 
     public boolean Edite() throws Exception {
+        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
+
         JTable am = get.getTableData("SELECT `patient_id`,`cost`,`acc_id` FROM `drg_patient_service` WHERE `id`='" + this.id + "'");
         DrugsAccounts.removeFromTotalSpended(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
-        AccountTransactions.removeAmountFromAccount(Integer.parseInt(am.getValueAt(0, 2).toString()), am.getValueAt(0, 1).toString());
-        DrugsAccounts.addToRemaining(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
+         DrugsAccounts.addToRemaining(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
 
         PreparedStatement ps = get.Prepare("UPDATE `drg_patient_service` SET `patient_id`=?,`acc_id`=?,`doctor_id`=?,`service_id`=?,`cost`=?,`date`=? WHERE `id`=?");
         ps.setInt(7, this.id);
@@ -143,15 +146,15 @@ public class DrugsServices {
         ps.setString(6, this.date);
         DrugsAccounts.removeFromRemaining(Integer.parseInt(getPatientAccId(this.patient_id)), this.cost);
         DrugsAccounts.addToTotalSpended(Integer.parseInt(getPatientAccId(this.patient_id)), this.cost);
-        AccountTransactions.addAmountToAccount(this.acc_id, this.cost);
-        ps.execute();
+         ps.execute();
         return true;
     }
 
     public boolean Delete() throws Exception {
+        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
+
         JTable am = get.getTableData("SELECT `patient_id`,`cost`,`acc_id` FROM `drg_patient_service` WHERE `id`='" + this.id + "'");
         DrugsAccounts.removeFromTotalSpended(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
-        AccountTransactions.removeAmountFromAccount(Integer.parseInt(am.getValueAt(0, 2).toString()), am.getValueAt(0, 1).toString());
         DrugsAccounts.addToRemaining(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
 
         PreparedStatement ps = get.Prepare("DELETE FROM `drg_patient_service` WHERE `id`=?");

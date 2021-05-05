@@ -14,11 +14,14 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import screens.store.assets.Shorts;
 import screens.store.assets.Stores;
@@ -58,6 +61,10 @@ public class StoreScreenShortsController implements Initializable {
     private TableColumn<Shorts, String> allShortsTabAmountInBranchs;
     @FXML
     private TableColumn<Shorts, String> allShortsTabTotalAmount;
+    @FXML
+    private ImageView printOneStoreShorts;
+    @FXML
+    private ImageView printAllStoreShorts;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -140,6 +147,18 @@ public class StoreScreenShortsController implements Initializable {
     private void getData() throws Exception {
         indShortStoresTable.setItems(Stores.getData());
         allShortsTable.setItems(Shorts.getAllData());
+    }
+
+    @FXML
+    private void printOneStoreShorts(MouseEvent event) {
+    }
+
+    @FXML
+    private void printAllStoreShorts(MouseEvent event) {
+    }
+
+    @FXML
+    private void StoreProducts(ActionEvent event) {
     }
 
 }

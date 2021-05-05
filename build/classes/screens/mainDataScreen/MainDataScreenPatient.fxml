@@ -47,6 +47,14 @@
                                           <Insets left="5.0" right="5.0" />
                                        </HBox.margin>
                                     </FontAwesomeIconView>
+                                    <ImageView fx:id="print" fitHeight="34.0" fitWidth="42.0" onMouseClicked="#print" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../assets/icons/icons8_print_80px.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </ImageView>
                                           </children>
                                       </HBox>
                                       <TableView id="patientTable" fx:id="patientTable" prefHeight="520.0" prefWidth="892.0">

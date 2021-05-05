@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AdmissionDetailsSurgires" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="04bd0fde-9c54-4118-a113-4f8fd6ae2aad">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontSize="14">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="admissionId" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT p3.id,p1.name as 'doctor', p2.name as 'Anesthetization_doctor',p3.date,p4.type, p5.name as 'escort' ,p3.totalcost 
+                FROM admission_services_surgeries c 
+                JOIN doctors p1 ON p1.id = c.doctor_id 
+                JOIN doctors p2 on p2.id = c.Anesthetization_doctor 
+                JOIN admission_services_surgeries p3 on p3.id = c.id 
+                JOIN admission_services_surgeries_type p4 on p4.id = c.surgey_type 
+                JOIN patient_escort p5 on p5.id = c.escort_id 
+                WHERE c.admission_id=$P{admissionId}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totalcost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="escort" class="java.lang.String"/>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Anesthetization_doctor" class="java.lang.String"/>
+	<field name="doctor" class="java.lang.String"/>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="223" y="15" width="100" height="20" uuid="90342440-9e06-45eb-a735-7d7fdfcda9c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[عمليات جراحية]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="92" height="20" uuid="ba5833fe-e1ac-4413-b877-34091b741b6e"/>
+				<text><![CDATA[اجمالي التكلفة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="92" y="0" width="92" height="20" uuid="0a2aae95-e542-4880-92db-828b6dc2252a"/>
+				<text><![CDATA[المرافق]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="184" y="0" width="92" height="20" uuid="eae98199-b765-49e1-be22-f04cf97e8ffd"/>
+				<text><![CDATA[نوع العملية]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="276" y="0" width="92" height="20" uuid="3a02cbb2-6500-45db-a679-47aa5de6d0e0"/>
+				<text><![CDATA[تاريخ العملية]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="368" y="0" width="92" height="20" uuid="bfddc9bb-29e4-41a7-a193-8fd191c54bbf"/>
+				<text><![CDATA[طبيب التخدير]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="460" y="0" width="92" height="20" uuid="f33852e0-139c-4c15-a54c-70f8aac8e6f5"/>
+				<text><![CDATA[الطبيب]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="0" y="0" width="92" height="20" uuid="b3a62b73-a87f-42ac-9268-6875c091d9fb"/>
+				<textFieldExpression><![CDATA[$F{totalcost}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="92" y="0" width="92" height="20" uuid="a0a58acd-03c6-4a5c-bf94-9aaa839a99ce"/>
+				<textFieldExpression><![CDATA[$F{escort}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="184" y="0" width="92" height="20" uuid="377facdb-e3d0-483a-a356-4f65b236a1c0"/>
+				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="276" y="0" width="92" height="20" uuid="0b5ea449-45d9-4da3-917e-d3921e922dc5"/>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="368" y="0" width="92" height="20" uuid="c31990cf-9bbd-42bf-aa58-3ad46902082f"/>
+				<textFieldExpression><![CDATA[$F{Anesthetization_doctor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="460" y="0" width="92" height="20" uuid="d093ed6a-f1cd-41b7-948b-519397a44aa7"/>
+				<textFieldExpression><![CDATA[$F{doctor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
