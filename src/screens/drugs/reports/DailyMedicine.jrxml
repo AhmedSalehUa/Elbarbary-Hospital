@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="555" pageHeight="802" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1e1f0687-d3b8-423a-95c8-615aa3b038cb">
+	<property name="ireport.zoom" value="3.1384283767210035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#F4F4F4" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="patient_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT `drg_patient_medicine`.`id`,`medicine`.`name`, `drg_patient_medicine`.`amount`, `drg_patient_medicine`.`cost_for_one`, `total_cost`,`drg_patient_medicine`.`medicine_id` FROM `drg_patient_medicine`,`medicine` WHERE `drg_patient_medicine`.`patient_id` =$P{patient_id} and `medicine`.`id` in (SELECT stores_medicines.medicine_id from stores_medicines where stores_medicines.id = `drg_patient_medicine`.`medicine_id`)]]>
+	</queryString>
+	<field name="medicine_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_cost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost_for_one" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="222" y="0" width="111" height="20" uuid="0a8d20b2-0ebc-4ad2-96e1-b2baf305ad4c"/>
+				<text><![CDATA[الادوية المصروفة]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="111" height="20" uuid="7cbe11e9-c3ab-46f3-af49-ecf068beb548"/>
+				<text><![CDATA[الاجمالي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="222" y="0" width="111" height="20" uuid="864985ca-0179-45b2-a39f-ae00d8327b2f"/>
+				<text><![CDATA[سعر الوحدة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="333" y="0" width="111" height="20" uuid="54da102c-708f-4ab8-8e77-7f1efed4ef3e"/>
+				<text><![CDATA[اسم الدواء]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="444" y="0" width="111" height="20" uuid="636c1471-f2eb-4d30-8b54-5dbd5c009018"/>
+				<text><![CDATA[م]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="111" y="0" width="111" height="20" uuid="efd5b616-65f2-4738-ac0f-3bc96d9383a1"/>
+				<text><![CDATA[الكمية]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="0" y="0" width="111" height="20" uuid="dea35338-a8e9-4884-ae9e-bcd7545fc342"/>
+				<textFieldExpression><![CDATA[$F{total_cost}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="222" y="0" width="111" height="20" uuid="412ab297-ebb7-4998-b07a-ebeedb6d9bfe"/>
+				<textFieldExpression><![CDATA[$F{cost_for_one}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="333" y="0" width="111" height="20" uuid="73640048-9671-45f3-bb0c-a158f115e4c0"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="444" y="0" width="111" height="20" uuid="1b1e40d1-9a06-472d-90bb-be18ef3fc39a"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="111" y="0" width="111" height="20" uuid="547eeee3-5a9c-493f-b5c2-24092de7c099"/>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

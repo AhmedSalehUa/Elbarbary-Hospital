@@ -72,6 +72,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import screens.mainDataScreen.assets.Contract;
@@ -1293,8 +1294,6 @@ public class MainDataScreenPatientController implements Initializable {
                         @Override
                         protected Void call() throws Exception {
 
-                          
-
                             return null;
                         }
                     };
@@ -1308,57 +1307,65 @@ public class MainDataScreenPatientController implements Initializable {
                 }
             };
             service.start();
-  try {
-                                Patients pa = patientTable.getSelectionModel().getSelectedItem();
-                                HashMap hash = new HashMap();
-                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
-                                hash.put("logo", image);
-                                hash.put("patient_id", Integer.toString(pa.getId()));
-                                hash.put("name", pa.getName());
-                                hash.put("government", pa.getGovernment());
-                                hash.put("adress", pa.getAddress());
-                                hash.put("nationalId", pa.getNational_id());
-                                hash.put("trans", pa.getTranportOrg());
-                                hash.put("disasea", pa.getDiagnosis());
-                                hash.put("doctor", pa.getDoctor_name());
-                                hash.put("date_of_birth", pa.getDateOfBirth());
-                                hash.put("gender", pa.getGender());
-                                hash.put("age", pa.getAge());
-                                hash.put("tele1", pa.getTele1());
-                                hash.put("tele2", pa.getTele2());
-                               
-                                InputStream admissionReport = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetails.jasper");
-                                hash.put("admissionReport", admissionReport);
-                              
-                                InputStream clincRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsClincs.jasper");
-                                hash.put("clincRep", clincRep);
-                               
-                                InputStream contractRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsContract.jasper");
-                                hash.put("contractRep", contractRep);
-                               
-                                InputStream medicineRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsMedicines.jasper");
-                                hash.put("medicineRep", medicineRep);
-                              
-                                InputStream serviceRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsServices.jasper");
-                                hash.put("serviceRep", serviceRep);
-                               
-                                InputStream surmedRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurMed.jasper");
-                                hash.put("surmedRep", surmedRep);
-                               
-                                InputStream surgiresRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurgires.jasper");
-                                hash.put("surgiresRep", surgiresRep);
-                               
-                                InputStream a = getClass().getResourceAsStream("/screens/mainDataScreen/reports/PatientFile.jrxml");
-                                JasperDesign design = JRXmlLoader.load(a);
-                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
-                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
-                                JasperViewer.viewReport(jasperprint, false);
+            try {
+                Patients pa = patientTable.getSelectionModel().getSelectedItem();
+                HashMap hash = new HashMap();
+                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                hash.put("logo", image);
+                hash.put("patient_id", Integer.toString(pa.getId()));
+                hash.put("name", pa.getName());
+                hash.put("government", pa.getGovernment());
+                hash.put("adress", pa.getAddress());
+                hash.put("nationalId", pa.getNational_id());
+                hash.put("trans", pa.getTranportOrg());
+                hash.put("disasea", pa.getDiagnosis());
+                hash.put("doctor", pa.getDoctor_name());
+                hash.put("date_of_birth", pa.getDateOfBirth());
+                hash.put("gender", pa.getGender());
+                hash.put("age", pa.getAge());
+                hash.put("tele1", pa.getTele1());
+                hash.put("tele2", pa.getTele2());
 
-                            } catch (Exception ex) {
-                                AlertDialogs.showErrors(ex);
-                            } finally {
+               
+                InputStream suprepo = getClass().getResourceAsStream("/screens/mainDataScreen/reports/Admissions.jasper");
+                JasperReport subJasperReport = (JasperReport) JRLoader.loadObject(suprepo);
+                hash.put("admissionReport", subJasperReport);
 
-                            }
+                InputStream clincRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsClincs.jasper");
+                JasperReport clincRepsubJasperReport = (JasperReport) JRLoader.loadObject(clincRep);
+                hash.put("clincRep", clincRepsubJasperReport);
+
+                InputStream contractRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsContract.jasper");
+                JasperReport contractRepsubJasperReport = (JasperReport) JRLoader.loadObject(contractRep);
+                hash.put("contractRep", contractRepsubJasperReport);
+
+                InputStream medicineRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsMedicines.jasper");
+                JasperReport medicineRepsubJasperReport = (JasperReport) JRLoader.loadObject(medicineRep);
+                hash.put("medicineRep", medicineRepsubJasperReport);
+
+                InputStream serviceRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsServices.jasper");
+                JasperReport serviceRepsubJasperReport = (JasperReport) JRLoader.loadObject(serviceRep);
+                hash.put("serviceRep", serviceRepsubJasperReport);
+
+                InputStream surmedRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurMed.jasper");
+                JasperReport surmedRepsubJasperReport = (JasperReport) JRLoader.loadObject(surmedRep);
+                hash.put("surmedRep", surmedRepsubJasperReport);
+
+                InputStream surgiresRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurgires.jasper");
+                JasperReport surgiresRepsubJasperReport = (JasperReport) JRLoader.loadObject(surgiresRep);
+                hash.put("surgiresRep", surgiresRepsubJasperReport);
+
+                InputStream a = getClass().getResourceAsStream("/screens/mainDataScreen/reports/PatientDocument.jrxml");
+                JasperDesign design = JRXmlLoader.load(a);
+                JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                JasperViewer.viewReport(jasperprint, false);
+
+            } catch (Exception ex) {
+                AlertDialogs.showErrors(ex);
+            } finally {
+
+            }
         }
     }
 

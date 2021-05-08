@@ -24,6 +24,7 @@ public class Overtime {
     static String TYPE_1 = "working hours - shift hours";
     static String TYPE_2 = "leave time  - shift leave time";
     static String TYPE_3 = "early income";
+    static String TYPE_4 = "no overtime";
 
     public Overtime() {
     }
@@ -72,6 +73,8 @@ public class Overtime {
         data.add(TYPE_1);
         data.add(TYPE_2);
         data.add(TYPE_3);
+        data.add(TYPE_4);
+
         return data;
     }
 
@@ -122,7 +125,8 @@ public class Overtime {
             case "TYPE_2":
                 return TYPE_2;
             case "TYPE_3":
-                return TYPE_3;
+                return TYPE_3; case "TYPE_4":
+                return TYPE_4;
 
         }
         return null;
@@ -137,6 +141,8 @@ public class Overtime {
                 return "TYPE_2";
             case "early income":
                 return "TYPE_3";
+            case "no overtime":
+                return "TYPE_4";
 
         }
         return null;

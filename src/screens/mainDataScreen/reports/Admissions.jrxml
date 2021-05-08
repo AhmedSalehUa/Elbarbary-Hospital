@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f7d3652a-1551-4717-a748-00a7cc635a4d">
+	<property name="ireport.zoom" value="2.357947691000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="432"/>
+	<parameter name="clincRep" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="contractRep" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="medicineRep" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="serviceRep" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="surmedRep" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="surgiresRep" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="admissionId" class="java.lang.Integer"/>
+	<parameter name="reptype" class="java.lang.Boolean"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\projects\\Implementation for institutions\\Elbarbary-Hospital\\src\\screens\\mainDataScreen\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="headertype" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[SELECT `admission`.`id`,`patients`.`name` as 'patient' , `contracts`.`name` as 'contract',`admission`.`date_of_enter`,`admission`.`date_of_exit`,`admission_type`.`name` as 'type',`admission_statue`.`name` as 'statue',`admission_spacification`.`name` as 'spacification',`admission`.`total_cost` 
+                from `admission`,`admission_type`,`admission_statue`,`admission_spacification`,`patients`,`contracts`
+                where `patients`.`id`=`admission`.`patient_id` and `contracts`.`id`=`admission`.`contract_id`and `admission`.`type` =`admission_type`.`id` and `admission`.`statue` = `admission_statue`.`id` and `admission`.`spacification` = `admission_spacification`.`id` and  `admission`.`id`=$P{admissionId} ORDER by `admission`.`id` DESC;]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient" class="java.lang.String"/>
+	<field name="contract" class="java.lang.String"/>
+	<field name="date_of_enter" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date_of_exit" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String"/>
+	<field name="statue" class="java.lang.String"/>
+	<field name="spacification" class="java.lang.String"/>
+	<field name="total_cost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="103" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{reptype}]]></printWhenExpression>
+			<staticText>
+				<reportElement x="433" y="0" width="122" height="33" uuid="f7d5496e-07ad-46f7-8c67-dd537f77fab1"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[مستشفي البربري التخصصي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="33" width="122" height="32" uuid="25a2db0c-3536-41bd-ba29-384ac0156e3e"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ElBarbary Hospital]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="79" uuid="67346e89-7d8e-4b2f-b9ee-8d4622fba69c"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="327" y="83" width="61" height="20" uuid="02ec16c1-0d71-42c4-876e-ff1818359856"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[اسم المريض]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="227" y="83" width="100" height="20" uuid="47fcb44c-7ec1-4537-b65b-76cf955d67f1"/>
+				<textFieldExpression><![CDATA[$F{patient}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="97" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{headertype}]]></printWhenExpression>
+			<staticText>
+				<reportElement x="236" y="53" width="61" height="20" uuid="835bac15-a5e0-49a7-966a-304c1dd17c51"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[اجمالي التكلفة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="77" width="61" height="20" uuid="a7f43519-f496-4d0a-8789-f698d00ad9e4"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[نوع التذكرة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="236" y="28" width="61" height="20" uuid="0a9695ba-c0f3-4070-9b3f-8f689401f001"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[التخصص]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="53" width="61" height="20" uuid="8b8836df-6178-416c-a533-da2b96b88eb4"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[تاريخ الخروج]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="2" width="61" height="20" uuid="537d9192-00e6-4e8c-9ab6-16cccbd02641"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[التعاقد]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="236" y="2" width="61" height="20" uuid="726d67fe-68a7-487f-a563-2fba16d91da6"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[حالة التذكرة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="28" width="61" height="20" uuid="5dcae6b6-6ba0-42e4-9442-7ced7f742c37"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[تاريخ الدخول]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="392" y="2" width="100" height="20" uuid="cbd0abb6-cfcd-46c9-9825-fadf5154a7d0"/>
+				<textFieldExpression><![CDATA[$F{contract}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="392" y="28" width="100" height="20" uuid="c78055d7-c137-4719-9113-539ffcae5332"/>
+				<textFieldExpression><![CDATA[$F{date_of_enter}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="392" y="53" width="100" height="20" uuid="c5f1d58e-c0e4-4537-acb2-5dfae8671dc9"/>
+				<textFieldExpression><![CDATA[$F{date_of_exit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="392" y="77" width="100" height="20" uuid="acaa074d-037d-401c-b0c8-213165a80395"/>
+				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="136" y="2" width="100" height="20" uuid="19fe48f1-e3e5-4bc2-8da2-3ec9adf79ea8"/>
+				<textFieldExpression><![CDATA[$F{statue}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="136" y="28" width="100" height="20" uuid="f12ae2a4-04b7-43c4-a700-5b8542eb8a4e"/>
+				<textFieldExpression><![CDATA[$F{spacification}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="136" y="53" width="100" height="20" uuid="dce745a2-f5d9-4f79-b50e-8cbc8da4652c"/>
+				<textFieldExpression><![CDATA[$F{total_cost}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="600" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="553" height="100" isRemoveLineWhenBlank="true" uuid="97a98e9a-809e-4426-81b1-63c646f5469f"/>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$P{admissionId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{clincRep}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="200" width="553" height="100" isRemoveLineWhenBlank="true" uuid="88d36dcc-31aa-438b-8fe0-1283712c31f8"/>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$P{admissionId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{contractRep}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="100" width="553" height="100" isRemoveLineWhenBlank="true" uuid="dc0023b5-d35b-4713-a83c-3dfc1d60e824"/>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$P{admissionId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{medicineRep}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="300" width="553" height="100" isRemoveLineWhenBlank="true" uuid="bb73aef7-5df5-4c02-be1f-dbdba8016087"/>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$P{admissionId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{serviceRep}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="399" width="553" height="100" isRemoveLineWhenBlank="true" uuid="2de80f58-b23a-4a5c-bb7b-4efa3b3f3c37"/>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$P{admissionId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{surgiresRep}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="499" width="553" height="100" isRemoveLineWhenBlank="true" uuid="244fa3d1-8c89-4e0b-bc79-d6248f9457d0"/>
+				<subreportParameter name="admissionId">
+					<subreportParameterExpression><![CDATA[$P{admissionId}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{surmedRep}]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

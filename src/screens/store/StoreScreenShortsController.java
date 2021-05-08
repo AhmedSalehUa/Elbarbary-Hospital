@@ -6,7 +6,10 @@
 package screens.store;
 
 import assets.classes.AlertDialogs;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
@@ -17,12 +20,21 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javax.imageio.ImageIO;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import screens.store.assets.Shorts;
 import screens.store.assets.Stores;
 
@@ -65,6 +77,10 @@ public class StoreScreenShortsController implements Initializable {
     private ImageView printOneStoreShorts;
     @FXML
     private ImageView printAllStoreShorts;
+    @FXML
+    private ProgressIndicator indProgress;
+    @FXML
+    private ProgressIndicator allProgress;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -103,7 +119,8 @@ public class StoreScreenShortsController implements Initializable {
 
             @Override
             protected void succeeded() {
-
+                indProgress.setVisible(false);
+                allProgress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -151,14 +168,126 @@ public class StoreScreenShortsController implements Initializable {
 
     @FXML
     private void printOneStoreShorts(MouseEvent event) {
+        if (indShortStoresTable.getSelectionModel().getSelectedIndex() == -1) {
+            AlertDialogs.showError("اختار المخزن اولا");
+        } else {
+            Stores store = indShortStoresTable.getSelectionModel().getSelectedItem();
+            indProgress.setVisible(true);
+            Service<Void> service = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+
+                            try {
+                                HashMap hash = new HashMap();
+                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                                hash.put("logo", image);
+                                hash.put("storName", store.getName());
+                                hash.put("storeId", Integer.toString(store.getId()));
+                                InputStream a = getClass().getResourceAsStream("/screens/store/reports/OneStore.jrxml");
+
+                                JasperDesign design = JRXmlLoader.load(a);
+                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                                JasperViewer.viewReport(jasperprint, false);
+                            } catch (Exception ex) {
+                                AlertDialogs.showErrors(ex);
+                            }
+
+                            return null;
+                        }
+                    };
+                }
+
+                @Override
+                protected void succeeded() {
+                    indProgress.setVisible(false);
+                    super.succeeded();
+                }
+            };
+            service.start();
+        }
     }
 
     @FXML
     private void printAllStoreShorts(MouseEvent event) {
+
+        allProgress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+
+                        try {
+                            HashMap hash = new HashMap();
+                            BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                            hash.put("logo", image);
+                            InputStream a = getClass().getResourceAsStream("/screens/store/reports/AllStores.jrxml");
+
+                            JasperDesign design = JRXmlLoader.load(a);
+                            JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                            JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                            JasperViewer.viewReport(jasperprint, false);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+
+                        return null;
+                    }
+                };
+            }
+
+            @Override
+            protected void succeeded() {
+                allProgress.setVisible(false);
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     @FXML
     private void StoreProducts(ActionEvent event) {
+         allProgress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+
+                        try {
+                            HashMap hash = new HashMap();
+                            BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                            hash.put("logo", image);
+                            InputStream a = getClass().getResourceAsStream("/screens/store/reports/StoreProducts.jrxml");
+
+                            JasperDesign design = JRXmlLoader.load(a);
+                            JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                            JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                            JasperViewer.viewReport(jasperprint, false);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+
+                        return null;
+                    }
+                };
+            }
+
+            @Override
+            protected void succeeded() {
+                allProgress.setVisible(false);
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
 }

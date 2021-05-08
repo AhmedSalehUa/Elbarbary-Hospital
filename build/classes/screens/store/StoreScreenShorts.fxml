@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -24,11 +25,16 @@
                            <children>
                               <VBox prefHeight="251.0" prefWidth="1340.0" spacing="15.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <ImageView fx:id="printOneStoreShorts" fitHeight="40.0" fitWidth="47.0" onMouseClicked="#printOneStoreShorts" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../assets/icons/icons8_print_80px.png" />
-                                       </image>
-                                    </ImageView>
+                                    <HBox spacing="15.0">
+                                       <children>
+                                          <ImageView fx:id="printOneStoreShorts" fitHeight="40.0" fitWidth="47.0" onMouseClicked="#printOneStoreShorts" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../assets/icons/icons8_print_80px.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ProgressIndicator fx:id="indProgress" />
+                                       </children>
+                                    </HBox>
                                     <TableView id="doctorTable" fx:id="indShortStoresTable" prefHeight="192.0" prefWidth="1301.0" VBox.vgrow="ALWAYS">
                                        <columns>
                                           <TableColumn fx:id="indShortStoresTabName" editable="false" prefWidth="300.0" text="المخزن" />
@@ -94,6 +100,7 @@
                                           </ImageView>
                                        </graphic>
                                     </Button>
+                                    <ProgressIndicator fx:id="allProgress" />
                                  </children>
                                  <padding>
                                     <Insets left="20.0" right="20.0" />

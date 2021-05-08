@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8a67ddc6-9c21-4674-9778-38df7ccfd90b">
+	<property name="ireport.zoom" value="2.5937424601000023"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontSize="14">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="repName" class="java.lang.String"/>
+	<parameter name="detailsRep" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\projects\\Implementation for institutions\\Elbarbary-Hospital\\src\\screens\\store\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[  SELECT * from `rep_invoices`]]>
+	</queryString>
+	<field name="id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discount" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="discoun_percent" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_cost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="notes" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="83" splitType="Stretch">
+			<staticText>
+				<reportElement x="433" y="1" width="122" height="33" uuid="1f63d8fb-7711-401e-a945-277bc0c6bcbf"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[مستشفي البربري التخصصي]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="1" width="100" height="79" uuid="e3043111-5237-4b20-91ea-4cb1a9567009"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="433" y="34" width="122" height="32" uuid="24d9f385-eed4-492a-813e-024a7727823b"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ElBarbary Hospital]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement x="207" y="0" width="122" height="21" uuid="3b2f52aa-0c8e-42b9-adc9-17c004dbbf66"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[بيان الفواتير]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="21" width="555" height="23" uuid="da3ba4f6-d2b4-45d4-be9d-2ab1a722aa04"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{repName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="123" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="528" y="20" width="27" height="20" uuid="648d6af3-2c92-42f3-9cc2-afc98a5a81bd"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="415" y="20" width="113" height="20" uuid="cf1b1a5c-10e5-4af0-8d3f-c9b0ee2b31fb"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement style="style2" x="346" y="20" width="69" height="20" uuid="8fe955a5-a686-4aee-a63b-194dda6ed080"/>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="277" y="20" width="69" height="20" uuid="33559b29-276a-4975-acc7-3bebb9da6b02"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="224" y="20" width="53" height="20" uuid="f746b4d2-64b4-4e1b-8003-5c45061ec34c"/>
+				<textFieldExpression><![CDATA[$F{discount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="167" y="20" width="57" height="20" uuid="8ac67146-4825-40e1-aa11-a662dda110a0"/>
+				<textFieldExpression><![CDATA[$F{discoun_percent}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="98" y="20" width="69" height="20" uuid="9559dd76-67a3-4e16-973a-2cc8d87db082"/>
+				<textFieldExpression><![CDATA[$F{total_cost}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="5" y="20" width="93" height="20" uuid="5a7f5ad8-b6a3-4d7a-8d2c-4500284b6b52"/>
+				<textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement positionType="Float" x="16" y="40" width="525" height="83" uuid="0f55955b-7b85-416c-9f50-3b716faf5618"/>
+				<subreportParameter name="id">
+					<subreportParameterExpression><![CDATA[$F{id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{detailsRep}]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement style="style1" x="528" y="0" width="27" height="20" uuid="a3a2de7b-14fe-4c74-8fd9-11da4a044f2c"/>
+				<text><![CDATA[م]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="415" y="0" width="113" height="20" uuid="a1cfb37d-2189-440c-92ad-0737e3f70079"/>
+				<text><![CDATA[شركة الادوية]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="346" y="0" width="69" height="20" uuid="9f7ee234-6bb6-426b-a87d-12af442c242e"/>
+				<text><![CDATA[تاريخ الفاتورة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="277" y="0" width="69" height="20" uuid="c1078544-4c0b-4d3c-a7b3-8746bfcc1f24"/>
+				<text><![CDATA[الاجمالي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="224" y="0" width="53" height="20" uuid="f222178f-a27f-406e-8ff5-889f142d8ba7"/>
+				<text><![CDATA[خصم]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="167" y="0" width="57" height="20" uuid="640192f0-a71a-4a6f-a124-64da85543f4c"/>
+				<text><![CDATA[نسبه الخصم]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="98" y="0" width="69" height="20" uuid="6fcc2ed6-2171-4e5b-b15f-eb75bb5ee1f3"/>
+				<text><![CDATA[السعر بعد الخصم]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="5" y="0" width="93" height="20" uuid="e776eed7-8282-4e93-8a7b-e71402ce340d"/>
+				<text><![CDATA[ملاحظات]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

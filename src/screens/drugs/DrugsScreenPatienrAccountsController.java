@@ -7,10 +7,13 @@ import com.jfoenix.controls.JFXTextField;
 import db.User;
 import db.get;
 import elbarbary.hospital.ElBarbaryHospital;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
@@ -49,14 +52,25 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javax.imageio.ImageIO;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import screens.drugs.assets.DrugsAccounts;
 import screens.drugs.assets.DrugsCategeroy;
 import screens.drugs.assets.DrugsMedicines;
 import screens.drugs.assets.DrugsPatientExpenses;
+import screens.drugs.assets.DrugsPatients;
 import screens.drugs.assets.DrugsRoom;
 import screens.drugs.assets.DrugsServices;
 import screens.mainDataScreen.assets.Doctors;
 import screens.mainDataScreen.assets.DoctorsServices;
+import screens.mainDataScreen.assets.Patients;
 import screens.store.assets.StoreProdcts;
 import screens.store.assets.Stores;
 
@@ -231,6 +245,8 @@ public class DrugsScreenPatienrAccountsController
     private TableColumn<DrugsRoom, String> roomTabId;
     @FXML
     private AnchorPane MoneyTransactions;
+    @FXML
+    private Button print;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -1574,6 +1590,89 @@ public class DrugsScreenPatienrAccountsController
             }
         };
         service.start();
+    }
+
+    @FXML
+    private void print(ActionEvent event) {
+        if (accountTable.getSelectionModel().getSelectedIndex() == -1) {
+            AlertDialogs.showError("اختار الحساب اولا");
+        } else {
+            Service<Void> service = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            try {
+                                DrugsAccounts acc = accountTable.getSelectionModel().getSelectedItem();
+                                DrugsPatients pa = DrugsPatients.getData(acc.getPaitent_id()).get(0);
+                                HashMap hash = new HashMap();
+                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                                hash.put("logo", image);
+                                hash.put("patient_id", Integer.toString(acc.getPaitent_id()));
+                                hash.put("name", pa.getName());
+                                hash.put("government", pa.getGovernment());
+                                hash.put("adress", pa.getAddress());
+                                hash.put("nationalId", pa.getNational_id());
+                                hash.put("trans", pa.getTranportOrg());
+                                hash.put("disasea", pa.getDiagnosis());
+                                hash.put("doctor", pa.getDoctor_name());
+                                hash.put("date_of_birth", pa.getDateOfBirth());
+                                hash.put("gender", pa.getGender());
+                                hash.put("age", pa.getAge());
+                                hash.put("tele1", pa.getTele1());
+                                hash.put("tele2", pa.getTele2());
+
+                                InputStream suprepo = getClass().getResourceAsStream("/screens/drugs/reports/CollectedMoney.jasper");
+                                JasperReport subJasperReport = (JasperReport) JRLoader.loadObject(suprepo);
+                                hash.put("collectedMoney", subJasperReport);
+
+                                InputStream clincRep = getClass().getResourceAsStream("/screens/drugs/reports/ExportedMoney.jasper");
+                                JasperReport clincRepsubJasperReport = (JasperReport) JRLoader.loadObject(clincRep);
+                                hash.put("ExportedMoney", clincRepsubJasperReport);
+
+                                InputStream contractRep = getClass().getResourceAsStream("/screens/drugs/reports/DailyExpenses.jasper");
+                                JasperReport contractRepsubJasperReport = (JasperReport) JRLoader.loadObject(contractRep);
+                                hash.put("dailyExpense", contractRepsubJasperReport);
+
+                                InputStream medicineRep = getClass().getResourceAsStream("/screens/drugs/reports/DailyMedicine.jasper");
+                                JasperReport medicineRepsubJasperReport = (JasperReport) JRLoader.loadObject(medicineRep);
+                                hash.put("dailyMedicine", medicineRepsubJasperReport);
+
+                                InputStream serviceRep = getClass().getResourceAsStream("/screens/drugs/reports/DailyRoom.jasper");
+                                JasperReport serviceRepsubJasperReport = (JasperReport) JRLoader.loadObject(serviceRep);
+                                hash.put("dailyRoom", serviceRepsubJasperReport);
+
+                                InputStream surmedRep = getClass().getResourceAsStream("/screens/drugs/reports/Services.jasper");
+                                JasperReport surmedRepsubJasperReport = (JasperReport) JRLoader.loadObject(surmedRep);
+                                hash.put("services", surmedRepsubJasperReport);
+
+                                 
+                                InputStream a = getClass().getResourceAsStream("/screens/drugs/reports/PatientFile.jrxml");
+                                JasperDesign design = JRXmlLoader.load(a);
+                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                                JasperViewer.viewReport(jasperprint, false);
+
+                            } catch (Exception ex) {
+                                AlertDialogs.showErrors(ex);
+                            } finally {
+
+                            }
+                            return null;
+                        }
+                    };
+
+                }
+
+                @Override
+                protected void succeeded() {
+
+                    super.succeeded();
+                }
+            };
+            service.start();
+        }
     }
 
 }

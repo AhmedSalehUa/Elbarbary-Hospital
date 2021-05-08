@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e908aa1f-6f18-4ed4-a53b-0266520cfc36">
+	<property name="ireport.zoom" value="2.853116706110003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle">
+		<pen lineWidth="0.25"/>
+		<box>
+			<pen lineWidth="0.5" lineStyle="Solid"/>
+			<topPen lineWidth="0.5" lineStyle="Solid"/>
+			<leftPen lineWidth="0.5" lineStyle="Solid"/>
+			<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+			<rightPen lineWidth="0.5" lineStyle="Solid"/>
+		</box>
+	</style>
+	<style name="style2" mode="Opaque" hAlign="Center" vAlign="Middle">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="emp" class="java.lang.String"/>
+	<parameter name="date_from" class="java.lang.String"/>
+	<parameter name="date_to" class="java.lang.String"/>
+	<parameter name="salarys" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="solfs" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="remains" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="emp_name" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT * FROM `att_report` WHERE `emp_id`=$P{emp}  and `date`>=$P{date_from}  and `date`<= $P{date_to} ORDER BY `date`]]>
+	</queryString>
+	<field name="notes" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="statue" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="salary_calc" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="earlyLeave" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="late" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="overtime" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="emp_leave" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="emp_att" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shift_end" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shift_start" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shift_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="emp_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="emp_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="171" y="0" width="238" height="20" uuid="e087b057-ba94-44a5-b581-ec2d274a7095"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[تقرير الحضور والانصراف]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="71" splitType="Stretch">
+			<staticText>
+				<reportElement x="441" y="0" width="114" height="20" uuid="f507f6ec-f6c1-4d36-957f-bfe07521e04d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[اسم الموظف :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="20" width="114" height="20" uuid="bb438bf6-2d0a-48d2-a253-0c47b7e9c6e0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[للفترة من :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="40" width="114" height="20" uuid="4023367e-3574-4aaf-8f0a-dbc5db3d1942"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[الفترة الي :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="153" y="0" width="132" height="20" uuid="800ebcaa-2713-4615-a988-41dbd6d191c2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[اجمالي المرتب :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="153" y="20" width="132" height="20" uuid="05c673f2-5dd0-445c-a0a3-c0811ae96ea5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[اجمالي المسحوبات خلال الفترة :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="153" y="40" width="132" height="20" uuid="c628d5e4-a520-417f-a297-4c73e5826f35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[الباقي :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="341" y="20" width="100" height="20" uuid="01b8075f-cc3b-451f-83f7-e3cc78eae080"/>
+				<textFieldExpression><![CDATA[$P{date_from}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="341" y="40" width="100" height="20" uuid="42ec0078-87c4-47d5-b0f7-e4e870617831"/>
+				<textFieldExpression><![CDATA[$P{date_to}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="53" y="0" width="100" height="20" uuid="2cdb2073-43d6-4d0d-ad2c-0b42dec9b3c9"/>
+				<textFieldExpression><![CDATA[$P{salarys}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="53" y="40" width="100" height="20" uuid="25097d24-3a1e-45b9-9454-f8a83f61203b"/>
+				<textFieldExpression><![CDATA[$P{remains}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="53" y="20" width="100" height="20" uuid="e557cd20-d508-4e6c-924c-b7f14715a03e"/>
+				<textFieldExpression><![CDATA[$P{solfs}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="341" y="0" width="100" height="20" uuid="225f2d27-7951-4d32-ae63-3083d772c130"/>
+				<textFieldExpression><![CDATA[$P{emp_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="46" height="20" uuid="e67219bd-4480-4a9f-98c3-bce4e550354d"/>
+				<text><![CDATA[ملاحظات]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="46" y="0" width="46" height="20" uuid="42d8be7e-ba68-49a6-9334-a7f6bd321fd9"/>
+				<text><![CDATA[حالة الحضور]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="92" y="0" width="46" height="20" uuid="242bfa2f-27ad-4034-886d-6aa16c4fbe30"/>
+				<text><![CDATA[حالة المرتب]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="138" y="0" width="46" height="20" uuid="194e8ceb-e8c6-4ffc-ad40-8a0c3e0670dc"/>
+				<text><![CDATA[انصراف مبكر]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="184" y="0" width="46" height="20" uuid="9f2911bc-7886-4a85-9e82-148921ca4956"/>
+				<text><![CDATA[التاخير]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="230" y="0" width="46" height="20" uuid="71a6955f-b30d-4e59-80a5-75a52bceb767"/>
+				<text><![CDATA[العمل الاضافي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="276" y="0" width="46" height="20" uuid="e150e81b-9254-4ade-98ef-de09333cac53"/>
+				<text><![CDATA[emp_leave]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="322" y="0" width="46" height="20" uuid="5023cc8d-0ae5-40f2-abe1-47b82b7c11ff"/>
+				<text><![CDATA[الحضور]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="368" y="0" width="46" height="20" uuid="fa434d74-c5f2-45b5-8504-0fd865444678"/>
+				<text><![CDATA[نهاية الحضور]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="414" y="0" width="46" height="20" uuid="7f6d4104-dcd9-4d81-98e2-bfb700812617"/>
+				<text><![CDATA[بداية الحضور]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="460" y="0" width="46" height="20" uuid="7d44630b-5489-44dd-b741-cc3df32333d9"/>
+				<text><![CDATA[اسم الميعاد]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="506" y="0" width="46" height="20" uuid="7580fb55-ea70-4cf8-8642-f2473181aa55"/>
+				<text><![CDATA[التاريخ]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="0" y="0" width="46" height="20" uuid="31083b90-1fbb-4bfd-9411-dffbdb5e92a3"/>
+				<textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="46" y="0" width="46" height="20" uuid="4f4348fa-5834-469b-9ff1-3302e36950e8"/>
+				<textFieldExpression><![CDATA[$F{statue}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="92" y="0" width="46" height="20" uuid="8c8a351d-7d82-4207-89f3-313445367fc1"/>
+				<textFieldExpression><![CDATA[$F{salary_calc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="138" y="0" width="46" height="20" uuid="0c28499d-64ea-4c7a-984c-1da2980cde03"/>
+				<textFieldExpression><![CDATA[$F{earlyLeave}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="184" y="0" width="46" height="20" uuid="e93f9902-1f6b-492e-bc39-32162f4db195"/>
+				<textFieldExpression><![CDATA[$F{late}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="230" y="0" width="46" height="20" uuid="c576cfcc-e92e-4b14-aecd-96a767d8490a"/>
+				<textFieldExpression><![CDATA[$F{overtime}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="276" y="0" width="46" height="20" uuid="e7370979-17e6-4a4a-b2b1-2986a778859f"/>
+				<textFieldExpression><![CDATA[$F{emp_leave}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="322" y="0" width="46" height="20" uuid="fee7aeb1-1810-451a-9101-343033e9a71f"/>
+				<textFieldExpression><![CDATA[$F{emp_att}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="368" y="0" width="46" height="20" uuid="24387373-42bc-492b-a11e-2a6b1767065c"/>
+				<textFieldExpression><![CDATA[$F{shift_end}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="414" y="0" width="46" height="20" uuid="0ca4109e-b468-49ae-b854-9564a45d8b76"/>
+				<textFieldExpression><![CDATA[$F{shift_start}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="460" y="0" width="46" height="20" uuid="e7dae07c-317c-40da-bf1a-3aa0cd36cb45"/>
+				<textFieldExpression><![CDATA[$F{shift_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement style="style2" positionType="Float" x="506" y="0" width="46" height="20" uuid="ce2bd8de-9c54-4a55-884c-7caa5c88ad28"/>
+				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="205" y="22" width="80" height="20" uuid="c330b503-5df6-48b9-b0ac-bbc23db513b6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="285" y="22" width="40" height="20" uuid="124e1902-e78b-4406-8bb3-99708042900c"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

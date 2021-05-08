@@ -29,7 +29,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button id="mainDataBtn" fx:id="allSalaryxReport" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#allSalaryxReport" prefHeight="172.0" prefWidth="300.0" text="تقرير اجمالي المرتبات" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+            <Button id="mainDataBtn" fx:id="allSalaryxReport" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#allSalaryxReport" prefHeight="172.0" prefWidth="300.0" text="تقرير الحضور والانصراف للكل" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <graphic>
                   <ImageView fitHeight="93.0" fitWidth="91.0" pickOnBounds="true" preserveRatio="true">
                      <image>

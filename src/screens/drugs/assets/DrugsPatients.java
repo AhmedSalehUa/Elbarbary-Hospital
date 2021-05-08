@@ -335,6 +335,17 @@
        data.add(new DrugsPatients(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13)));
      }
      return data;
+   }  public static ObservableList<DrugsPatients> getData(int id) throws Exception {
+     ObservableList<DrugsPatients> data = FXCollections.observableArrayList();
+     
+     String SQL = "SELECT `drg_patient`.`id`, `drg_patient`.`name`,`drg_patient`.`government`, `drg_patient`.`address`, `drg_patient`.`date_of_birth`, `drg_patient`.`age`, `drg_patient`.`national_id`, `doctors`.`name`, `patient_transporting_org`.`name`, `drg_patient`.`diagnosis`, `drg_patient`.`tele1`, `drg_patient`.`tele2`,`drg_patient`.`gender` FROM `patient_transporting_org`,`drg_patient`,`doctors` WHERE `doctors`.`id` =`drg_patient`.`doctor_id` AND `patient_transporting_org`.`id` =  `drg_patient`.`transport_org_id` and `drg_patient`.`id`='"+id+"'";
+     
+     ResultSet rs = get.getReportCon().createStatement().executeQuery(SQL);
+     
+     while (rs.next()) {
+       data.add(new DrugsPatients(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13)));
+     }
+     return data;
    }
    
    public static String getAutoNum() throws Exception {

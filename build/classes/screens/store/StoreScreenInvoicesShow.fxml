@@ -70,6 +70,7 @@
                      <children>
                         <ProgressIndicator fx:id="progress" />
                         <Button id="btnEdite" fx:id="showInvoices" mnemonicParsing="false" onAction="#showInvoices" prefHeight="32.0" prefWidth="93.0" text="عرض" />
+                        <Button id="btnAdd" fx:id="print" mnemonicParsing="false" onAction="#printInvoices" prefHeight="32.0" prefWidth="93.0" text="طباعة" />
                      </children>
                   </HBox>
                </children>

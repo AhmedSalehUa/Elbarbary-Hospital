@@ -106,16 +106,41 @@ public class statics {
     public static String ReceptionScreenShortsOrder = "/screens/reception/ReceptionScreenShortsOrder.fxml";
 
     public static String NoPermission = "/elbarbary/hospital/permissionDenied.fxml";
-    //python locations
-    public static String syncTime = "syncTime.py";
-    public static String powerOff = "powerOff.py";
-    public static String restart = "restart.py";
-    public static String deleteAdmins = "deleteAdmins.py";
-    public static String uploadAdmins = "uploadAdmins.py";
-    public static String clearAttendance = "clearAttendance.py";
-    public static String clearData = "clearData.py";
-    public static String uploadUsers = "uploadUsers.py";
-    public static String downloadUsers = "downloadUsers.py";
-    public static String downloadAttendance = "downloadAttendance.py";
+    //python locations  
+    public static String DATABASE_TYPE = "db";
+    public static String DATABASE_TYPE_DEFAULT = "mysql";
+    public static String DATABASE_LOCATION = "db_location";
+    public static String DATABASE_LOCATION_DEFAULT = "C:\\Program Files (x86)\\bnb\\db\\bnb.db"; 
+  
+  
+    //screens
+    public static String Login = "/main/Login.fxml";
 
+    public static String MainData = "/screens/mainDataScreen/MainDataScreen.fxml";
+    public static String SalesScreen = "";
+    public static String StoreScreen = "/screens/store/StoreScreen.fxml";
+    public static String AccountsScreen = "/screens/accounts/AccountsScreen.fxml";
+    public static String HrScreen = "/screens/hr/HrScreen.fxml";
+    public static String InvoiceScreen = "/screens/drugs/DrugsScreen.fxml";
+    public static String controlPanelScreen = "/screens/controlpanel/ControlPanel.fxml";
+ 
+    //hr screens 
+    //main screen  
+    public static String HrScreenEmployeeLeaveMaster = "/screens/hr/HrScreenAppendLeaveMaster.fxml"; 
+    //python locations
+    public static String syncTime = "\\syncTime";
+    public static String powerOff = "\\powerOff";
+    public static String restart = "\\restart";
+    public static String deleteAdmins = "\\deleteAdmins";
+    public static String uploadAdmins = "\\uploadAdmins";
+    public static String clearAttendance = "\\clearAttendance";
+    public static String clearData = "\\clearData";
+    public static String uploadUsers = "\\uploadUsers";
+    public static String downloadUsers = "\\downloadUsers";
+    public static String downloadAttendance = "\\downloadAttendance";
+
+    public static String EXTEND = "exet";
+    public static String EXTEND_DEFAULT = ".py";
+    public static String COMMAND = "com";
+    public static String COMMAND_DEFAULT = "python ";
 }

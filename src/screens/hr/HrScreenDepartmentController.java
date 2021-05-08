@@ -38,8 +38,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import screens.hr.assets.Department;
-import screens.hr.assets.Organization;
-import screens.mainDataScreen.assets.ContractServicesName;
+import screens.hr.assets.Organization; 
 
 /**
  * FXML Controller class

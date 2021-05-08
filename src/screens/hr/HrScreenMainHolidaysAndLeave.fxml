@@ -17,7 +17,6 @@
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <Button id="mainDataBtn" fx:id="earlyLeave" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#earlyLeave" prefHeight="172.0" prefWidth="300.0" text="الانصراف مبكرا" GridPane.halignment="CENTER">
@@ -25,15 +24,6 @@
                   <ImageView fitHeight="101.0" fitWidth="84.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../assets/icons/icons8_exit_80px.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button id="mainDataBtn" fx:id="mission" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#mission" prefHeight="172.0" prefWidth="300.0" text="الخروج لمهمة رسمية" textAlignment="CENTER" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-               <graphic>
-                  <ImageView fitHeight="101.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../assets/icons/icons8_admission_96px.png" />
                      </image>
                   </ImageView>
                </graphic>

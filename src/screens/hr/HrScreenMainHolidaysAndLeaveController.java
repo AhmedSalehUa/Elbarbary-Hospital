@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 package screens.hr;
-
+ 
 import assets.animation.ZoomInLeft;
 import assets.animation.ZoomInRight;
 import assets.classes.AlertDialogs;
-import static assets.classes.statics.*; 
+import static assets.classes.statics.*;  
 import elbarbary.hospital.ElBarbaryHospital;
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.Stage; 
 
 /**
  * FXML Controller class
@@ -34,9 +34,7 @@ import javafx.stage.Stage;
 public class HrScreenMainHolidaysAndLeaveController implements Initializable {
  Preferences prefs;
     @FXML
-    private Button earlyLeave;
-    @FXML
-    private Button mission;
+    private Button earlyLeave; 
     @FXML
     private Button holidays;
 
@@ -46,9 +44,7 @@ public class HrScreenMainHolidaysAndLeaveController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) { prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
        new ZoomInRight(earlyLeave).play();
-         
-        new ZoomInRight(mission).play();
-        new ZoomInLeft(holidays).play();
+          new ZoomInLeft(holidays).play();
        
     }    
 
@@ -70,25 +66,7 @@ public class HrScreenMainHolidaysAndLeaveController implements Initializable {
             AlertDialogs.showErrors(ex);
         }
     }
-
-    @FXML
-    private void mission(ActionEvent event) {
-        try {
-            Parent mainMember = FXMLLoader.load(getClass().getResource(HrScreenLeavForMission));
-            mainMember.getStylesheets().add(getClass().getResource("/assets/styles/" + prefs.get(THEME, DEFAULT_THEME) + ".css").toExternalForm());
-            Scene sc = new Scene(mainMember);
-            Stage st = new Stage();
-            st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (مأمورية)");
-            st.setScene(sc);
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            st.setX((screenBounds.getWidth() - 1360) / 2);
-            st.setY((screenBounds.getHeight() - 760) / 2);
-            st.show();
-        } catch (IOException ex) {
-            AlertDialogs.showErrors(ex);
-        }
-    }
+ 
 
     @FXML
     private void holidays(ActionEvent event) {

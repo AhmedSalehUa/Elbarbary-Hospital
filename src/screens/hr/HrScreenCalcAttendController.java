@@ -41,11 +41,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.swing.JTable;
 import screens.hr.assets.Attendence;
 import screens.hr.assets.Employee;
 import screens.hr.assets.EmployeeAttendance;
 import screens.hr.assets.Holidays;
 import screens.hr.assets.LateRules;
+import screens.hr.assets.LeaveMaster;
 import screens.hr.assets.Overtime;
 import screens.hr.assets.Shifts;
 import screens.hr.assets.Workdays;
@@ -80,6 +82,7 @@ public class HrScreenCalcAttendController implements Initializable {
     ObservableList<Attendence> attendance;
     ObservableList<Employee> employes;
     ObservableList<Holidays> holidays;
+    ObservableList<LeaveMaster> leaveMasters;
 
     LocalDate fromDate;
     LocalDate toDate;
@@ -243,13 +246,16 @@ public class HrScreenCalcAttendController implements Initializable {
                 }
 
                 private void getDataFromServerToLocal() throws Exception {
-                    updateMessage("جارى نقل البيانات من السيرفر الي الجهاز");
-                    workdays = Workdays.getData();
-                    shifts = Shifts.getData();
-                    overTime = Overtime.getData();
-                    lateRule = LateRules.getData();
+                    try {
 
-                    attendance = Attendence.getDataInInterval(from.getValue().format(format), to.getValue().format(format));
+                        System.out.println("start getDataFromServerToLocal");
+                        updateMessage("جارى نقل البيانات من السيرفر الي الجهاز");
+                        workdays = Workdays.getData();
+                        shifts = Shifts.getData();
+                        overTime = Overtime.getData();
+                        lateRule = LateRules.getData();
+                        leaveMasters = LeaveMaster.getData();
+                        attendance = Attendence.getDataInInterval(from.getValue().format(format), to.getValue().format(format));
 //                    if (lite.excuteNon("delete from att_attendance")) {
 //                        Statement createStatement = lite.getCon().createStatement();
 //                         for (Attendence att : attendance) {
@@ -258,19 +264,24 @@ public class HrScreenCalcAttendController implements Initializable {
 //                        }
 //                        createStatement.executeBatch();
 //                    }
-                    employes = Employee.getData();
-                    holidays = Holidays.getData();
+                        employes = Employee.getData();
+                        holidays = Holidays.getData();
+                        System.out.println("end getDataFromServerToLocal");
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
 
                 private void startCalc() throws Exception {
 
+                    System.out.println("start startCalc");
                     updateMessage("جارى حساب الحضور والانصراف");
                     double size = employes.size();
                     double a = 1;
 
                     /* Loop On All Employee*/
                     for (Employee emp : employes) {
-
+                        System.out.println("start Employee" + emp.getName());
                         progressOfCalc.setProgress((a / size));
                         updateMessage("جارى حساب الحضور والانصراف" + "    " + emp.getName());
                         ObservableList<Shifts> empShifts = Shifts.getData(emp.getId());
@@ -279,37 +290,62 @@ public class HrScreenCalcAttendController implements Initializable {
                         ObservableList<Attendence> allAttendOfEmp = FXCollections.observableArrayList();
                         /* get All Atten For This Employee*/
                         for (Attendence attendence : attendance) {
+                            System.out.println("get all ateendence  " + emp.getId());
                             if (attendence.getEmpId() == emp.getId()) {
                                 allAttendOfEmp.add(attendence);
+//                                System.out.println(attendence.getStatue());
                             }
                         }
                         /* Loop On Given Intervel*/
                         for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
+                            System.out.println("interval loop");
                             EmployeeAttendance empAtt = new EmployeeAttendance();
                             Shifts sh;
+                            System.out.println("allAttendOfEmp.size() " + allAttendOfEmp.size());
                             if (allAttendOfEmp.size() == 0) {
+                                System.out.println("empShifts " + empShifts.size());
                                 sh = empShifts.get(0);
                                 empAtt.setStatue("غياب");
                             } else {
+                                System.out.println("else allAttendOfEmp.size() " + allAttendOfEmp.size());
                                 if (empShifts.size() > 1) {
                                     sh = getCorrectShifts(empShifts, allAttendOfEmp, date, emp.getId(), empAtt);
                                 } else {
                                     sh = empShifts.get(0);
                                 }
                             }
-
+                            System.out.println();
                             empAtt.setEmpId(emp.getId());
                             empAtt.setEmpName(emp.getName());
-                            empAtt.setDate(date.format(format));
-
+                            empAtt.setDate(date.format(format));   System.out.println("before isEarlyLeave");
+                            int earlyLeave1 = isEarlyLeave(date, emp.getId());
                             if (isHoliday(date, sh.getWorkdays())) {
+                                System.out.println("isHoliday");
                                 empAtt.setStatue("اجازة اسبوعية");
                                 empAtt.setSalaryValue("1");
                             } else if (isgeneralHoliday(date)) {
+                                System.out.println("isgeneralHoliday");
                                 empAtt.setStatue("اجازة  " + holidayName);
                                 empAtt.setSalaryValue("1");
+                            } else if (earlyLeave1 != 0) {
+                                System.out.println("earlyLeave1");
+                                String sql = " select * from att_attendance where employee_id='" + emp.getId() + "' and date >= '" + date.format(format) + "' and date <= '" + date.format(format) + "' order by date,time";
+                                ResultSet attOfDate = db.get.getReportCon().createStatement().executeQuery(sql);
+                                while (attOfDate.next()) {
+                                    empAtt.setEmpAttend(attOfDate.getString(4));
+
+                                }
+                                for (LeaveMaster lv : leaveMasters) {
+                                    if (lv.getId() == earlyLeave1) {
+                                        empAtt.setStatue(lv.getName());
+                                        if (lv.getAction().equals("مدفوع")) {
+                                            empAtt.setSalaryValue("1");
+                                        } else {
+                                            empAtt.setSalaryValue(".5");
+                                        }
+                                    }
+                                }
                             } else {
-//
                                 times = FXCollections.observableArrayList();
                                 empAtt.setShiftName(sh.getName());
                                 empAtt.setShiftEnd(sh.getEndTime());
@@ -358,7 +394,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                             minOfThisDay = LocalTime.parse(minOfThisDaySat.getString(4));
                                         }
                                         //last attend in current day
-                                        Attendence getAtt = attendOfThisDaye.get(0);
+                                        Attendence getAtt = attendOfThisDaye.get(0); // System.out.println(getAtt.getStatue());
 //                                        if (!getAtt.getStatue().equals("from_device")) {
 //                                            System.out.println(getAtt.getStatue());
 //                                            if (empAtt.getNotes() == null) {
@@ -411,6 +447,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                         if (e.getEmpId() == emp.getId() && e.getDate().equals(currentDatee.format(format))) {
                                             times.add(LocalTime.parse(e.getTime()));
                                             timestring.add(e.getTime());
+
                                         }
                                     }
 
@@ -527,6 +564,9 @@ public class HrScreenCalcAttendController implements Initializable {
                                                     empAtt.setSalaryValue("1+" + overTime2);
 
                                                     break;
+                                                case "no overtime":
+                                                    empAtt.setSalaryValue("1");
+                                                    break;
                                             }
                                         }
                                     }
@@ -589,11 +629,12 @@ public class HrScreenCalcAttendController implements Initializable {
 
                     }
 
-                    updateMessage(
-                            "تم");
+                    updateMessage("تم");
+
                 }
 
                 private boolean isHoliday(LocalDate date, String workdays_id) {
+
                     for (Workdays wk : workdays) {
                         if (wk.getName().equals(workdays_id)) {
                             String[] split = wk.getHolidays().split(",");
@@ -607,6 +648,7 @@ public class HrScreenCalcAttendController implements Initializable {
 
                         }
                     }
+
                     return false;
                 }
                 String holidayName;
@@ -619,6 +661,19 @@ public class HrScreenCalcAttendController implements Initializable {
                         }
                     }
                     return false;
+                }
+
+                private int isEarlyLeave(LocalDate date, int empId) {
+                    try {
+                        JTable tableData = db.get.getTableData("SELECT  `leave_id` FROM `att_early_leave` WHERE `emp_id`='" + empId + "' and `date`='" + date + "'");
+                        if (tableData.getRowCount() != 0) {
+                            return Integer.parseInt(tableData.getValueAt(0, 0).toString());
+                        }
+                    } catch (Exception ex) {
+                        AlertDialogs.showErrors(ex);
+                        return 0;
+                    }
+                    return 0;
                 }
 
                 private Shifts getCorrectShifts(ObservableList<Shifts> empShifts, ObservableList<Attendence> allAttendOfEmp, LocalDate date, int empId, EmployeeAttendance employeeAttendance) throws SQLException, Exception {
@@ -762,7 +817,7 @@ public class HrScreenCalcAttendController implements Initializable {
                             try {
                                 PreparedStatement ps = db.get.Prepare("INSERT IGNORE INTO `att_report`(`emp_id`, `emp_name`, `date`, `shift_name`, `shift_start`, `shift_end`, `emp_att`, `emp_leave`, `overtime`, `late`, `earlyLeave`, `salary_calc`, `statue`, `notes`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                                 ObservableList<EmployeeAttendance> items = table.getItems();
-                                System.out.println(items.size());
+//                                System.out.println(items.size());
                                 for (EmployeeAttendance a : items) {
                                     if (a == null) {
 
@@ -782,7 +837,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                         ps.setString(13, a.getStatue());
                                         ps.setString(14, a.getNotes());
                                         ps.addBatch();
-                                        System.out.println(a.getEmpId());
+//                                        System.out.println(a.getEmpId());
                                     }
 
                                 }

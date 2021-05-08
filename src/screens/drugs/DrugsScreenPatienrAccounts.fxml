@@ -42,6 +42,7 @@
                                                 <ProgressIndicator fx:id="progress" />
                                                 <Button id="btnDelete" fx:id="updateRoom" mnemonicParsing="false" onAction="#updateRoom" text="تعديل سعر الغرفة" />
                                                 <Button id="btnAdd" fx:id="addDailyCost" mnemonicParsing="false" onAction="#addDailyCost" text="اضافة تكلفة الغرفة لكل المرضي" visible="false" />
+                                                <Button id="btnAdd" fx:id="print" mnemonicParsing="false" onAction="#print" text="طباعة" />
                                              </children>
                                           </HBox>
                                           <TableView id="formTable" fx:id="accountTable" prefHeight="321.0" prefWidth="1201.0">

@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 package screens.hr;
-
+ 
 import assets.animation.ZoomInLeft;
 import assets.animation.ZoomInRight;
 import assets.classes.AlertDialogs; 
-import static assets.classes.statics.*; 
+import static assets.classes.statics.*;  
 import elbarbary.hospital.ElBarbaryHospital;
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.Stage; 
 
 /**
  * FXML Controller class

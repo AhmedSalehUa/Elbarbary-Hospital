@@ -1089,7 +1089,37 @@ public class AdmissionScreenController implements Initializable {
                         @Override
                         protected Void call() throws Exception {
 
-                         
+                            try {
+                                Admission pa = admissionTable.getSelectionModel().getSelectedItem();
+                                HashMap hash = new HashMap();
+                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                                hash.put("logo", image);
+                                hash.put("admissionId", pa.getId());
+                                hash.put("reptype", true);
+                                InputStream clincRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsClincs.jasper");
+                                hash.put("clincRep", clincRep);
+                                InputStream contractRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsContract.jasper");
+                                hash.put("contractRep", contractRep);
+                                InputStream medicineRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsMedicines.jasper");
+                                hash.put("medicineRep", medicineRep);
+                                InputStream serviceRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsServices.jasper");
+                                hash.put("serviceRep", serviceRep);
+                                InputStream surmedRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurMed.jasper");
+                                hash.put("surmedRep", surmedRep);
+                                InputStream surgiresRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurgires.jasper");
+                                hash.put("surgiresRep", surgiresRep);
+
+                                InputStream a = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetails.jrxml");
+                                JasperDesign design = JRXmlLoader.load(a);
+                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                                JasperViewer.viewReport(jasperprint, false);
+
+                            } catch (Exception ex) {
+                                AlertDialogs.showErrors(ex);
+                            } finally {
+
+                            }
 
                             return null;
                         }
@@ -1104,37 +1134,7 @@ public class AdmissionScreenController implements Initializable {
                 }
             };
             service.start();
-               try {
-                                Admission pa = admissionTable.getSelectionModel().getSelectedItem();
-                                HashMap hash = new HashMap();
-                                BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
-                                hash.put("logo", image);
-                                hash.put("admissionId", pa.getId());
-                                hash.put("reptype", true);
-                                  InputStream clincRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsClincs.jasper");
-                                hash.put("clincRep", clincRep);
-                                InputStream contractRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsContract.jasper");
-                                hash.put("contractRep", contractRep);
-                                InputStream medicineRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsMedicines.jasper");
-                                hash.put("medicineRep", medicineRep);
-                                InputStream serviceRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsServices.jasper");
-                                hash.put("serviceRep", serviceRep);
-                                InputStream surmedRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurMed.jasper");
-                                hash.put("surmedRep", surmedRep);
-                                InputStream surgiresRep = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetailsSurgires.jasper");
-                                hash.put("surgiresRep", surgiresRep);
-                               
-                                InputStream a = getClass().getResourceAsStream("/screens/mainDataScreen/reports/AdmissionDetails.jrxml");
-                                JasperDesign design = JRXmlLoader.load(a);
-                                JasperReport jasperreport = JasperCompileManager.compileReport(design);
-                                JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
-                                JasperViewer.viewReport(jasperprint, false);
 
-                            } catch (Exception ex) {
-                                AlertDialogs.showErrors(ex);
-                            } finally {
-
-                            }
         }
     }
 

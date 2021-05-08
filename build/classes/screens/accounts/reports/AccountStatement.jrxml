@@ -10,6 +10,10 @@
 	<parameter name="yieldsAdmission" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="yieldsOther" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="expenses" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\projects\\Implementation for institutions\\Elbarbary-Hospital\\src\\screens\\accounts\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company" class="java.lang.Object" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT SUM(hr) as 'total' FROM
 (
@@ -18,8 +22,7 @@
   Select IFNULL(sum(cast(`yields_accounts`.`amount` as UNSIGNED)),0)  as hr FROM `yields_accounts` WHERE  `yields_accounts`.`date`>=$P{date_from}  and `yields_accounts`.`date` <=$P{date_to} 
      UNION ALL
     SELECT IFNULL(0-Sum(cast(`expenses`.`amount` as UNSIGNED)),0) as hr FROM `expenses`  WHERE `expenses`.`date`>=$P{date_from} and `expenses`.`date`<=$P{date_to}
-)as a 
-]]>
+)as a]]>
 	</queryString>
 	<field name="total" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -93,7 +96,7 @@
 		</band>
 	</pageHeader>
 	<summary>
-		<band height="219" splitType="Stretch">
+		<band height="324" splitType="Stretch">
 			<subreport isUsingCache="false">
 				<reportElement positionType="Float" x="0" y="0" width="555" height="100" isRemoveLineWhenBlank="true" uuid="08f5e437-d3a8-41d0-9721-f60f8423f442"/>
 				<subreportParameter name="yieldsOther">
@@ -133,6 +136,17 @@
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{expenses}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="200" width="555" height="100" isRemoveLineWhenBlank="true" uuid="9cbb0119-0b52-4aaf-aece-fe73b3153d9c"/>
+				<subreportParameter name="date_to">
+					<subreportParameterExpression><![CDATA[$P{date_to}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="date_from">
+					<subreportParameterExpression><![CDATA[$P{date_from}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{company}]]></subreportExpression>
 			</subreport>
 		</band>
 	</summary>

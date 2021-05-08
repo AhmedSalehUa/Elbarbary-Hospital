@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2ccc89a8-8ec5-4cb8-8468-a4600783be2a">
+	<property name="ireport.zoom" value="2.1435888100000025"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1973"/>
+	<style name="style1" mode="Opaque" backcolor="#F4F4F4" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
+	<parameter name="patient_id" class="java.lang.String"/>
+	<parameter name="name" class="java.lang.String"/>
+	<parameter name="gender" class="java.lang.String"/>
+	<parameter name="age" class="java.lang.String"/>
+	<parameter name="nationalId" class="java.lang.String"/>
+	<parameter name="government" class="java.lang.String"/>
+	<parameter name="adress" class="java.lang.String"/>
+	<parameter name="date_of_birth" class="java.lang.String"/>
+	<parameter name="trans" class="java.lang.String"/>
+	<parameter name="disasea" class="java.lang.String"/>
+	<parameter name="doctor" class="java.lang.String"/>
+	<parameter name="tele1" class="java.lang.String"/>
+	<parameter name="tele2" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="collectedMoney" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="ExportedMoney" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="dailyExpense" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="dailyMedicine" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="dailyRoom" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="services" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\projects\\Implementation for institutions\\Elbarbary-Hospital\\src\\screens\\drugs\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT `drg_accounts`.`id`, `drg_patient`.`name`, `drg_accounts`.`total_paied`, `drg_accounts`.`total_spended`, `drg_accounts`.`remaining`,`drg_accounts`.`daily_room`,`drg_accounts`.`patient_id` FROM `drg_accounts`,`drg_patient` WHERE `drg_accounts`.`patient_id` =`drg_patient`.`id` and `drg_accounts`.`patient_id`=$P{patient_id}]]>
+	</queryString>
+	<field name="patient_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="daily_room" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="remaining" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_spended" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_paied" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="607" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="79" uuid="0252b153-89d3-4488-a77b-f479be8fbf8a"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="433" y="33" width="122" height="32" uuid="bab11475-dccb-462c-90c2-be23cc2f94e8"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ElBarbary Hospital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="0" width="122" height="33" uuid="87b565a6-1198-4f8c-b19a-a37e676e69b1"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[مستشفي البربري التخصصي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="100" width="200" height="30" uuid="7d3f8a5c-f29e-4553-8aad-a6c1186e507e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[الاسم]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="269" width="200" height="30" uuid="49437bb1-3d80-4f2e-a4db-6d62c2ce32ba"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[المحافظة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="313" width="200" height="30" uuid="32b37b14-b63a-4b4e-a0dc-bd9738d412d8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[العنوان]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="222" width="200" height="30" uuid="c1d31ce9-4719-4726-9d27-27f8208b0d30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[الرقم القومي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="409" width="200" height="30" uuid="0940ef89-56bf-4594-a67a-040dd9b57219"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[جهة التحويل]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="451" width="200" height="30" uuid="ee6e688b-c60d-47d6-b7cf-4cd250b438c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[التشخيص]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="489" width="200" height="30" uuid="5157e5cd-6ade-452d-b03a-678e47d9b9cb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[الطبيب المعالج]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="364" width="200" height="30" uuid="7a7b29a7-add8-4e84-87cf-b2187564efad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[تاريخ الميلاد]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="142" width="200" height="30" uuid="e78bd7d4-1459-4dcc-b072-3d6bc5aa2002"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[النوع]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="180" width="200" height="30" uuid="c25ded38-400a-400c-95ab-8efac41d45aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[السن]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="533" width="200" height="30" uuid="d5554ebb-c6b0-4312-b791-d5ad917359df"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[رقم الموبايل 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="573" width="200" height="30" uuid="f9425796-a2c0-4ece-9f4b-e3369c9dc508"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[رقم الموبايل 2]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="137" y="100" width="200" height="30" uuid="442d8428-6208-4374-bfe8-74ce02834057"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="268" width="200" height="30" uuid="c211f0bf-352d-4fec-bf20-d1ee60d572af"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{government}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="313" width="200" height="30" uuid="1245a0bf-4f18-4074-b8a7-c1d5fbadbe40"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{adress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="222" width="200" height="30" uuid="ab2fe527-ea64-466c-bd7f-001b0ea03139"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nationalId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="409" width="200" height="30" uuid="7a5fd600-12b8-4250-bf32-911c9a953eb5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{trans}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="489" width="200" height="30" uuid="ca5e19c1-4e53-4f4a-86ee-5a8c8fdc4e46"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{doctor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="363" width="200" height="30" uuid="c9cd1811-2e80-487a-8c5e-97fca750e360"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{date_of_birth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="181" width="200" height="30" uuid="bd433514-8617-4c68-b554-7fb5f60e5b1c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{age}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="143" width="200" height="30" uuid="b9f4a1d5-f767-4c87-af22-96340a3f45ea"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{gender}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="530" width="200" height="30" uuid="68b6e62f-9f48-4f1a-9437-d08cd9c570d6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tele1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="572" width="200" height="30" uuid="7565c0a4-2f4a-44e0-b822-3447fe300199"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tele2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="450" width="200" height="30" uuid="de78df38-4c15-4f76-9fbf-3ba1829180f3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="15"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{disasea}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="443" y="0" width="111" height="20" uuid="4cc8a26f-c08c-4ad1-b213-d6ed2faba439"/>
+				<text><![CDATA[م]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="332" y="0" width="111" height="20" uuid="7909604a-81ed-4386-a763-8ee722fa2935"/>
+				<text><![CDATA[اجمالي المبالغ المودعة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="221" y="0" width="111" height="20" uuid="67a83554-a115-4ab6-8372-d42376115d14"/>
+				<text><![CDATA[اجمالي المبالغ المصروفة]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="110" y="0" width="111" height="20" uuid="1dbc8450-41bd-4070-b0c4-7f23a0eeaa87"/>
+				<text><![CDATA[الباقي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="-1" y="0" width="111" height="20" uuid="9d58a29f-c214-425a-a1f7-fc6909f2e807"/>
+				<text><![CDATA[سعر اقامة الغرفة]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement style="style2" x="443" y="0" width="111" height="20" uuid="79f78765-6286-466b-8a89-5ba15602a472"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="332" y="0" width="111" height="20" uuid="70eaa352-d9ba-44c4-9a26-e6c2de65f42f"/>
+				<textFieldExpression><![CDATA[$F{total_paied}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="221" y="0" width="111" height="20" uuid="6e1ec029-fa1c-4c5b-a748-919483084864"/>
+				<textFieldExpression><![CDATA[$F{total_spended}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="110" y="0" width="111" height="20" uuid="203202a4-cb95-4aee-b476-f9ee2021dece"/>
+				<textFieldExpression><![CDATA[$F{remaining}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" x="-1" y="0" width="111" height="20" uuid="67c551ab-12c0-404e-9803-2daf8267f9a9"/>
+				<textFieldExpression><![CDATA[$F{daily_room}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="602" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="100" isRemoveLineWhenBlank="true" uuid="6bbedbaa-9f4f-4fbf-a611-3f6a81d054fd"/>
+				<subreportParameter name="patient_id">
+					<subreportParameterExpression><![CDATA[$F{patient_id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{collectedMoney}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="-1" y="500" width="555" height="100" isRemoveLineWhenBlank="true" uuid="daf7c35d-ec9f-407a-8a2e-11ac30bb2de6"/>
+				<subreportParameter name="patient_id">
+					<subreportParameterExpression><![CDATA[$F{patient_id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{services}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="200" width="555" height="100" isRemoveLineWhenBlank="true" uuid="06198097-bc16-4f46-9b0c-9c673aa544d5"/>
+				<subreportParameter name="patient_id">
+					<subreportParameterExpression><![CDATA[$F{patient_id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{dailyExpense}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="300" width="555" height="100" isRemoveLineWhenBlank="true" uuid="b2425c67-8db0-4a61-9220-be03f873e1fb"/>
+				<subreportParameter name="patient_id">
+					<subreportParameterExpression><![CDATA[$F{patient_id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{dailyMedicine}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="400" width="555" height="100" isRemoveLineWhenBlank="true" uuid="37058214-c469-42ff-9d8c-865de66e9c98"/>
+				<subreportParameter name="patient_id">
+					<subreportParameterExpression><![CDATA[$F{patient_id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{dailyRoom}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="100" width="555" height="100" isRemoveLineWhenBlank="true" uuid="e46c0485-b6c1-41ee-a4ef-33069c185c50"/>
+				<subreportParameter name="patient_id">
+					<subreportParameterExpression><![CDATA[$F{patient_id}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{ExportedMoney}]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

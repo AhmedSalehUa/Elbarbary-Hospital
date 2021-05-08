@@ -9,9 +9,10 @@ import assets.animation.ZoomInLeft;
 import assets.animation.ZoomInRight;
 import assets.classes.AlertDialogs;
 import assets.classes.statics;
-import static assets.classes.statics.uploadUsers;
+import static assets.classes.statics.*;
 import elbarbary.hospital.ElBarbaryHospital;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,7 +33,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.ImageView; 
 import org.apache.batik.svggen.font.table.Device;
 import org.controlsfx.dialog.ProgressDialog;
 import screens.hr.assets.Devices;
@@ -52,6 +54,8 @@ public class HrScreenMainUploadDataController implements Initializable {
     @FXML
     private Button uploadEmployee;
     Preferences prefs;
+    @FXML
+    private ProgressIndicator progres;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -60,7 +64,10 @@ public class HrScreenMainUploadDataController implements Initializable {
         new ZoomInRight(downloadEmployee).play();
 
         new ZoomInLeft(downloadAttendane).play();
+        progres.setVisible(false);
     }
+    String a = "";
+    String b = "";
 
     @FXML
     private void downloadAttendane(ActionEvent event) {
@@ -78,6 +85,7 @@ public class HrScreenMainUploadDataController implements Initializable {
             dialog.setGraphic(new ImageView(this.getClass().getResource("/assets/icons/icons8_hdd_80px.png").toString()));
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
+                progres.setVisible(true);
                 db.get.getReportCon().createStatement().execute("REPLACE INTO `att_target_devices`(`device_id`) select `att_machines`.`id` from `att_machines` where `att_machines`.`name`='" + result.get() + "'");
                 AlertDialogs.showmessage("سيتم تنزيل البيانات قد يتسبب فى توقف مؤقت للبرنامج");
                 Service<Void> service = new Service<Void>() {
@@ -86,46 +94,41 @@ public class HrScreenMainUploadDataController implements Initializable {
                         return new Task<Void>() {
                             @Override
                             protected Void call() throws Exception {
-                                //Background work                       
                                 final CountDownLatch latch = new CountDownLatch(1);
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
 
-                                            try {
-                                                Process p = Runtime.getRuntime().exec(prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.downloadAttendance);
-                                                p.waitFor();
-                                                BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                                                BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-                                                String line;
-                                                while ((line = bri.readLine()) != null) {
-                                                    System.out.println(line);
-                                                }
-                                                bri.close();
-                                                while ((line = bre.readLine()) != null) {
-                                                    System.out.println(line);
+                                try {
 
-                                                }
-                                                bre.close();
-                                                p.waitFor();
-                                                System.out.println("Done.");
-
-                                                p.destroy();
-
-                                            } catch (Exception ex) {
-                                                AlertDialogs.showErrors(ex);
-                                            } finally {
-                                                latch.countDown();
-                                            }
-                                        } catch (Exception ex) {
-                                            AlertDialogs.showErrors(ex);
-                                        } finally {
-                                            latch.countDown();
+                                    try {
+                                        System.out.println(prefs.get(statics.COMMAND, COMMAND_DEFAULT) + prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.downloadAttendance + prefs.get(statics.EXTEND, EXTEND_DEFAULT));
+                                        Process p = Runtime.getRuntime().exec(prefs.get(statics.COMMAND, COMMAND_DEFAULT) + prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.downloadAttendance + prefs.get(statics.EXTEND, EXTEND_DEFAULT));
+                                        p.waitFor();
+                                        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                                        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                                        String line;
+                                        while ((line = bri.readLine()) != null) {
+                                            a += "\n " + line;
                                         }
-                                    }
+                                        bri.close();
+                                        while ((line = bre.readLine()) != null) {
 
-                                });
+                                            b += "\n " + line;
+                                        }
+                                        bre.close();
+                                        p.waitFor();
+
+                                        p.destroy();
+
+                                    } catch (Exception ex) {
+                                        AlertDialogs.showErrors(ex);
+                                    } finally {
+                                        latch.countDown();
+                                    }
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+
                                 latch.await();
 
                                 return null;
@@ -137,9 +140,11 @@ public class HrScreenMainUploadDataController implements Initializable {
 
                     @Override
                     protected void succeeded() {
-                        AlertDialogs.showmessage("تم");
+                        showMessage(a, b);
+                        progres.setVisible(false);
                         super.succeeded();
                     }
+
                 };
                 service.start();
 
@@ -150,6 +155,7 @@ public class HrScreenMainUploadDataController implements Initializable {
 
     }
 
+  
     @FXML
     private void downloadEmployee(ActionEvent event) {
         try {
@@ -167,6 +173,7 @@ public class HrScreenMainUploadDataController implements Initializable {
             dialog.setGraphic(new ImageView(this.getClass().getResource("/assets/icons/icons8_hdd_80px.png").toString()));
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
+                progres.setVisible(true);
                 db.get.getReportCon().createStatement().execute("REPLACE INTO `att_target_devices`(`device_id`) select `att_machines`.`id` from `att_machines` where `att_machines`.`name`='" + result.get() + "'");
                 AlertDialogs.showmessage("سيتم تنزيل البيانات قد يتسبب فى توقف مؤقت للبرنامج");
                 Service<Void> service = new Service<Void>() {
@@ -177,44 +184,39 @@ public class HrScreenMainUploadDataController implements Initializable {
                             protected Void call() throws Exception {
                                 //Background work                       
                                 final CountDownLatch latch = new CountDownLatch(1);
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
 
-                                            try {
-                                                Process p = Runtime.getRuntime().exec(prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.downloadUsers);
-                                                p.waitFor();
-                                                BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                                                BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-                                                String line;
-                                                while ((line = bri.readLine()) != null) {
-                                                    System.out.println(line);
-                                                }
-                                                bri.close();
-                                                while ((line = bre.readLine()) != null) {
-                                                    System.out.println(line);
+                                try {
 
-                                                }
-                                                bre.close();
-                                                p.waitFor();
-                                                System.out.println("Done.");
-
-                                                p.destroy();
-
-                                            } catch (Exception ex) {
-                                                AlertDialogs.showErrors(ex);
-                                            } finally {
-                                                latch.countDown();
-                                            }
-                                        } catch (Exception ex) {
-                                            AlertDialogs.showErrors(ex);
-                                        } finally {
-                                            latch.countDown();
+                                    try {
+                                        Process p = Runtime.getRuntime().exec(prefs.get(statics.COMMAND, COMMAND_DEFAULT) + prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.downloadUsers + prefs.get(statics.EXTEND, EXTEND_DEFAULT));
+                                        p.waitFor();
+                                        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                                        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                                        String line;
+                                        while ((line = bri.readLine()) != null) {
+                                            a += "\n " + line;
                                         }
-                                    }
+                                        bri.close();
+                                        while ((line = bre.readLine()) != null) {
 
-                                });
+                                            b += "\n " + line;
+                                        }
+                                        bre.close();
+                                        p.waitFor();
+
+                                        p.destroy();
+
+                                    } catch (Exception ex) {
+                                        AlertDialogs.showErrors(ex);
+                                    } finally {
+                                        latch.countDown();
+                                    }
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+
                                 latch.await();
 
                                 return null;
@@ -228,7 +230,9 @@ public class HrScreenMainUploadDataController implements Initializable {
                     protected void succeeded() {
                         try {
                             if (Employee.syncData()) {
-                                AlertDialogs.showmessage("تم");
+                                showMessage(a, b);
+                                progres.setVisible(false);
+
                             }
                         } catch (Exception ex) {
                             AlertDialogs.showErrors(ex);
@@ -262,6 +266,7 @@ public class HrScreenMainUploadDataController implements Initializable {
             dialog.setGraphic(new ImageView(this.getClass().getResource("/assets/icons/icons8_hdd_80px.png").toString()));
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
+                progres.setVisible(true);
                 if (Employee.syncUpload()) {
                     db.get.getReportCon().createStatement().execute("REPLACE INTO `att_target_devices`(`device_id`) select `att_machines`.`id` from `att_machines` where `att_machines`.`name`='" + result.get() + "'");
                     AlertDialogs.showmessage("سيتم رفع البيانات قد يتسبب فى توقف مؤقت للبرنامج");
@@ -273,44 +278,39 @@ public class HrScreenMainUploadDataController implements Initializable {
                                 protected Void call() throws Exception {
                                     //Background work                       
                                     final CountDownLatch latch = new CountDownLatch(1);
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
 
-                                                try {
-                                                    Process p = Runtime.getRuntime().exec(prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.uploadUsers);
-                                                    p.waitFor();
-                                                    BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                                                    BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-                                                    String line;
-                                                    while ((line = bri.readLine()) != null) {
-                                                        System.out.println(line);
-                                                    }
-                                                    bri.close();
-                                                    while ((line = bre.readLine()) != null) {
-                                                        System.out.println(line);
+                                    try {
 
-                                                    }
-                                                    bre.close();
-                                                    p.waitFor();
-                                                    System.out.println("Done.");
-
-                                                    p.destroy();
-
-                                                } catch (Exception ex) {
-                                                    AlertDialogs.showErrors(ex);
-                                                } finally {
-                                                    latch.countDown();
-                                                }
-                                            } catch (Exception ex) {
-                                                AlertDialogs.showErrors(ex);
-                                            } finally {
-                                                latch.countDown();
+                                        try {
+                                            Process p = Runtime.getRuntime().exec(prefs.get(statics.COMMAND, COMMAND_DEFAULT) + prefs.get(statics.PYTHON_PATH, statics.PYTHON_PATH_DEFAULT) + statics.uploadUsers + prefs.get(statics.EXTEND, EXTEND_DEFAULT));
+                                            p.waitFor();
+                                            BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                                            BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                                            String line;
+                                            while ((line = bri.readLine()) != null) {
+                                                a += "\n " + line;
                                             }
-                                        }
+                                            bri.close();
+                                            while ((line = bre.readLine()) != null) {
 
-                                    });
+                                                b += "\n " + line;
+                                            }
+                                            bre.close();
+                                            p.waitFor();
+
+                                            p.destroy();
+
+                                        } catch (Exception ex) {
+                                            AlertDialogs.showErrors(ex);
+                                        } finally {
+                                            latch.countDown();
+                                        }
+                                    } catch (Exception ex) {
+                                        AlertDialogs.showErrors(ex);
+                                    } finally {
+                                        latch.countDown();
+                                    }
+
                                     latch.await();
 
                                     return null;
@@ -322,7 +322,8 @@ public class HrScreenMainUploadDataController implements Initializable {
 
                         @Override
                         protected void succeeded() {
-                            AlertDialogs.showmessage("تم");
+                            showMessage(a, b);
+                            progres.setVisible(false);
                             super.succeeded();
                         }
                     };
@@ -331,6 +332,16 @@ public class HrScreenMainUploadDataController implements Initializable {
             }
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
+        }
+
+    }
+  private void showMessage(String a, String b) {
+        if (a.contains("cannt connect to db") || b.contains("cannt connect to db")) {
+            AlertDialogs.showError("check database ip and running (192.168.1.90)");
+        } else if (a.contains("Process terminate :") || b.contains("Process terminate :")) {
+            AlertDialogs.showError("An Error Accured In Progress \n " +a+b);
+        } else {
+            AlertDialogs.showmessage("تم");
         }
 
     }

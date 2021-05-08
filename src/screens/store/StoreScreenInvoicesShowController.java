@@ -7,8 +7,12 @@ package screens.store;
 
 import assets.classes.AlertDialogs;
 import com.jfoenix.controls.JFXDatePicker;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.net.URL;
+import java.sql.Statement;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
@@ -31,6 +35,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import javax.imageio.ImageIO;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import screens.store.assets.Company;
 import screens.store.assets.Invoice;
 import screens.store.assets.InvoiceTable;
@@ -86,6 +98,11 @@ public class StoreScreenInvoicesShowController implements Initializable {
     private TableColumn<InvoiceTable, String> invoiceDetailsTabId;
     @FXML
     private ProgressIndicator progress;
+    @FXML
+    private Button print;
+
+    String repName = " ";
+    String sql = "SELECT `medicine_invoices`.`id`, `medicine_company`.`name`, `medicine_invoices`.`date`, `medicine_invoices`.`total`, `medicine_invoices`.`discount`, `medicine_invoices`.`discount_percent`, `medicine_invoices`.`total_after_descount`, `medicine_invoices`.`notes` FROM  `medicine_company`, `medicine_invoices` WHERE `medicine_invoices`.`company_id`= `medicine_company`.`id` ";
 
     /**
      * Initializes the controller class.
@@ -144,21 +161,25 @@ public class StoreScreenInvoicesShowController implements Initializable {
     @FXML
     private void showInvoices(ActionEvent event) {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String sql = "SELECT `medicine_invoices`.`id`, `medicine_company`.`name`, `medicine_invoices`.`date`, `medicine_invoices`.`total`, `medicine_invoices`.`discount`, `medicine_invoices`.`discount_percent`, `medicine_invoices`.`total_after_descount`, `medicine_invoices`.`notes` FROM  `medicine_company`, `medicine_invoices` WHERE `medicine_invoices`.`company_id`= `medicine_company`.`id` ";
+        sql = "SELECT `medicine_invoices`.`id`, `medicine_company`.`name`, `medicine_invoices`.`date`, `medicine_invoices`.`total`, `medicine_invoices`.`discount`, `medicine_invoices`.`discount_percent`, `medicine_invoices`.`total_after_descount`, `medicine_invoices`.`notes` FROM  `medicine_company`, `medicine_invoices` WHERE `medicine_invoices`.`company_id`= `medicine_company`.`id` ";
+        repName = "";
         if (withCompany.isSelected()) {
             int compId = company.getSelectionModel().getSelectedItem().getId();
             sql += " AND `medicine_invoices`.`company_id`='" + compId + "'";
+            repName += "الخاصة بشركة: " + company.getSelectionModel().getSelectedItem().getName() + " ";
         }
         if (withDateFrom.isSelected()) {
             String dateFrom = this.dateFrom.getValue().format(format);
             sql += " AND `medicine_invoices`.`date` >= '" + dateFrom + "'";
+            repName += " للفترة من : " + this.dateFrom.getValue().format(format);
         }
         if (withDateTo.isSelected()) {
             String dateTo = this.dateTo.getValue().format(format);
             sql += " AND `medicine_invoices`.`date` <= '" + dateTo + "'";
+            repName += " للفترة الي: " + this.dateTo.getValue().format(format);
         }
         try {
-invoiceDetailsTable.setItems(null);
+            invoiceDetailsTable.setItems(null);
             invoiceTable.setItems(Invoice.getCutomData(sql));
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
@@ -248,6 +269,71 @@ invoiceDetailsTable.setItems(null);
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
         }
+    }
+
+    @FXML
+    private void printInvoices(ActionEvent event) {
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        sql = "SELECT `medicine_invoices`.`id`, `medicine_company`.`name`, `medicine_invoices`.`date`, `medicine_invoices`.`total`, `medicine_invoices`.`discount`, `medicine_invoices`.`discount_percent`, `medicine_invoices`.`total_after_descount`, `medicine_invoices`.`notes` FROM  `medicine_company`, `medicine_invoices` WHERE `medicine_invoices`.`company_id`= `medicine_company`.`id` ";
+                        repName = "";
+                        if (withCompany.isSelected()) {
+                            int compId = company.getSelectionModel().getSelectedItem().getId();
+                            sql += " AND `medicine_invoices`.`company_id`='" + compId + "'";
+                            repName += "الخاصة بشركة: " + company.getSelectionModel().getSelectedItem().getName() + " ";
+                        }
+                        if (withDateFrom.isSelected()) {
+                            String datefrom = dateFrom.getValue().format(format);
+                            sql += " AND `medicine_invoices`.`date` >= '" + datefrom + "'";
+                            repName += " للفترة من : " + datefrom;
+                        }
+                        if (withDateTo.isSelected()) {
+                            String dateto = dateTo.getValue().format(format);
+                            sql += " AND `medicine_invoices`.`date` <= '" + dateto + "'";
+                            repName += " للفترة الي: " + dateto;
+                        }
+                        Statement st = db.get.getReportCon().createStatement();
+                        String oneSql = "DELETE FROM `rep_invoices`";
+                        st.execute(oneSql);
+                        Statement stt = db.get.getReportCon().createStatement();
+                        String twoSql = "INSERT INTO `rep_invoices` " + sql;
+                         stt.execute(twoSql);
+                        return null;
+                    }
+                };
+            }
+
+            @Override
+            protected void succeeded() {
+                try {
+
+                    HashMap hash = new HashMap();
+                    BufferedImage image = ImageIO.read(getClass().getResource("/assets/icons/logo.png"));
+                    hash.put("logo", image);
+                    hash.put("repName", repName);
+                    InputStream contractRep = getClass().getResourceAsStream("/screens/store/reports/InvoicesDetails.jasper");
+                    hash.put("detailsRep", contractRep);
+
+                    InputStream a = getClass().getResourceAsStream("/screens/store/reports/Invoices.jrxml");
+                    JasperDesign design = JRXmlLoader.load(a);
+                    JasperReport jasperreport = JasperCompileManager.compileReport(design);
+                    JasperPrint jasperprint = JasperFillManager.fillReport(jasperreport, hash, db.get.getReportCon());
+                    JasperViewer.viewReport(jasperprint, false);
+                } catch (Exception ex) {
+                    AlertDialogs.showErrors(ex);
+                }
+                progress.setVisible(false);
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
 }

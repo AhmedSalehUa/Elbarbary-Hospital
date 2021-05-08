@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f199cd7d-e626-4c7f-a005-02eeed099e53">
-	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.zoom" value="2.5937424601000023"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontSize="14">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="style2" hAlign="Center" vAlign="Middle" fontSize="13">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.25"/>
+			<leftPen lineWidth="0.25"/>
+			<bottomPen lineWidth="0.25"/>
+			<rightPen lineWidth="0.25"/>
+		</box>
+	</style>
 	<parameter name="storeId" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="storName" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT `medicine`.`name`,`medicine`.`warn_num`, SUM(`amount`) FROM `medicine`,`stores_medicines` WHERE `store_id`=$P{storeId} and `medicine`.`id`=`stores_medicines`.`medicine_id` GROUP BY `medicine_id` HAVING Sum(`amount`)<`medicine`.`warn_num`]]>
 	</queryString>
@@ -16,54 +36,70 @@
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
 	<title>
-		<band height="79" splitType="Stretch"/>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="427" y="47" width="122" height="32" uuid="cbefb00a-a96c-4bf6-ad5c-cf3abc99ff96"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ElBarbary Hospital]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="79" uuid="06f7c2b5-377f-4307-9d7b-e24a5f7e9d60"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="427" y="14" width="122" height="33" uuid="35311161-46d4-4e43-80ea-54c765807ed3"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[مستشفي البربري التخصصي]]></text>
+			</staticText>
+		</band>
 	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch"/>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement style="style2" x="285" y="15" width="85" height="20" uuid="1628a87c-6bcf-4240-a134-422c04a20831"/>
+				<text><![CDATA[اسم المخزن]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style2" x="185" y="15" width="100" height="20" uuid="3327db6e-cb9f-4c7a-ba8a-c8efa407ec0e"/>
+				<textFieldExpression><![CDATA[$P{storName}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="185" height="20" uuid="a99e7e2a-8400-404e-a7f4-7b500851ad93"/>
-				<text><![CDATA[SUM(`amount`)]]></text>
+				<reportElement style="style1" x="0" y="0" width="185" height="20" uuid="a99e7e2a-8400-404e-a7f4-7b500851ad93"/>
+				<text><![CDATA[المتوفر بالمخزن]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="0" width="185" height="20" uuid="3f7ce542-ce89-4b7b-9e9d-8ea2acc9991c"/>
-				<text><![CDATA[warn_num]]></text>
+				<reportElement style="style1" x="185" y="0" width="185" height="20" uuid="3f7ce542-ce89-4b7b-9e9d-8ea2acc9991c"/>
+				<text><![CDATA[اقل كمية للتحذير]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="370" y="0" width="185" height="20" uuid="6e3dba52-e50b-495d-81aa-f99ea4c54b95"/>
-				<text><![CDATA[name]]></text>
+				<reportElement style="style1" x="370" y="0" width="185" height="20" uuid="6e3dba52-e50b-495d-81aa-f99ea4c54b95"/>
+				<text><![CDATA[اسم الدواء]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="185" height="20" uuid="2dabdc39-81eb-4522-aade-303f204a32cc"/>
+				<reportElement style="style2" x="0" y="0" width="185" height="20" uuid="2dabdc39-81eb-4522-aade-303f204a32cc"/>
 				<textFieldExpression><![CDATA[$F{SUM(`amount`)}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="185" y="0" width="185" height="20" uuid="5e25c4c4-2b62-41dd-a6c1-381f2ee2c4a8"/>
+				<reportElement style="style2" x="185" y="0" width="185" height="20" uuid="5e25c4c4-2b62-41dd-a6c1-381f2ee2c4a8"/>
 				<textFieldExpression><![CDATA[$F{warn_num}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="370" y="0" width="185" height="20" uuid="791822b0-5a05-4ce9-95f4-8fa2b33f0219"/>
+				<reportElement style="style2" x="370" y="0" width="185" height="20" uuid="791822b0-5a05-4ce9-95f4-8fa2b33f0219"/>
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

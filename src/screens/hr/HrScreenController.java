@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 package screens.hr;
-
+ 
 import assets.classes.AlertDialogs;
 import static assets.classes.statics.*;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition; 
 import elbarbary.hospital.ElBarbaryHospital;
 import java.io.IOException;
 import java.net.URL;
@@ -28,7 +28,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.Stage; 
 
 /**
  * FXML Controller class
@@ -193,7 +193,7 @@ public class HrScreenController implements Initializable {
             Scene sc = new Scene(mainMember);
             Stage st = new Stage();
             st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (الموظفين)");
+            st.setTitle("BNB For Aromatic Oils (الموظفين)");
             st.setScene(sc);
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             st.setX((screenBounds.getWidth() - 1360) / 2);
@@ -206,6 +206,21 @@ public class HrScreenController implements Initializable {
 
     @FXML
     private void openIndividualReport(ActionEvent event) {
+         try {
+            Parent mainMember = FXMLLoader.load(getClass().getResource(HrScreenIndividualReport));
+            mainMember.getStylesheets().add(getClass().getResource("/assets/styles/" + prefs.get(THEME, DEFAULT_THEME) + ".css").toExternalForm());
+            Scene sc = new Scene(mainMember);
+            Stage st = new Stage();
+            st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
+            st.setTitle("BNB For Aromatic Oils (تقرير فردي)");
+            st.setScene(sc);
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            st.setX((screenBounds.getWidth() - 1360) / 2);
+            st.setY((screenBounds.getHeight() - 760) / 2);
+            st.show();
+        } catch (IOException ex) {
+            AlertDialogs.showErrors(ex);
+        }
     }
 
     @FXML
@@ -216,7 +231,7 @@ public class HrScreenController implements Initializable {
             Scene sc = new Scene(mainMember);
             Stage st = new Stage();
             st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (بصمة يدوي)");
+            st.setTitle("BNB For Aromatic Oils (بصمة يدوي)");
             st.setScene(sc);
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             st.setX((screenBounds.getWidth() - 1360) / 2);
@@ -234,7 +249,7 @@ public class HrScreenController implements Initializable {
             Scene sc = new Scene(mainMember);
             Stage st = new Stage();
             st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (الموظفين)");
+            st.setTitle("BNB For Aromatic Oils (الموظفين)");
             st.setScene(sc);
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             st.setX((screenBounds.getWidth() - 1360) / 2);
@@ -252,7 +267,7 @@ public class HrScreenController implements Initializable {
             Scene sc = new Scene(mainMember);
             Stage st = new Stage();
             st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (الاجهزة)");
+            st.setTitle("BNB For Aromatic Oils (الاجهزة)");
             st.setScene(sc);
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             st.setX((screenBounds.getWidth() - 1360) / 2);
