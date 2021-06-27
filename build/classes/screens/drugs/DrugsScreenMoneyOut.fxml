@@ -23,8 +23,7 @@
          <children>
             <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="62.0" prefWidth="1240.0" spacing="10.0">
                <children>
-                  <Button id="btnAdd" mnemonicParsing="false" onAction="#show" text="عرض" />
-                  <ComboBox fx:id="patient" nodeOrientation="RIGHT_TO_LEFT" prefHeight="38.0" prefWidth="200.0" />
+                  <ComboBox fx:id="patient" nodeOrientation="RIGHT_TO_LEFT" onAction="#show" prefHeight="38.0" prefWidth="200.0" />
                   <Label text="المريض">
                      <font>
                         <Font size="20.0" />

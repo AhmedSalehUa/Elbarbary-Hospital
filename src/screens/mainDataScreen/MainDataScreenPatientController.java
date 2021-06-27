@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Optional;
@@ -279,7 +280,25 @@ public class MainDataScreenPatientController implements Initializable {
             }
         };
         service.start();
+        patientDateOfBirth.setConverter(new StringConverter<LocalDate>() {
+            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+            @Override
+            public String toString(LocalDate localDate) {
+                if (localDate == null) {
+                    return "";
+                }
+                return dateTimeFormatter.format(localDate);
+            }
+
+            @Override
+            public LocalDate fromString(String dateString) {
+                if (dateString == null || dateString.trim().isEmpty()) {
+                    return null;
+                }
+                return LocalDate.parse(dateString, dateTimeFormatter);
+            }
+        });
         patientTable.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
             if (patientTable.getSelectionModel().getSelectedIndex() == -1) {
                 escortTable.setItems(null);
@@ -1326,7 +1345,6 @@ public class MainDataScreenPatientController implements Initializable {
                 hash.put("tele1", pa.getTele1());
                 hash.put("tele2", pa.getTele2());
 
-               
                 InputStream suprepo = getClass().getResourceAsStream("/screens/mainDataScreen/reports/Admissions.jasper");
                 JasperReport subJasperReport = (JasperReport) JRLoader.loadObject(suprepo);
                 hash.put("admissionReport", subJasperReport);
@@ -1367,6 +1385,34 @@ public class MainDataScreenPatientController implements Initializable {
 
             }
         }
+    }
+
+    @FXML
+    private void setBirthDateFromNational(KeyEvent event) {
+        if (patientNational.getText().length() == 14) {
+            String national = patientNational.getText();
+            String year;
+            if (national.substring(0, 1).equals("2")) {
+                year = "19" + national.substring(1, 3);
+            } else {
+                year = "20" + national.substring(1, 3);
+            }
+            String month = national.substring(3, 5);
+            String day = national.substring(5, 7);
+            patientDateOfBirth.setValue(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day)));
+        }
+    }
+
+    @FXML
+    private void setAgeFromBirth(ActionEvent event) {
+        LocalDate lo = LocalDate.now();
+        patientAge.setText(Integer.toString(lo.getYear() - patientDateOfBirth.getValue().getYear()));
+    }
+
+    @FXML
+    private void setBithdateFromAge(KeyEvent event) {
+        LocalDate lo = LocalDate.now();
+        patientDateOfBirth.setValue(LocalDate.of(lo.getYear() - Integer.parseInt(patientAge.getText()), lo.getMonth(), lo.getDayOfMonth()));
     }
 
 }

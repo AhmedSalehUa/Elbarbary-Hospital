@@ -193,6 +193,25 @@ public class template {
     
      DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
+    babyDateOfBirth.setConverter(new StringConverter<LocalDate>() {
+            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate localDate) {
+                if (localDate == null) {
+                    return "";
+                }
+                return format.format(localDate);
+            }
+
+            @Override
+            public LocalDate fromString(String dateString) {
+                if (dateString == null || dateString.trim().isEmpty()) {
+                    return null;
+                }
+                return LocalDate.parse(dateString, format);
+            }
+        });
      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                                         alert.setTitle("Deleting  ");
                                         alert.setHeaderText("سيتم حذف ");

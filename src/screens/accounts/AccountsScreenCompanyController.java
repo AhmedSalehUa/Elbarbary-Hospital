@@ -99,6 +99,25 @@ public class AccountsScreenCompanyController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+         comAccDate.setConverter(new StringConverter<LocalDate>() {
+            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate localDate) {
+                if (localDate == null) {
+                    return "";
+                }
+                return dateTimeFormatter.format(localDate);
+            }
+
+            @Override
+            public LocalDate fromString(String dateString) {
+                if (dateString == null || dateString.trim().isEmpty()) {
+                    return null;
+                }
+                return LocalDate.parse(dateString, dateTimeFormatter);
+            }
+        });
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
             @Override

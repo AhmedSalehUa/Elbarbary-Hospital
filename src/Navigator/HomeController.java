@@ -72,6 +72,8 @@ public class HomeController implements Initializable {
     private Label userName;
     @FXML
     private Button Addmisions;
+    @FXML
+    private Button reports;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -82,6 +84,7 @@ public class HomeController implements Initializable {
         new ZoomInRight(Clincs).play();
         new ZoomInLeft(Store).play();
         new ZoomInRight(Addmisions).play();
+        root.setMinWidth(524);
         userName.setText(prefs.get(USER_NAME, USERNAME_DEFAULT).toUpperCase());
         MenuItem logout = new MenuItem("Log Out");
         MenuItem changePassword = new MenuItem("change password");
@@ -529,7 +532,52 @@ public class HomeController implements Initializable {
                 }
             }
         });
+        reports.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+            if (User.canAccess("ReportsSections")) {
+                Service<Void> service = new Service<Void>() {
+                    @Override
+                    protected Task<Void> createTask() {
+                        return new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                //Background work                       
+                                final CountDownLatch latch = new CountDownLatch(1);
+                                Platform.runLater(() -> {
+                                    try {
+                                        try { 
+                                            Parent mainData = FXMLLoader.load(getClass().getResource("/screens/reports/MainReportsScreen.fxml"));
+                                            mainData.getStylesheets().add(getClass().getResource("/assets/styles/" + prefs.get(THEME, DEFAULT_THEME) + ".css").toExternalForm());
+                                            Scene sc = new Scene(mainData);
+                                            Stage st = (Stage) ((Node) e.getSource()).getScene().getWindow();
+                                            st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
+                                            st.setTitle("Elbarbary Hospital (التقارير)");
+                                            st.setScene(sc);
+                                        } catch (IOException ex) {
+                                            ex.printStackTrace();
+                                            AlertDialogs.showErrors(ex);
+                                        }
+                                    } finally {
+                                        latch.countDown();
+                                    }
+                                });
+                                latch.await();
 
+                                return null;
+                            }
+                        };
+                    }
+
+                    @Override
+                    protected void succeeded() {
+
+                        super.succeeded();
+                    }
+                };
+                service.start();
+            } else {
+                AlertDialogs.permissionDenied();
+            }
+        });
     }
 
 }

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="297" pageHeight="421" columnWidth="257" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1240005c-26bd-419b-801e-055c05e8d32e">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Opaque" forecolor="#000000" hAlign="Center" vAlign="Middle" isBlankWhenNull="true" fontSize="14" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="logo" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="baby_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from rep_baby where id = $P{baby_id}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="father" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mother" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="gender" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date_of_birth" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="country" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="doctor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="120" splitType="Stretch">
+			<staticText>
+				<reportElement x="116" y="0" width="141" height="20" uuid="49ba95ca-deb7-4c36-9aee-2349e3702825"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[مستشفى البربرى التخصصي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="138" y="20" width="100" height="20" uuid="f7fd50cf-3c86-4c9e-bb3a-983b5719347b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[طنطا - شارع حافظ وهبي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="60" width="141" height="20" uuid="6f28df3f-4f74-4304-a49f-d9c63227866e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[--------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="40" width="141" height="20" uuid="0523ca50-f15c-414b-b977-e79eb158088e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[ت: 3507033 - 040/3509007]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="80" width="141" height="20" uuid="da7bce07-d818-4249-83ec-0801163e586f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[تم التسجيل فى نقابة الاطباء 28]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="138" y="100" width="100" height="20" uuid="fcc929e8-b704-49ea-91c0-91393014ca1d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[بتاريخ 1991/8/7 م]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="100" height="80" uuid="5005d20f-aafb-463a-9d4d-9841b6eb0f0a"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="0" width="100" height="20" uuid="073a5449-aa16-4134-902b-b73273fc60aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[اخطار مولود]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="144" splitType="Stretch">
+			<textField>
+				<reportElement style="style1" x="0" y="80" width="156" height="20" uuid="51a3c761-dee5-4588-b815-9bb720f86b98"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{country}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="0" y="20" width="156" height="20" uuid="b0493d04-1763-4edb-9430-1bb99933e1ca"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{gender}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="0" y="0" width="156" height="20" uuid="93f89c89-9b14-473b-b708-16b0e2cbf983"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy/MM/dd">
+				<reportElement style="style1" x="0" y="100" width="156" height="20" uuid="f2727be2-a393-464c-bebf-f034a3002521"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{date_of_birth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="0" y="40" width="156" height="20" uuid="97596f15-0ebb-428d-abab-eca4b096440d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{father}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="0" y="120" width="156" height="20" uuid="5f3d0eb5-d272-462f-8845-9aa1e9768fb7"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{doctor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="0" y="60" width="156" height="20" uuid="0f3716f6-4a35-4567-b769-758064695f21"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{mother}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style1" x="156" y="80" width="101" height="20" uuid="3312cfcd-fd0b-47e3-bfcc-0bc82f790a3f"/>
+				<text><![CDATA[اســم البــلـد :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="156" y="20" width="101" height="20" uuid="9400ed3c-2dd5-478c-aaab-12cf4570d262"/>
+				<text><![CDATA[نـوع المولود : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="156" y="0" width="101" height="20" uuid="9d2632bf-94b2-4ad1-abd5-91cfbb204e09"/>
+				<text><![CDATA[اســـم المولود : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="156" y="100" width="101" height="20" uuid="3530abd1-c8eb-4b69-bdba-558ff203de4d"/>
+				<text><![CDATA[تاريخ الميلاد :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="156" y="40" width="101" height="20" uuid="383bc143-5f2a-4be8-a58f-0e7138665248"/>
+				<text><![CDATA[اســـــم الاب :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="156" y="120" width="101" height="20" uuid="1677d541-cb6e-4099-b553-e2a08b015358"/>
+				<text><![CDATA[اسم من قام بالولادة :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="156" y="60" width="101" height="20" uuid="0f33f4a5-07af-493d-86c1-d4886407c9f9"/>
+				<text><![CDATA[اســــــم الام :]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

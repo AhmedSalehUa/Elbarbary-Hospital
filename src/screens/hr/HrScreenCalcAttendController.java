@@ -41,6 +41,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.StringConverter;
 import javax.swing.JTable;
 import screens.hr.assets.Attendence;
 import screens.hr.assets.Employee;
@@ -121,6 +122,44 @@ public class HrScreenCalcAttendController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+         from.setConverter(new StringConverter<LocalDate>() {
+            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate localDate) {
+                if (localDate == null) {
+                    return "";
+                }
+                return dateTimeFormatter.format(localDate);
+            }
+
+            @Override
+            public LocalDate fromString(String dateString) {
+                if (dateString == null || dateString.trim().isEmpty()) {
+                    return null;
+                }
+                return LocalDate.parse(dateString, dateTimeFormatter);
+            }
+        });
+         to.setConverter(new StringConverter<LocalDate>() {
+            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate localDate) {
+                if (localDate == null) {
+                    return "";
+                }
+                return dateTimeFormatter.format(localDate);
+            }
+
+            @Override
+            public LocalDate fromString(String dateString) {
+                if (dateString == null || dateString.trim().isEmpty()) {
+                    return null;
+                }
+                return LocalDate.parse(dateString, dateTimeFormatter);
+            }
+        });
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
             @Override
@@ -317,7 +356,8 @@ public class HrScreenCalcAttendController implements Initializable {
                             System.out.println();
                             empAtt.setEmpId(emp.getId());
                             empAtt.setEmpName(emp.getName());
-                            empAtt.setDate(date.format(format));   System.out.println("before isEarlyLeave");
+                            empAtt.setDate(date.format(format));
+                            System.out.println("before isEarlyLeave");
                             int earlyLeave1 = isEarlyLeave(date, emp.getId());
                             if (isHoliday(date, sh.getWorkdays())) {
                                 System.out.println("isHoliday");

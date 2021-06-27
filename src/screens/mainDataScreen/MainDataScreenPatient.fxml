@@ -280,7 +280,7 @@
                                               <TextField id="patientFields" fx:id="patientGovernment" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="2" />
                                     
                                                                 <TextField id="patientFields" fx:id="patientAddress" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="3" />
-                                              <TextField id="patientFields" fx:id="patientNational" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="4" />
+                                              <TextField id="patientFields" fx:id="patientNational" onKeyReleased="#setBirthDateFromNational" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="4" />
                                               <HBox GridPane.rowIndex="5">
                                                   <children>
                                                       <MaterialIconView fx:id="addTranspering" glyphName="ADD" onMouseClicked="#addTranspering" size="30" />
@@ -289,10 +289,10 @@
                                               </HBox>
                                               <TextField id="patientFields" fx:id="patientGiagnose" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="6" />
                                               <ComboBox fx:id="patientDoctor" nodeOrientation="RIGHT_TO_LEFT" prefHeight="32.0" prefWidth="242.0" GridPane.rowIndex="7" />
-                                              <JFXDatePicker fx:id="patientDateOfBirth" nodeOrientation="RIGHT_TO_LEFT" prefHeight="28.0" prefWidth="285.0" GridPane.rowIndex="8" />
+                                              <JFXDatePicker fx:id="patientDateOfBirth" nodeOrientation="RIGHT_TO_LEFT" onAction="#setAgeFromBirth" prefHeight="28.0" prefWidth="285.0" GridPane.rowIndex="8" />
                                              
                                                                 <ComboBox fx:id="patientGender" nodeOrientation="RIGHT_TO_LEFT" prefHeight="32.0" prefWidth="242.0" GridPane.rowIndex="9" />
-                                              <TextField id="patientFields" fx:id="patientAge" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="10" />
+                                              <TextField id="patientFields" fx:id="patientAge" onKeyReleased="#setBithdateFromAge" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="10" />
                                               <HBox alignment="CENTER" spacing="10.0" GridPane.rowIndex="11">
                                                   <children>
                                                       <ImageView fx:id="patientPhotoPicker" fitHeight="50.0" fitWidth="34.0" onMouseClicked="#pickPhoto" pickOnBounds="true" preserveRatio="true">

@@ -122,6 +122,8 @@ public class LoginController implements Initializable {
             result.ifPresent(ip -> prefs.put(DATABASE_IP, ip));
 
         });
+        userneme.setText( prefs.get(USER_NAME, ""));
+        
     }
 
     private void loggin() {

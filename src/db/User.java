@@ -6,6 +6,8 @@
 package db;
 
 import assets.classes.AlertDialogs;
+import static assets.classes.statics.USER_ID;
+import static assets.classes.statics.USER_ROLE;
 import elbarbary.hospital.ElBarbaryHospital;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -99,23 +101,33 @@ public class User {
     }
 
     public static boolean canAccess(String priviliages) {
-        try {
-            db.get.getReportCon().createStatement().execute("INSERT IGNORE INTO `priviliges_name`(`name`) VALUES ('"+priviliages+"')");
-        } catch (Exception ex) {
-           AlertDialogs.showErrors(ex);
-        }
         Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
-        String get = prefs.get(priviliages, "false");
-        return Boolean.parseBoolean(get); 
-
+        if (prefs.get(USER_ROLE, "user").equals("super_admin")) {
+            return true;
+        }
+        try {
+            db.get.getReportCon().createStatement().execute("INSERT IGNORE INTO `priviliges_name`(`name`) VALUES ('" + priviliages + "')");
+        } catch (Exception ex) {
+            AlertDialogs.showErrors(ex);
+        }
+        try {
+            String strt = "SELECT value FROM `users_permissions` WHERE `user_id`='" + prefs.get(USER_ID, "0") + "'";
+            ResultSet rs = db.get.getReportCon().createStatement().executeQuery(strt);
+            while (rs.next()) {
+                return Boolean.parseBoolean(rs.getString(1));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     private boolean configPermissions() throws Exception {
-        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
-         ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT * FROM `users_permissions` WHERE `user_id`='" + id + "'");
-        while (rs.next()) {
-            prefs.put(rs.getString(2), rs.getString(3));
-        }
+//        Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
+//         ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT * FROM `users_permissions` WHERE `user_id`='" + id + "'");
+//        while (rs.next()) {
+//            prefs.put(rs.getString(2), rs.getString(3));
+//        }
         return true;
     }
 
