@@ -44,6 +44,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.control.CheckListView;
 import screens.accounts.assets.Accounts;
 import screens.hr.assets.Employee;
+import screens.hr.assets.EmployeeRewards;
 import screens.hr.assets.EmployeeSolfa;
 import screens.hr.assets.Sections;
 import screens.hr.assets.Shifts;
@@ -54,7 +55,7 @@ import screens.hr.assets.Shifts;
  * @author AHMED
  */
 public class HrScreenEmployesController implements Initializable {
-    
+
     @FXML
     private JFXTextField search;
     @FXML
@@ -127,8 +128,30 @@ public class HrScreenEmployesController implements Initializable {
     private Button solfaEdite;
     @FXML
     private Button solfaAdd;
-    
+
     Employee selectedOne;
+    @FXML
+    private TableView<EmployeeRewards> rewardTable;
+    @FXML
+    private TableColumn<EmployeeRewards, String> rewardTabDate;
+    @FXML
+    private TableColumn<EmployeeRewards, String> rewardTabAmount;
+    @FXML
+    private TableColumn<EmployeeRewards, String> rewardTabId;
+    @FXML
+    private Label rewardId;
+    @FXML
+    private TextField rewardAmount;
+    @FXML
+    private JFXDatePicker rewardDate;
+    @FXML
+    private Button rewardNew;
+    @FXML
+    private Button rewardDelete;
+    @FXML
+    private Button rewardEdite;
+    @FXML
+    private Button rewardAdd;
 
     /**
      * Initializes the controller class.
@@ -152,27 +175,27 @@ public class HrScreenEmployesController implements Initializable {
                                     intialColumn();
                                     getData();
                                     fillCombo();
-                                    
+
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
                                 } finally {
                                     latch.countDown();
                                 }
                             }
-                            
+
                         });
                         latch.await();
-                        
+
                         return null;
                     }
                 };
-                
+
             }
-            
+
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                
+
                 super.succeeded();
             }
         };
@@ -181,26 +204,26 @@ public class HrScreenEmployesController implements Initializable {
             if (empTable.getSelectionModel().getSelectedIndex() == -1) {
             } else {
                 empNew.setDisable(false);
-                
+
                 empDelete.setDisable(false);
-                
+
                 empEdite.setDisable(false);
-                
+
                 empAdd.setDisable(true);
-                
+
                 Employee selected = empTable.getSelectionModel().getSelectedItem();
                 empId.setText(Integer.toString(selected.getId()));
-                
+
                 empName.setText(selected.getName());
-                
+
                 empTele.setText(selected.getTele());
-                
+
                 empAge.setText(selected.getAge());
-                
+
                 empAdress.setText(selected.getAdress());
-                
+
                 empSalary.setText(selected.getSalary());
-                
+
                 ObservableList<Sections> items1 = empSection.getItems();
                 for (Sections a : items1) {
                     if (a.getName().equals(selected.getSection())) {
@@ -217,13 +240,14 @@ public class HrScreenEmployesController implements Initializable {
                                 shifts.getCheckModel().check(b);
                             }
                         }
-                        
+
                     }
                 } catch (Exception ex) {
                     AlertDialogs.showErrors(ex);
                 }
                 selectedOne = selected;
                 getSolfaFor(selected.getId());
+                getRewardFor(selected.getId());
             }
         });
         solfaTable.setOnMouseClicked((e) -> {
@@ -237,70 +261,76 @@ public class HrScreenEmployesController implements Initializable {
                     if (a.getName().equals(sel.getAcc())) {
                         solfaAcc.getSelectionModel().select(a);
                     }
-                    
+
                 }
                 solfaDate.setValue(LocalDate.parse(sel.getDate()));
             }
         });
     }
-    
+
     private void clear() {
         try {
             getAutoNum();
             empNew.setDisable(true);
-            
+
             empDelete.setDisable(true);
-            
+
             empEdite.setDisable(true);
-            
+
             empAdd.setDisable(false);
-            
+
             empSection.getSelectionModel().clearSelection();
             empName.setText("");
-            
+
             empTele.setText("");
-            
+
             empAge.setText("");
-            
+
             empAdress.setText("");
-            
+
             empSalary.setText("");
             shifts.getCheckModel().clearChecks();
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
         }
-        
+
     }
-    
+
     private void intialColumn() {
+        rewardTabDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        rewardTabAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+
+        rewardTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
         empTabSection.setCellValueFactory(new PropertyValueFactory<>("section"));
-        
+
         empTabSalary.setCellValueFactory(new PropertyValueFactory<>("salary"));
-        
+
         empTabAge.setCellValueFactory(new PropertyValueFactory<>("age"));
-        
+
         empTabTele.setCellValueFactory(new PropertyValueFactory<>("tele"));
-        
+
         empTabAdress.setCellValueFactory(new PropertyValueFactory<>("adress"));
-        
+
         empTabName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        
+
         empTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        
+
         solfaTabAcc.setCellValueFactory(new PropertyValueFactory<>("acc"));
-        
+
         solfaTabDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        
+
         solfaTabAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        
+
         solfaTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        
+
     }
-    
+
     private void getAutoNum() throws Exception {
         empId.setText(Employee.getAutoNum());
     }
-    
+
     private void getData() {
         try {
             empTable.setItems(Employee.getData());
@@ -310,7 +340,7 @@ public class HrScreenEmployesController implements Initializable {
         }
     }
     ObservableList<Employee> items;
-    
+
     private void fillCombo() throws Exception {
         ObservableList<String> items = FXCollections.observableArrayList();
         ObservableList<Shifts> data = Shifts.getData();
@@ -324,74 +354,74 @@ public class HrScreenEmployesController implements Initializable {
             public String toString(Sections patient) {
                 return patient.getName();
             }
-            
+
             @Override
             public Sections fromString(String string) {
                 return null;
             }
         });
         empSection.setCellFactory(cell -> new ListCell<Sections>() {
-            
+
             GridPane gridPane = new GridPane();
             Label lblid = new Label();
             Label lblName = new Label();
-            
+
             {
                 gridPane.getColumnConstraints().addAll(
                         new ColumnConstraints(100, 100, 100),
                         new ColumnConstraints(100, 100, 100)
                 );
-                
+
                 gridPane.add(lblid, 0, 1);
                 gridPane.add(lblName, 1, 1);
-                
+
             }
-            
+
             @Override
             protected void updateItem(Sections person, boolean empty) {
                 super.updateItem(person, empty);
-                
+
                 if (!empty && person != null) {
-                    
+
                     lblid.setText("م: " + Integer.toString(person.getId()));
                     lblName.setText("الاسم: " + person.getName());
-                    
+
                     setGraphic(gridPane);
                 } else {
                     setGraphic(null);
                 }
             }
         });
-        
+
     }
-    
+
     @FXML
     private void search(KeyEvent event) {
         FilteredList<Employee> filteredData = new FilteredList<>(items, p -> true);
-        
+
         filteredData.setPredicate(pa -> {
-            
+
             if (search.getText() == null || search.getText().isEmpty()) {
                 return true;
             }
-            
+
             String lowerCaseFilter = search.getText().toLowerCase();
-            
+
             return (pa.getName().contains(lowerCaseFilter)
                     || pa.getSection().contains(lowerCaseFilter));
-            
+
         });
-        
+
         SortedList<Employee> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(empTable.comparatorProperty());
         empTable.setItems(sortedData);
     }
-    
+
     @FXML
     private void empNew(ActionEvent event) {
         clear();
     }
-    
+
     @FXML
     private void empDelete(ActionEvent event) {
         progress.setVisible(true);
@@ -411,7 +441,7 @@ public class HrScreenEmployesController implements Initializable {
                                     alert.setTitle("Deleting Employee");
                                     alert.setHeaderText("سيتم حذف الموظف ");
                                     alert.setContentText("هل انت متاكد؟");
-                                    
+
                                     Optional<ButtonType> result = alert.showAndWait();
                                     if (result.get() == ButtonType.OK) {
                                         Employee em = new Employee();
@@ -424,16 +454,16 @@ public class HrScreenEmployesController implements Initializable {
                                     latch.countDown();
                                 }
                             }
-                            
+
                         });
                         latch.await();
-                        
+
                         return null;
                     }
                 };
-                
+
             }
-            
+
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
@@ -444,7 +474,7 @@ public class HrScreenEmployesController implements Initializable {
         };
         service.start();
     }
-    
+
     @FXML
     private void empEdite(ActionEvent event) {
         ObservableList<String> selectedItems = shifts.getCheckModel().getCheckedItems();
@@ -468,10 +498,10 @@ public class HrScreenEmployesController implements Initializable {
                                         alert.setTitle("Editing Employee");
                                         alert.setHeaderText("سيتم تعديل الموظف ");
                                         alert.setContentText("هل انت متاكد؟");
-                                        
+
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            
+
                                             String shifts = "";
                                             for (String a : selectedItems) {
                                                 shifts += a.split("-")[0].split(":")[1].replaceAll(" ", "") + "-";
@@ -494,16 +524,16 @@ public class HrScreenEmployesController implements Initializable {
                                         latch.countDown();
                                     }
                                 }
-                                
+
                             });
                             latch.await();
-                            
+
                             return null;
                         }
                     };
-                    
+
                 }
-                
+
                 @Override
                 protected void succeeded() {
                     progress.setVisible(false);
@@ -515,14 +545,14 @@ public class HrScreenEmployesController implements Initializable {
             service.start();
         }
     }
-    
+
     @FXML
     private void empAdd(ActionEvent event) {
         ObservableList<String> selectedItems = shifts.getCheckModel().getCheckedItems();
         if (selectedItems.isEmpty()) {
             AlertDialogs.showError("يجب اختيار شيفت على الاقل");
         } else {
-            
+
             progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
                 @Override
@@ -557,16 +587,16 @@ public class HrScreenEmployesController implements Initializable {
                                         latch.countDown();
                                     }
                                 }
-                                
+
                             });
                             latch.await();
-                            
+
                             return null;
                         }
                     };
-                    
+
                 }
-                
+
                 @Override
                 protected void succeeded() {
                     progress.setVisible(false);
@@ -578,22 +608,23 @@ public class HrScreenEmployesController implements Initializable {
             service.start();
         }
     }
-    
+
     @FXML
     private void solfaNew(ActionEvent event) {
         clearSolfa();
     }
-    
+
     private void clearSolfa() {
         try {
             solfaId.setText(EmployeeSolfa.getAutoNum());
             solfaAmount.setText("");
-            solfaAcc.getSelectionModel().clearSelection();solfaDate.setValue(null);
+            solfaAcc.getSelectionModel().clearSelection();
+            solfaDate.setValue(null);
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
         }
     }
-    
+
     @FXML
     private void solfaDelete(ActionEvent event) {
         Service<Void> service = new Service<Void>() {
@@ -612,7 +643,7 @@ public class HrScreenEmployesController implements Initializable {
                                     alert.setTitle("Deleting  Solfa");
                                     alert.setHeaderText("سيتم حذف السلفة ");
                                     alert.setContentText("هل انت متاكد؟");
-                                    
+
                                     Optional<ButtonType> result = alert.showAndWait();
                                     if (result.get() == ButtonType.OK) {
                                         EmployeeSolfa emps = new EmployeeSolfa();
@@ -630,19 +661,19 @@ public class HrScreenEmployesController implements Initializable {
                                     latch.countDown();
                                 }
                             }
-                            
+
                         });
                         latch.await();
-                        
+
                         return null;
                     }
                 };
-                
+
             }
-            
+
             @Override
             protected void succeeded() {
-                
+
                 clearSolfa();
                 try {
                     solfaTable.setItems(EmployeeSolfa.getData(selectedOne.getId()));
@@ -654,7 +685,7 @@ public class HrScreenEmployesController implements Initializable {
         };
         service.start();
     }
-    
+
     @FXML
     private void solfaEdite(ActionEvent event) {
         Service<Void> service = new Service<Void>() {
@@ -673,7 +704,7 @@ public class HrScreenEmployesController implements Initializable {
                                     alert.setTitle("Editing  Solfa");
                                     alert.setHeaderText("سيتم تعديل السلفة ");
                                     alert.setContentText("هل انت متاكد؟");
-                                    
+
                                     Optional<ButtonType> result = alert.showAndWait();
                                     if (result.get() == ButtonType.OK) {
                                         EmployeeSolfa emps = new EmployeeSolfa();
@@ -691,19 +722,19 @@ public class HrScreenEmployesController implements Initializable {
                                     latch.countDown();
                                 }
                             }
-                            
+
                         });
                         latch.await();
-                        
+
                         return null;
                     }
                 };
-                
+
             }
-            
+
             @Override
             protected void succeeded() {
-                
+
                 clearSolfa();
                 try {
                     solfaTable.setItems(EmployeeSolfa.getData(selectedOne.getId()));
@@ -715,7 +746,7 @@ public class HrScreenEmployesController implements Initializable {
         };
         service.start();
     }
-    
+
     @FXML
     private void solfaAdd(ActionEvent event) {
         Service<Void> service = new Service<Void>() {
@@ -744,19 +775,19 @@ public class HrScreenEmployesController implements Initializable {
                                     latch.countDown();
                                 }
                             }
-                            
+
                         });
                         latch.await();
-                        
+
                         return null;
                     }
                 };
-                
+
             }
-            
+
             @Override
             protected void succeeded() {
-                
+
                 clearSolfa();
                 try {
                     solfaTable.setItems(EmployeeSolfa.getData(selectedOne.getId()));
@@ -768,7 +799,7 @@ public class HrScreenEmployesController implements Initializable {
         };
         service.start();
     }
-    
+
     private void getSolfaFor(int id) {
         try {
             solfaAcc.setItems(Accounts.getData());
@@ -777,38 +808,38 @@ public class HrScreenEmployesController implements Initializable {
                 public String toString(Accounts patient) {
                     return patient.getName();
                 }
-                
+
                 @Override
                 public Accounts fromString(String string) {
                     return null;
                 }
             });
             solfaAcc.setCellFactory(cell -> new ListCell<Accounts>() {
-                
+
                 GridPane gridPane = new GridPane();
                 Label lblid = new Label();
                 Label lblName = new Label();
-                
+
                 {
                     gridPane.getColumnConstraints().addAll(
                             new ColumnConstraints(100, 100, 100),
                             new ColumnConstraints(100, 100, 100)
                     );
-                    
+
                     gridPane.add(lblid, 0, 1);
                     gridPane.add(lblName, 1, 1);
-                    
+
                 }
-                
+
                 @Override
                 protected void updateItem(Accounts person, boolean empty) {
                     super.updateItem(person, empty);
-                    
+
                     if (!empty && person != null) {
-                        
+
                         lblid.setText("م: " + Integer.toString(person.getId()));
                         lblName.setText("الاسم: " + person.getName());
-                        
+
                         setGraphic(gridPane);
                     } else {
                         setGraphic(null);
@@ -821,5 +852,198 @@ public class HrScreenEmployesController implements Initializable {
             AlertDialogs.showErrors(ex);
         }
     }
-    
+
+    private void getRewardFor(int id) {
+        try {
+
+            rewardTable.setItems(EmployeeRewards.getData(id));
+            rewardId.setText(EmployeeRewards.getAutoNum());
+        } catch (Exception ex) {
+            AlertDialogs.showErrors(ex);
+        }
+    }
+
+    private void clearReward() {
+        try {
+            rewardId.setText(EmployeeRewards.getAutoNum());
+            rewardAmount.setText("");
+            rewardDate.setValue(null);
+        } catch (Exception ex) {
+            AlertDialogs.showErrors(ex);
+        }
+    }
+
+    @FXML
+    private void rewardNew(ActionEvent event) {
+        clearReward();
+    }
+
+    @FXML
+    private void rewardDelete(ActionEvent event) {
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        //Background work                       
+                        final CountDownLatch latch = new CountDownLatch(1);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle("Deleting  Reward");
+                                    alert.setHeaderText("سيتم تعديل المكافاة ");
+                                    alert.setContentText("هل انت متاكد؟");
+
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == ButtonType.OK) {
+                                        EmployeeRewards emps = new EmployeeRewards();
+                                        emps.setId(Integer.parseInt(rewardId.getText()));
+                                        emps.Delete();
+                                    }
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+                            }
+
+                        });
+                        latch.await();
+
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+
+                clearReward();
+                try {
+                    rewardTable.setItems(EmployeeRewards.getData(selectedOne.getId()));
+                } catch (Exception ex) {
+                    AlertDialogs.showErrors(ex);
+                }
+                super.succeeded();
+            }
+        };
+        service.start();
+    }
+
+    @FXML
+    private void rewardEdite(ActionEvent event) {
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        //Background work                       
+                        final CountDownLatch latch = new CountDownLatch(1);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle("Editing  Solfa");
+                                    alert.setHeaderText("سيتم تعديل المكافاة ");
+                                    alert.setContentText("هل انت متاكد؟");
+
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == ButtonType.OK) {
+                                        EmployeeRewards emps = new EmployeeRewards();
+                                        emps.setId(Integer.parseInt(rewardId.getText()));
+                                        emps.setAmount(rewardAmount.getText());
+                                        emps.setEmployeeId(selectedOne.getId());
+                                        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                        emps.setDate(rewardDate.getValue().format(format));
+                                        emps.Edite();
+                                    }
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+                            }
+
+                        });
+                        latch.await();
+
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+
+                clearReward();
+                try {
+                    rewardTable.setItems(EmployeeRewards.getData(selectedOne.getId()));
+                } catch (Exception ex) {
+                    AlertDialogs.showErrors(ex);
+                }
+                super.succeeded();
+            }
+        };
+        service.start();
+    }
+
+    @FXML
+    private void rewardAdd(ActionEvent event) {
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        //Background work                       
+                        final CountDownLatch latch = new CountDownLatch(1);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    EmployeeRewards emps = new EmployeeRewards();
+                                    emps.setId(Integer.parseInt(rewardId.getText()));
+                                    emps.setAmount(rewardAmount.getText());
+                                    emps.setEmployeeId(selectedOne.getId());
+                                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                    emps.setDate(rewardDate.getValue().format(format));
+                                    emps.Add();
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+                            }
+
+                        });
+                        latch.await();
+
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+
+                clearReward();
+                try {
+                    rewardTable.setItems(EmployeeRewards.getData(selectedOne.getId()));
+                } catch (Exception ex) {
+                    AlertDialogs.showErrors(ex);
+                }
+                super.succeeded();
+            }
+        };
+        service.start();
+    }
+
 }

@@ -203,6 +203,7 @@ public class MainDataScreenPatientController implements Initializable {
     private JFXDrawer drawer;
     @FXML
     private ImageView print;
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * Initializes the controller class.
@@ -480,11 +481,16 @@ public class MainDataScreenPatientController implements Initializable {
         if (patientName.getText().isEmpty() || patientName.getText() == null) {
             AlertDialogs.showError("اسم المريض لا يجب ان يكون فارغا!!");
         } else {
+
             progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                Patients patient = new Patients();
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
+
                         @Override
                         protected Void call() throws Exception {
                             //Background work                       
@@ -502,7 +508,7 @@ public class MainDataScreenPatientController implements Initializable {
                                             Optional<ButtonType> result = alert.showAndWait();
                                             if (result.get() == ButtonType.OK) {
                                                 if (patientPhoto.getText().isEmpty() || patientPhoto.getText() == null) {
-                                                    Patients patient = new Patients();
+
                                                     patient.setId(Integer.parseInt(patientId.getText()));
                                                     patient.setName(patientName.getText());
                                                     patient.setAddress(patientAddress.getText());
@@ -518,8 +524,9 @@ public class MainDataScreenPatientController implements Initializable {
                                                     patient.setTele2(patientTele2.getText());
                                                     patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                     patient.Edite();
+                                                    isDone = true;
                                                 } else {
-                                                    Patients patient = new Patients();
+
                                                     patient.setId(Integer.parseInt(patientId.getText()));
                                                     patient.setName(patientName.getText());
                                                     patient.setAddress(patientAddress.getText());
@@ -540,10 +547,12 @@ public class MainDataScreenPatientController implements Initializable {
                                                     patient.setPhotoExt(st[st.length - 1]);
                                                     patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                     patient.EditeWithPhoto();
+                                                    isDone = true;
                                                 }
                                             }
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -559,7 +568,11 @@ public class MainDataScreenPatientController implements Initializable {
 
                 @Override
                 protected void succeeded() {
-                    clear();
+                    if (isDone) {
+                        clear();
+                    } else {
+                        clear(patient);
+                    }
                     getDataToTable();
                     progress.setVisible(false);
                     super.succeeded();
@@ -577,6 +590,9 @@ public class MainDataScreenPatientController implements Initializable {
         } else {
             progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                Patients patient = new Patients();
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -590,7 +606,7 @@ public class MainDataScreenPatientController implements Initializable {
                                     try {
                                         try {
                                             if (patientPhoto.getText().isEmpty() || patientPhoto.getText() == null) {
-                                                Patients patient = new Patients();
+
                                                 patient.setId(Integer.parseInt(patientId.getText()));
                                                 patient.setName(patientName.getText());
                                                 patient.setAddress(patientAddress.getText());
@@ -606,8 +622,9 @@ public class MainDataScreenPatientController implements Initializable {
                                                 patient.setTele2(patientTele2.getText());
                                                 patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                 patient.Add();
+                                                isDone = true;
                                             } else {
-                                                Patients patient = new Patients();
+
                                                 patient.setId(Integer.parseInt(patientId.getText()));
                                                 patient.setName(patientName.getText());
                                                 patient.setAddress(patientAddress.getText());
@@ -628,9 +645,11 @@ public class MainDataScreenPatientController implements Initializable {
                                                 patient.setPhotoExt(st[st.length - 1]);
                                                 patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                 patient.AddWithPhoto();
+                                                isDone = true;
                                             }
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -646,7 +665,11 @@ public class MainDataScreenPatientController implements Initializable {
 
                 @Override
                 protected void succeeded() {
-                    clear();
+                    if (isDone) {
+                        clear();
+                    } else {
+                        clear(patient);
+                    }
                     getDataToTable();
                     progress.setVisible(false);
                     super.succeeded();
@@ -660,6 +683,9 @@ public class MainDataScreenPatientController implements Initializable {
     private void patientDelete(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean isDone = false;
+            Patients patient = new Patients();
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -679,9 +705,10 @@ public class MainDataScreenPatientController implements Initializable {
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            Patients patient = new Patients();
+
                                             patient.setId(Integer.parseInt(patientId.getText()));
                                             patient.Delete();
+                                            isDone = true;
                                         }
 
                                     } catch (Exception ex) {
@@ -701,7 +728,11 @@ public class MainDataScreenPatientController implements Initializable {
 
             @Override
             protected void succeeded() {
-                clear();
+                if (isDone) {
+                    clear();
+                } else {
+                    clear(patient);
+                }
                 getDataToTable();
                 progress.setVisible(false);
                 super.succeeded();
@@ -734,6 +765,42 @@ public class MainDataScreenPatientController implements Initializable {
         patientTransName.getSelectionModel().clearSelection();
         patientTele1.setText("");
         patientTele2.setText("");
+        patientAdd.setDisable(false);
+        patientEdite.setDisable(true);
+        patientDelete.setDisable(true);
+        patientNew.setDisable(true);
+    }
+
+    private void clear(Patients pa) {
+        setAutoNumber();
+        patientName.setText(pa.getName());
+        patientAddress.setText(pa.getAddress());
+        patientAge.setText(pa.getAge());
+        patientNational.setText(pa.getNational_id());
+        patientGiagnose.setText(pa.getDiagnosis()); 
+        ObservableList<Doctors> items1 = patientDoctor.getItems();
+        for (Doctors a : items1) {
+            if (a.getId() == pa.getDoctor_id()) {
+
+                patientDoctor.getSelectionModel().select(a);
+            }
+        }
+        try {
+            patientDateOfBirth.setValue(LocalDate.parse(pa.getDateOfBirth()));
+
+        } catch (Exception e) {
+        }
+        patientGovernment.setText(pa.getGovernment());
+        patientGender.getSelectionModel().select(pa.getGender());
+        ObservableList<TransferOrganization> items = patientTransName.getItems();
+        for (TransferOrganization a : items) {
+            if (a.getName().equals(pa.getTranportOrg())) {
+
+                patientTransName.getSelectionModel().select(a);
+            }
+        }
+        patientTele1.setText(pa.getTele1());
+        patientTele2.setText(pa.getTele2());
         patientAdd.setDisable(false);
         patientEdite.setDisable(true);
         patientDelete.setDisable(true);
@@ -918,6 +985,9 @@ public class MainDataScreenPatientController implements Initializable {
         } else {
             escortProgress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                PatientsEscort patient = new PatientsEscort();
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -938,7 +1008,6 @@ public class MainDataScreenPatientController implements Initializable {
                                             Optional<ButtonType> result = alert.showAndWait();
                                             if (result.get() == ButtonType.OK) {
                                                 if (escortPhoto.getText().isEmpty() || escortPhoto.getText() == null) {
-                                                    PatientsEscort patient = new PatientsEscort();
                                                     patient.setId(Integer.parseInt(escortId.getText()));
                                                     patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
                                                     patient.setName(escortName.getText());
@@ -948,8 +1017,8 @@ public class MainDataScreenPatientController implements Initializable {
                                                     patient.setTele1(escortTele1.getText());
                                                     patient.setTele2(escortTele2.getText());
                                                     patient.EditeWithoutPhoto();
+                                                    isDone = true;
                                                 } else {
-                                                    PatientsEscort patient = new PatientsEscort();
                                                     patient.setId(Integer.parseInt(escortId.getText()));
                                                     patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
                                                     patient.setName(escortName.getText());
@@ -966,10 +1035,12 @@ public class MainDataScreenPatientController implements Initializable {
                                                     patient.setPhotoExt(st[st.length - 1]);
 
                                                     patient.Edite();
+                                                    isDone = true;
                                                 }
                                             }
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -985,7 +1056,11 @@ public class MainDataScreenPatientController implements Initializable {
 
                 @Override
                 protected void succeeded() {
-                    clearEscort();
+                    if (isDone) {
+                        clearEscort();
+                    } else {
+                        clearEscort(patient);
+                    }
                     clear();
                     getDataToTable();
                     escortProgress.setVisible(false);
@@ -1003,6 +1078,9 @@ public class MainDataScreenPatientController implements Initializable {
         } else {
             escortProgress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                PatientsEscort patient = new PatientsEscort();
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -1023,14 +1101,14 @@ public class MainDataScreenPatientController implements Initializable {
                                             Optional<ButtonType> result = alert.showAndWait();
                                             if (result.get() == ButtonType.OK) {
 
-                                                PatientsEscort patient = new PatientsEscort();
                                                 patient.setId(Integer.parseInt(escortId.getText()));
 
                                                 patient.Delete();
-
+                                                isDone = true;
                                             }
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -1046,7 +1124,11 @@ public class MainDataScreenPatientController implements Initializable {
 
                 @Override
                 protected void succeeded() {
-                    clearEscort();
+                    if (isDone) {
+                        clearEscort();
+                    } else {
+                        clearEscort(patient);
+                    }
                     clear();
                     getDataToTable();
                     escortProgress.setVisible(false);
@@ -1064,6 +1146,9 @@ public class MainDataScreenPatientController implements Initializable {
         } else {
             escortProgress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                PatientsEscort patient = new PatientsEscort();
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -1078,7 +1163,6 @@ public class MainDataScreenPatientController implements Initializable {
                                         try {
 
                                             if (escortPhoto.getText().isEmpty() || escortPhoto.getText() == null) {
-                                                PatientsEscort patient = new PatientsEscort();
                                                 patient.setId(Integer.parseInt(escortId.getText()));
                                                 patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
                                                 patient.setName(escortName.getText());
@@ -1088,8 +1172,8 @@ public class MainDataScreenPatientController implements Initializable {
                                                 patient.setTele1(escortTele1.getText());
                                                 patient.setTele2(escortTele2.getText());
                                                 patient.AddWithoutPhoto();
+                                                isDone = true;
                                             } else {
-                                                PatientsEscort patient = new PatientsEscort();
                                                 patient.setId(Integer.parseInt(escortId.getText()));
                                                 patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
                                                 patient.setName(escortName.getText());
@@ -1106,10 +1190,12 @@ public class MainDataScreenPatientController implements Initializable {
                                                 patient.setPhotoExt(st[st.length - 1]);
 
                                                 patient.Add();
+                                                isDone = true;
                                             }
 
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -1125,7 +1211,11 @@ public class MainDataScreenPatientController implements Initializable {
 
                 @Override
                 protected void succeeded() {
-                    clearEscort();
+                    if (isDone) {
+                        clearEscort();
+                    } else {
+                        clearEscort(patient);
+                    }
                     clear();
                     getDataToTable();
                     escortProgress.setVisible(false);
@@ -1158,6 +1248,32 @@ public class MainDataScreenPatientController implements Initializable {
             escortPhoto.setText("");
             escortTele1.setText("");
             escortTele2.setText("");
+        } catch (Exception ex) {
+            AlertDialogs.showErrors(ex);
+        }
+    }
+
+    private void clearEscort(PatientsEscort pa) {
+        try {
+            if (patientTable.getSelectionModel().getSelectedIndex() == -1) {
+                escortTable.setItems(null);
+            } else {
+                escortTable.setItems(PatientsEscort.getData(Integer.toString(patientTable.getSelectionModel().getSelectedItem().getId())));
+            }
+
+            setEscortAutoNum();
+            escortProgress.setVisible(false);
+            escortAdd.setDisable(false);
+            escortEdite.setDisable(true);
+            escortDelete.setDisable(true);
+            escortNew.setDisable(true);
+
+            escortName.setText(pa.getName());
+            escortRelation.setText(pa.getRelation());
+            escortAddress.setText(pa.getAddress());
+            escortNational.setText(pa.getNationaId()); 
+            escortTele1.setText(pa.getTele1());
+            escortTele2.setText(pa.getTele2());
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
         }

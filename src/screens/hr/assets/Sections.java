@@ -17,24 +17,16 @@ import javafx.collections.ObservableList;
 public class Sections {
     
     int id;
-    String name;
-    String department;
-    int dept_id;
+    String name; 
 
     public Sections() {
     }
 
-    public Sections(int id, String name, String department) {
+    public Sections(int id, String name) {
         this.id = id;
-        this.name = name;
-        this.department = department;
+        this.name = name; 
     }
-
-    public Sections(int id, String name, int dept_id) {
-        this.id = id;
-        this.name = name;
-        this.dept_id = dept_id;
-    }
+ 
 
    
 
@@ -53,38 +45,20 @@ public class Sections {
     public void setName(String name) {
         this.name = name;
     }
- 
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public int getDept_id() {
-        return dept_id;
-    }
-
-    public void setDept_id(int dept_id) {
-        this.dept_id = dept_id;
-    }
-
+  
     
     public boolean Add() throws Exception {
-        PreparedStatement ps = db.get.Prepare("INSERT INTO `att_section`(`id`, `name`, `department_id`) VALUES (?,?,?)");
+        PreparedStatement ps = db.get.Prepare("INSERT INTO `att_section`(`id`, `name`) VALUES (?,?)");
         ps.setInt(1, id);
-        ps.setString(2, name);
-        ps.setInt(3, dept_id);
+        ps.setString(2, name); 
         ps.execute();
         return true;
     }
 
     public boolean Edite() throws Exception {
-        PreparedStatement ps = db.get.Prepare("UPDATE `att_section` SET `name`=?,`department_id`=? WHERE `id`=?");
-        ps.setInt(3, id);
-        ps.setString(1, name);
-        ps.setInt(2, dept_id);
+        PreparedStatement ps = db.get.Prepare("UPDATE `att_section` SET `name`=? WHERE `id`=?");
+        ps.setInt(2, id);
+        ps.setString(1, name); 
         ps.execute();
         return true;
     }
@@ -98,9 +72,9 @@ public class Sections {
 
     public static ObservableList<Sections> getData() throws Exception {
         ObservableList<Sections> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `att_section`.`id`, `att_section`.`name`, `att_department`.`name` FROM `att_section`,`att_department` WHERE `att_department`.`id`= `att_section`.`department_id`");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `att_section`.`id`, `att_section`.`name` FROM `att_section`");
         while (rs.next()) {
-            data.add(new Sections(rs.getInt(1), rs.getString(2), rs.getString(3)));
+            data.add(new Sections(rs.getInt(1), rs.getString(2)));
         }
         return data;
     }

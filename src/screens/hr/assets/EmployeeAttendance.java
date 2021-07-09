@@ -23,13 +23,14 @@ public class EmployeeAttendance {
     String earlyLeave;
     String empOvertime;
     String Statue;
+    String shiftCost;
     String salaryValue;
     String notes;
 
     public EmployeeAttendance() {
     }
 
-    public EmployeeAttendance(int empId, String empName, String date, String shiftName, String shiftStart, String shiftEnd, String empAttend, String empLeave, String empLate, String earlyLeave, String empOvertime, String Statue, String salaryValue, String notes) {
+    public EmployeeAttendance(int empId, String empName, String date, String shiftName, String shiftStart, String shiftEnd, String empAttend, String empLeave, String empLate, String earlyLeave, String empOvertime, String Statue, String shiftCost, String salaryValue, String notes) {
         this.empId = empId;
         this.empName = empName;
         this.date = date;
@@ -42,9 +43,11 @@ public class EmployeeAttendance {
         this.earlyLeave = earlyLeave;
         this.empOvertime = empOvertime;
         this.Statue = Statue;
+        this.shiftCost = shiftCost;
         this.salaryValue = salaryValue;
         this.notes = notes;
     }
+ 
 
     public String getEarlyLeave() {
         return earlyLeave;
@@ -158,6 +161,14 @@ public class EmployeeAttendance {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getShiftCost() {
+        return shiftCost;
+    }
+
+    public void setShiftCost(String shiftCost) {
+        this.shiftCost = shiftCost;
     }
 
 }

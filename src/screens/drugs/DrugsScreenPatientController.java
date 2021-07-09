@@ -176,7 +176,7 @@ public class DrugsScreenPatientController
     ObservableList<DrugsPatients> items;
 
     public void initialize(URL url, ResourceBundle rb) {
-         patientDateOfBirth.setConverter(new StringConverter<LocalDate>() {
+        patientDateOfBirth.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -433,6 +433,9 @@ public class DrugsScreenPatientController
         } else {
             this.progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                DrugsPatients patient = new DrugsPatients();
+
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
                         protected Void call() throws Exception {
@@ -449,7 +452,6 @@ public class DrugsScreenPatientController
                                             Optional<ButtonType> result = alert.showAndWait();
                                             if (result.get() == ButtonType.OK) {
                                                 if (DrugsScreenPatientController.this.patientPhoto.getText().isEmpty() || DrugsScreenPatientController.this.patientPhoto.getText() == null) {
-                                                    DrugsPatients patient = new DrugsPatients();
                                                     patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
                                                     patient.setName(DrugsScreenPatientController.this.patientName.getText());
                                                     patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
@@ -465,8 +467,8 @@ public class DrugsScreenPatientController
                                                     patient.setTele2(DrugsScreenPatientController.this.patientTele2.getText());
                                                     patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
                                                     patient.Edite();
+                                                    isDone = true;
                                                 } else {
-                                                    DrugsPatients patient = new DrugsPatients();
                                                     patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
                                                     patient.setName(DrugsScreenPatientController.this.patientName.getText());
                                                     patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
@@ -487,10 +489,12 @@ public class DrugsScreenPatientController
                                                     patient.setPhotoExt(st[st.length - 1]);
                                                     patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
                                                     patient.EditeWithPhoto();
+                                                    isDone = true;
                                                 }
                                             }
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -505,9 +509,14 @@ public class DrugsScreenPatientController
                 }
 
                 protected void succeeded() {
-                    DrugsScreenPatientController.this.clear();
-                    DrugsScreenPatientController.this.getDataToTable();
-                    DrugsScreenPatientController.this.progress.setVisible(false);
+                    if (isDone) {
+                        clear();
+                    } else {
+                        clear(patient);
+                    }
+
+                    getDataToTable();
+                    progress.setVisible(false);
                     super.succeeded();
                 }
             };
@@ -522,6 +531,9 @@ public class DrugsScreenPatientController
         } else {
             this.progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
+                boolean isDone = false;
+                DrugsPatients patient = new DrugsPatients();
+
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
                         protected Void call() throws Exception {
@@ -531,7 +543,6 @@ public class DrugsScreenPatientController
                                     try {
                                         try {
                                             if (DrugsScreenPatientController.this.patientPhoto.getText().isEmpty() || DrugsScreenPatientController.this.patientPhoto.getText() == null) {
-                                                DrugsPatients patient = new DrugsPatients();
                                                 patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
                                                 patient.setName(DrugsScreenPatientController.this.patientName.getText());
                                                 patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
@@ -547,8 +558,8 @@ public class DrugsScreenPatientController
                                                 patient.setTele2(DrugsScreenPatientController.this.patientTele2.getText());
                                                 patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
                                                 patient.Add();
+                                                isDone = true;
                                             } else {
-                                                DrugsPatients patient = new DrugsPatients();
                                                 patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
                                                 patient.setName(DrugsScreenPatientController.this.patientName.getText());
                                                 patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
@@ -569,6 +580,7 @@ public class DrugsScreenPatientController
                                                 patient.setPhotoExt(st[st.length - 1]);
                                                 patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
                                                 patient.AddWithPhoto();
+                                                isDone = true;
                                             }
                                             DrugsAccounts da = new DrugsAccounts();
                                             da.setId(Integer.parseInt(DrugsAccounts.getAutoNum()));
@@ -577,8 +589,10 @@ public class DrugsScreenPatientController
                                             da.setTotal_spended("0");
                                             da.setRemaining("0");
                                             da.Add();
+                                            isDone = true;
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            isDone = false;
                                         }
                                     } finally {
                                         latch.countDown();
@@ -593,9 +607,13 @@ public class DrugsScreenPatientController
                 }
 
                 protected void succeeded() {
-                    DrugsScreenPatientController.this.clear();
-                    DrugsScreenPatientController.this.getDataToTable();
-                    DrugsScreenPatientController.this.progress.setVisible(false);
+                    if (isDone) {
+                        clear();
+                    } else {
+                        clear(patient);
+                    }
+                    getDataToTable();
+                    progress.setVisible(false);
                     super.succeeded();
                 }
             };
@@ -607,6 +625,9 @@ public class DrugsScreenPatientController
     private void patientDelete(ActionEvent event) {
         this.progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean isDone = false;
+            DrugsPatients patient = new DrugsPatients();
+
             protected Task<Void> createTask() {
                 return new Task<Void>() {
                     protected Void call() throws Exception {
@@ -622,16 +643,17 @@ public class DrugsScreenPatientController
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            DrugsPatients patient = new DrugsPatients();
                                             patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
                                             patient.Delete();
                                             DrugsAccounts da = new DrugsAccounts();
                                             da.setPaitent_id(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
                                             da.Delete();
+                                            isDone = true;
                                         }
 
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
+                                        isDone = false;
                                     }
                                 } finally {
                                     latch.countDown();
@@ -646,9 +668,13 @@ public class DrugsScreenPatientController
             }
 
             protected void succeeded() {
-                DrugsScreenPatientController.this.clear();
-                DrugsScreenPatientController.this.getDataToTable();
-                DrugsScreenPatientController.this.progress.setVisible(false);
+                if (isDone) {
+                    clear();
+                } else {
+                    clear(patient);
+                }
+                getDataToTable();
+                progress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -678,6 +704,41 @@ public class DrugsScreenPatientController
         this.patientTransName.getSelectionModel().clearSelection();
         this.patientTele1.setText("");
         this.patientTele2.setText("");
+        this.patientAdd.setDisable(false);
+        this.patientEdite.setDisable(true);
+        this.patientDelete.setDisable(true);
+        this.patientNew.setDisable(true);
+    }
+
+    private void clear(DrugsPatients pa) {
+        setAutoNumber();
+        this.patientName.setText(pa.getName());
+        this.patientAddress.setText(pa.getAddress());
+        this.patientAge.setText(pa.getAge());
+        this.patientNational.setText(pa.getNational_id());
+        this.patientGiagnose.setText(pa.getDiagnosis());
+
+        ObservableList<TransferOrganization> items = this.patientTransName.getItems();
+        for (TransferOrganization a : items) {
+            if (a.getName().equals(pa.getTranportOrg())) {
+                this.patientTransName.getSelectionModel().select(a);
+            }
+        }
+        ObservableList<Doctors> items1 = this.patientDoctor.getItems();
+        for (Doctors a : items1) {
+            if (a.getId() == pa.getDoctor_id()) {
+                this.patientDoctor.getSelectionModel().select(a);
+            }
+        }
+        try {
+
+            this.patientDateOfBirth.setValue(LocalDate.parse(pa.getDateOfBirth()));
+        } catch (Exception e) {
+        }
+        this.patientGovernment.setText(pa.getGovernment());
+        this.patientGender.getSelectionModel().select(pa.getGender());
+        this.patientTele1.setText(pa.getTele1());
+        this.patientTele2.setText(pa.getTele2());
         this.patientAdd.setDisable(false);
         this.patientEdite.setDisable(true);
         this.patientDelete.setDisable(true);
@@ -1179,5 +1240,53 @@ public class DrugsScreenPatientController
                 }
             }
         }
+    }
+
+    @FXML
+    private void setBirthDateFromNational(KeyEvent event) {
+        if (patientNational.getText().length() == 14) {
+            String national = patientNational.getText();
+            String year;
+            if (national.substring(0, 1).equals("2")) {
+                year = "19" + national.substring(1, 3);
+            } else {
+                year = "20" + national.substring(1, 3);
+            }
+            String month = national.substring(3, 5);
+            String day = national.substring(5, 7);
+            patientDateOfBirth.setValue(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day)));
+        }
+    }
+
+    @FXML
+    private void setAgeFromBirth(ActionEvent event) {
+        LocalDate lo = LocalDate.now();
+        patientAge.setText(Integer.toString(lo.getYear() - patientDateOfBirth.getValue().getYear()));
+    }
+
+    @FXML
+    private void setBithdateFromAge(KeyEvent event) {
+        LocalDate lo = LocalDate.now();
+        patientDateOfBirth.setValue(LocalDate.of(lo.getYear() - Integer.parseInt(patientAge.getText()), lo.getMonth(), lo.getDayOfMonth()));
+    }
+
+    @FXML
+    private void setBirthDateFromNational(ActionEvent event) { if (patientNational.getText().length() == 14) {
+            String national = patientNational.getText();
+            String year;
+            if (national.substring(0, 1).equals("2")) {
+                year = "19" + national.substring(1, 3);
+            } else {
+                year = "20" + national.substring(1, 3);
+            }
+            String month = national.substring(3, 5);
+            String day = national.substring(5, 7);
+            patientDateOfBirth.setValue(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day)));
+        }
+    }
+
+    @FXML
+    private void setBithdateFromAge(ActionEvent event) { LocalDate lo = LocalDate.now();
+        patientDateOfBirth.setValue(LocalDate.of(lo.getYear() - Integer.parseInt(patientAge.getText()), lo.getMonth(), lo.getDayOfMonth()));
     }
 }

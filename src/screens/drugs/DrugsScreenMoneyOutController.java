@@ -75,7 +75,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         date.setConverter(new StringConverter<LocalDate>() {
+        date.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -151,7 +151,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
                 date.setValue(LocalDate.parse(selected.getDate()));
                 ObservableList<DrugsPatientsEscort> items1 = escort.getItems();
                 for (DrugsPatientsEscort a : items1) {
-                    if (a.getName().equals(selected.getEscort_name())) {
+                    if (a.getId()==Integer.parseInt(selected.getEscort_name())) {
                         escort.getSelectionModel().select(a);
                     }
                 }
@@ -363,7 +363,12 @@ public class DrugsScreenMoneyOutController implements Initializable {
                                         d.setId(Integer.parseInt(id.getText()));
                                         d.setDate(date.getValue().format(format));
                                         d.setAmount(totalRemaining.getText());
-                                        d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+
+                                        if (escort.getSelectionModel().getSelectedIndex() == -1) {
+
+                                        } else {
+                                            d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                        }
                                         d.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
                                         d.Delete();
                                     }
@@ -421,7 +426,11 @@ public class DrugsScreenMoneyOutController implements Initializable {
                                         d.setId(Integer.parseInt(id.getText()));
                                         d.setDate(date.getValue().format(format));
                                         d.setAmount(totalRemaining.getText());
-                                        d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                        if (escort.getSelectionModel().getSelectedIndex() == -1) {
+
+                                        } else {
+                                            d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                        }
                                         d.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
                                         d.Edite();
                                     }
@@ -472,7 +481,11 @@ public class DrugsScreenMoneyOutController implements Initializable {
                                     d.setId(Integer.parseInt(id.getText()));
                                     d.setDate(date.getValue().format(format));
                                     d.setAmount(totalRemaining.getText());
-                                    d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                    if (escort.getSelectionModel().getSelectedIndex() == -1) {
+
+                                    } else {
+                                        d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                    }
                                     d.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
                                     d.Add();
                                 } catch (Exception ex) {

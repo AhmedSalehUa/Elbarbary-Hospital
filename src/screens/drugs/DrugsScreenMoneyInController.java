@@ -80,7 +80,7 @@ public class DrugsScreenMoneyInController
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         date.setConverter(new StringConverter<LocalDate>() {
+        date.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -145,7 +145,7 @@ public class DrugsScreenMoneyInController
                 date.setValue(LocalDate.parse(selected.getDate()));
                 ObservableList<DrugsPatientsEscort> items1 = escort.getItems();
                 for (DrugsPatientsEscort a : items1) {
-                    if (a.getName().equals(selected.getEscort_name())) {
+                    if (a.getId()==Integer.parseInt(selected.getEscort_name())) {
                         escort.getSelectionModel().select(a);
                     }
                 }
@@ -248,7 +248,7 @@ public class DrugsScreenMoneyInController
     }
 
     private void fillEscortCombo(int patientId) {
-         try {
+        try {
             escort.setItems(DrugsPatientsEscort.getData(Integer.toString(patientId)));
             escort.setConverter(new StringConverter<DrugsPatientsEscort>() {
                 @Override
@@ -312,160 +312,168 @@ public class DrugsScreenMoneyInController
 
     @FXML
     private void delete(ActionEvent event) {
-        if (this.escort.getSelectionModel().getSelectedIndex() == -1) {
-            AlertDialogs.showError("اختار المرافق مودع المبلغ اولا");
-        } else {
-            this.progress.setVisible(true);
-            Service<Void> service = new Service<Void>() {
-                protected Task<Void> createTask() {
-                    return new Task<Void>() {
-                        protected Void call() throws Exception {
-                            final CountDownLatch latch = new CountDownLatch(1);
-                            Platform.runLater(new Runnable() {
-                                public void run() {
-                                    try {
-                                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                                        alert.setTitle("Deleting  لايداع");
-                                        alert.setHeaderText("سيتم حذف لايداع ");
-                                        alert.setContentText("هل انت متاكد؟");
+//        if (this.escort.getSelectionModel().getSelectedIndex() == -1) {
+//            AlertDialogs.showError("اختار المرافق مودع المبلغ اولا");
+//        } else {
+        this.progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    protected Void call() throws Exception {
+                        final CountDownLatch latch = new CountDownLatch(1);
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+                                try {
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle("Deleting  لايداع");
+                                    alert.setHeaderText("سيتم حذف لايداع ");
+                                    alert.setContentText("هل انت متاكد؟");
 
-                                        Optional<ButtonType> result = alert.showAndWait();
-                                        if (result.get() == ButtonType.OK) {
-                                            DrugsMoneyIn mo = new DrugsMoneyIn();
-                                            mo.setId(Integer.parseInt(id.getText()));
-                                            mo.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
-                                            mo.setAmount(amount.getText());
-                                            mo.Delete();
-                                        }
-                                    } catch (Exception ex) {
-                                        AlertDialogs.showErrors(ex);
-                                    } finally {
-                                        latch.countDown();
-                                    }
-                                }
-                            });
-
-                            latch.await();
-
-                            return null;
-                        }
-                    };
-                }
-
-                protected void succeeded() {
-                    progress.setVisible(false);
-                    clear();
-                    getData(patient.getSelectionModel().getSelectedItem().getId());
-                    updateParent();
-                    super.succeeded();
-                }
-            };
-            service.start();
-        }
-    }
-
-    @FXML
-    private void edite(ActionEvent event) {
-        if (escort.getSelectionModel().getSelectedIndex() == -1) {
-            AlertDialogs.showError("اختار المرافق مودع المبلغ اولا");
-        } else {
-            progress.setVisible(true);
-            Service<Void> service = new Service<Void>() {
-                protected Task<Void> createTask() {
-                    return new Task<Void>() {
-                        protected Void call() throws Exception {
-                            final CountDownLatch latch = new CountDownLatch(1);
-                            Platform.runLater(new Runnable() {
-                                public void run() {
-                                    try {
-                                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                                        alert.setTitle("Editing  لايداع");
-                                        alert.setHeaderText("سيتم تعديل لايداع ");
-                                        alert.setContentText("هل انت متاكد؟");
-
-                                        Optional<ButtonType> result = alert.showAndWait();
-                                        if (result.get() == ButtonType.OK) {
-                                            DrugsMoneyIn mo = new DrugsMoneyIn();
-                                            mo.setId(Integer.parseInt(id.getText()));
-                                            mo.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
-                                            mo.setAmount(amount.getText());
-                                            mo.setDate(date.getValue().format(DrugsScreenMoneyInController.this.format));
-                                            mo.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
-                                            mo.Edite();
-                                        }
-                                    } catch (Exception ex) {
-                                        AlertDialogs.showErrors(ex);
-                                    } finally {
-                                        latch.countDown();
-                                    }
-                                }
-                            });
-
-                            latch.await();
-
-                            return null;
-                        }
-                    };
-                }
-
-                protected void succeeded() {
-                    progress.setVisible(false);
-                    clear();
-                    getData(patient.getSelectionModel().getSelectedItem().getId());
-                    updateParent();
-                    super.succeeded();
-                }
-            };
-            service.start();
-        }
-    }
-
-    @FXML
-    private void add(ActionEvent event) {
-        if (escort.getSelectionModel().getSelectedIndex() == -1) {
-            AlertDialogs.showError("اختار المرافق مودع المبلغ اولا");
-        } else {
-            progress.setVisible(true);
-            Service<Void> service = new Service<Void>() {
-                protected Task<Void> createTask() {
-                    return new Task<Void>() {
-                        protected Void call() throws Exception {
-                            final CountDownLatch latch = new CountDownLatch(1);
-                            Platform.runLater(new Runnable() {
-                                public void run() {
-                                    try {
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == ButtonType.OK) {
                                         DrugsMoneyIn mo = new DrugsMoneyIn();
                                         mo.setId(Integer.parseInt(id.getText()));
                                         mo.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
                                         mo.setAmount(amount.getText());
-                                        mo.setDate(date.getValue().format(format));
-                                        mo.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
-                                        mo.Add();
-                                    } catch (Exception ex) {
-                                        AlertDialogs.showErrors(ex);
-                                    } finally {
-                                        latch.countDown();
+                                        mo.Delete();
                                     }
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
                                 }
-                            });
+                            }
+                        });
 
-                            latch.await();
+                        latch.await();
 
-                            return null;
-                        }
-                    };
-                }
+                        return null;
+                    }
+                };
+            }
 
-                protected void succeeded() {
-                    progress.setVisible(false);
-                    clear();
-                    getData(((DrugsPatients) DrugsScreenMoneyInController.this.patient.getSelectionModel().getSelectedItem()).getId());
-                    updateParent();
-                    super.succeeded();
-                }
-            };
-            service.start();
-        }
+            protected void succeeded() {
+                progress.setVisible(false);
+                clear();
+                getData(patient.getSelectionModel().getSelectedItem().getId());
+                updateParent();
+                super.succeeded();
+            }
+        };
+        service.start();
+//        }
+    }
+
+    @FXML
+    private void edite(ActionEvent event) {
+//        if (escort.getSelectionModel().getSelectedIndex() == -1) {
+//            AlertDialogs.showError("اختار المرافق مودع المبلغ اولا");
+//        } else {
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    protected Void call() throws Exception {
+                        final CountDownLatch latch = new CountDownLatch(1);
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+                                try {
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle("Editing  لايداع");
+                                    alert.setHeaderText("سيتم تعديل لايداع ");
+                                    alert.setContentText("هل انت متاكد؟");
+
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == ButtonType.OK) {
+                                        DrugsMoneyIn mo = new DrugsMoneyIn();
+                                        mo.setId(Integer.parseInt(id.getText()));
+                                        if (escort.getSelectionModel().getSelectedIndex() == -1) {
+
+                                        } else {
+                                            mo.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                        }
+                                        mo.setAmount(amount.getText());
+                                        mo.setDate(date.getValue().format(DrugsScreenMoneyInController.this.format));
+                                        mo.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                        mo.Edite();
+                                    }
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+                            }
+                        });
+
+                        latch.await();
+
+                        return null;
+                    }
+                };
+            }
+
+            protected void succeeded() {
+                progress.setVisible(false);
+                clear();
+                getData(patient.getSelectionModel().getSelectedItem().getId());
+                updateParent();
+                super.succeeded();
+            }
+        };
+        service.start();
+//        }
+    }
+
+    @FXML
+    private void add(ActionEvent event) {
+//        if (escort.getSelectionModel().getSelectedIndex() == -1) {
+//            AlertDialogs.showError("اختار المرافق مودع المبلغ اولا");
+//        } else {
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    protected Void call() throws Exception {
+                        final CountDownLatch latch = new CountDownLatch(1);
+                        Platform.runLater(new Runnable() {
+                            public void run() {
+                                try {
+                                    DrugsMoneyIn mo = new DrugsMoneyIn();
+                                    mo.setId(Integer.parseInt(id.getText()));
+                                    mo.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
+                                    mo.setAmount(amount.getText());
+                                    mo.setDate(date.getValue().format(format));
+                                    if (escort.getSelectionModel().getSelectedIndex() == -1) {
+
+                                    } else {
+                                        mo.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
+                                    }
+                                    mo.Add();
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } finally {
+                                    latch.countDown();
+                                }
+                            }
+                        });
+
+                        latch.await();
+
+                        return null;
+                    }
+                };
+            }
+
+            protected void succeeded() {
+                progress.setVisible(false);
+                clear();
+                getData(((DrugsPatients) DrugsScreenMoneyInController.this.patient.getSelectionModel().getSelectedItem()).getId());
+                updateParent();
+                super.succeeded();
+            }
+        };
+        service.start();
+//        }
     }
 
     @FXML

@@ -55,13 +55,15 @@ public class HrScreenIndividualReportController implements Initializable {
     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @FXML
     private ProgressIndicator progress;
+    @FXML
+    private Button pay;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         dateFrom.setConverter(new StringConverter<LocalDate>() {
+        dateFrom.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -80,7 +82,7 @@ public class HrScreenIndividualReportController implements Initializable {
                 return LocalDate.parse(dateString, dateTimeFormatter);
             }
         });
-          dateTo.setConverter(new StringConverter<LocalDate>() {
+        dateTo.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -122,7 +124,7 @@ public class HrScreenIndividualReportController implements Initializable {
 
             @Override
             protected void succeeded() {
-progress.setVisible(false);
+                progress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -193,7 +195,8 @@ progress.setVisible(false);
         if (emp.getSelectionModel().getSelectedIndex() == -1 || dateFrom.getValue() == null || dateTo.getValue() == null) {
 
             AlertDialogs.showError("اختار الفترة والموظف اولا");
-        } else {progress.setVisible(true);
+        } else {
+            progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
                 @Override
                 protected Task<Void> createTask() {
@@ -209,6 +212,7 @@ progress.setVisible(false);
                                         hash.put("salarys", "0");
                                         hash.put("solfs", "0");
                                         hash.put("remains", "0");
+                                        hash.put("reward", "0");
 
                                     } else {
                                         if (Integer.parseInt(selectedItem.getSalary()) != 0) {
@@ -216,12 +220,15 @@ progress.setVisible(false);
                                             double salary = oneDaye * Double.parseDouble(allSalary);
                                             System.out.println(salary);
                                             String solfa = db.get.getTableData("SELECT IFNULL(Sum(cast(`amount` as UNSIGNED)),'0') from `att_employee_solfa` WHERE `emp_id`='" + selectedItem.getId() + "'  and `date`>='" + dateFrom.getValue().format(format) + "'  and `date`<= '" + dateTo.getValue().format(format) + "'").getValueAt(0, 0).toString();
+                                           String reward = db.get.getTableData("SELECT IFNULL(Sum(cast(`amount` as UNSIGNED)),'0') from `att_employee_rewards` WHERE `emp_id`='" + selectedItem.getId() + "'  and `date`>='" + dateFrom.getValue().format(format) + "'  and `date`<= '" + dateTo.getValue().format(format) + "'").getValueAt(0, 0).toString();
                                             double remaining = salary - Double.parseDouble(solfa);
+                                            remaining += Double.parseDouble(reward);
                                             System.out.println(solfa);
                                             System.out.println(remaining);
                                             hash.put("salarys", Double.toString(salary));
                                             hash.put("solfs", solfa);
                                             hash.put("remains", Double.toString(remaining));
+                                            hash.put("reward", reward);
                                         }
                                     }
 
@@ -258,13 +265,18 @@ progress.setVisible(false);
                 }
 
                 @Override
-                protected void succeeded() { progress.setVisible(false);
+                protected void succeeded() {
+                    progress.setVisible(false);
                     super.succeeded();
                 }
             };
             service.start();
 
         }
+    }
+
+    @FXML
+    private void pay(ActionEvent event) {
     }
 
 }

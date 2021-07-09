@@ -30,11 +30,12 @@ public class Shifts {
     String isDaily;
     String lateTime;
     String earlyLeave;
+    String cost;
 
     public Shifts() {
     }
 
-    public Shifts(int id, String name, String overtime, String workdays, String startTime, String endTime, String isDaily, String lateTime, String earlyLeave) {
+    public Shifts(int id, String name, String overtime, String workdays, String startTime, String endTime, String isDaily, String lateTime, String earlyLeave, String cost) {
         this.id = id;
         this.name = name;
         this.overtime = overtime;
@@ -44,6 +45,7 @@ public class Shifts {
         this.isDaily = isDaily;
         this.lateTime = lateTime;
         this.earlyLeave = earlyLeave;
+        this.cost = cost;
     }
 
     public int getId() {
@@ -134,8 +136,16 @@ public class Shifts {
         this.earlyLeave = earlyLeave;
     }
 
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
+    }
+
     public boolean Add() throws Exception {
-        PreparedStatement ps = db.get.Prepare("INSERT INTO `att_shifts`(`id`, `name`, `overtime_id`, `working_days_id`, `start_time`, `end_time`, `in_same_day`, `late_time`, `early_time`) VALUES (?,?,?,?,?,?,?,?,?)");
+        PreparedStatement ps = db.get.Prepare("INSERT INTO `att_shifts`(`id`, `name`, `overtime_id`, `working_days_id`, `start_time`, `end_time`, `in_same_day`, `late_time`, `early_time`,`cost`) VALUES (?,?,?,?,?,?,?,?,?,?)");
         ps.setInt(1, id);
         ps.setString(2, name);
         ps.setInt(3, overtime_id);
@@ -145,13 +155,14 @@ public class Shifts {
         ps.setString(7, isDaily);
         ps.setString(8, lateTime);
         ps.setString(9, earlyLeave);
+        ps.setString(10, cost);
         ps.execute();
         return true;
     }
 
     public boolean Edite() throws Exception {
-        PreparedStatement ps = db.get.Prepare("UPDATE `att_shifts` SET `name`=?,`overtime_id`=?,`working_days_id`=?,`start_time`=?,`end_time`=?,`in_same_day`=?,`late_time`=?,`early_time`=? WHERE `id`=?");
-        ps.setInt(9, id);
+        PreparedStatement ps = db.get.Prepare("UPDATE `att_shifts` SET `name`=?,`overtime_id`=?,`working_days_id`=?,`start_time`=?,`end_time`=?,`in_same_day`=?,`late_time`=?,`early_time`=?,`cost`=? WHERE `id`=?");
+        ps.setInt(10, id);
         ps.setString(1, name);
         ps.setInt(2, overtime_id);
         ps.setInt(3, workdays_id);
@@ -160,6 +171,7 @@ public class Shifts {
         ps.setString(6, isDaily);
         ps.setString(7, lateTime);
         ps.setString(8, earlyLeave);
+        ps.setString(9, cost);
         ps.execute();
         return true;
     }
@@ -173,17 +185,18 @@ public class Shifts {
 
     public static ObservableList<Shifts> getData() throws Exception {
         ObservableList<Shifts> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `att_shifts`.`id`, `att_shifts`.`name` as 'shift',`att_overtime`.`name` as 'overtime', `att_working_days`.`name` as 'workingdays', `att_shifts`.`start_time`, `att_shifts`.`end_time`, `att_shifts`.`in_same_day`, `att_shifts`.`late_time`, `att_shifts`.`early_time` FROM `att_shifts`,`att_working_days`,`att_overtime` WHERE `att_shifts`.`overtime_id`=`att_overtime`.`id` and `att_shifts`.`working_days_id` =`att_working_days`.`id`");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `att_shifts`.`id`, `att_shifts`.`name` as 'shift',`att_overtime`.`name` as 'overtime', `att_working_days`.`name` as 'workingdays', `att_shifts`.`start_time`, `att_shifts`.`end_time`, `att_shifts`.`in_same_day`, `att_shifts`.`late_time`, `att_shifts`.`early_time`,`att_shifts`.`cost` FROM `att_shifts`,`att_working_days`,`att_overtime` WHERE `att_shifts`.`overtime_id`=`att_overtime`.`id` and `att_shifts`.`working_days_id` =`att_working_days`.`id`");
         while (rs.next()) {
-            data.add(new Shifts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9)));
+            data.add(new Shifts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)));
         }
         return data;
     }
+
     public static ObservableList<Shifts> getData(int empId) throws Exception {
         ObservableList<Shifts> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `att_shifts`.`id`, `att_shifts`.`name` as 'shift',`att_overtime`.`name` as 'overtime', `att_working_days`.`name` as 'workingdays', `att_shifts`.`start_time`, `att_shifts`.`end_time`, `att_shifts`.`in_same_day`, `att_shifts`.`late_time`, `att_shifts`.`early_time` FROM `att_shifts`,`att_working_days`,`att_overtime` WHERE `att_shifts`.`overtime_id`=`att_overtime`.`id` and `att_shifts`.`working_days_id` =`att_working_days`.`id` and `att_shifts`.`id` in (SELECT `shift_id` from `att_employee_shifts` where `employee_id`='"+empId+"')");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `att_shifts`.`id`, `att_shifts`.`name` as 'shift',`att_overtime`.`name` as 'overtime', `att_working_days`.`name` as 'workingdays', `att_shifts`.`start_time`, `att_shifts`.`end_time`, `att_shifts`.`in_same_day`, `att_shifts`.`late_time`, `att_shifts`.`early_time`,`att_shifts`.`cost` FROM `att_shifts`,`att_working_days`,`att_overtime` WHERE `att_shifts`.`overtime_id`=`att_overtime`.`id` and `att_shifts`.`working_days_id` =`att_working_days`.`id` and `att_shifts`.`id` in (SELECT `shift_id` from `att_employee_shifts` where `employee_id`='" + empId + "')");
         while (rs.next()) {
-            data.add(new Shifts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9)));
+            data.add(new Shifts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10)));
         }
         return data;
     }

@@ -39,23 +39,17 @@ public class HrScreenMainScreenController implements Initializable {
 
     Preferences prefs;
     @FXML
-    private Button employee;
+    private Button employee; 
     @FXML
-    private Button department;
-    @FXML
-    private Button shifts;
-    @FXML
-    private Button organization;
+    private Button shifts; 
     @FXML
     private Button sections;
  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
-        new ZoomInRight(employee).play();
-        new ZoomInRight(department).play();
-        new ZoomInRight(shifts).play();
-        new ZoomInLeft(organization).play();
+        new ZoomInRight(employee).play(); 
+        new ZoomInRight(shifts).play(); 
         new ZoomInLeft(sections).play();
 
     }
@@ -79,25 +73,7 @@ public class HrScreenMainScreenController implements Initializable {
         }
 
     }
-
-    @FXML
-    private void openDepartment(ActionEvent event) {
-        try {
-            Parent mainMember = FXMLLoader.load(getClass().getResource(HrScreenDepartment));
-            mainMember.getStylesheets().add(getClass().getResource("/assets/styles/" + prefs.get(THEME, DEFAULT_THEME) + ".css").toExternalForm());
-            Scene sc = new Scene(mainMember);
-            Stage st = new Stage();
-            st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (الموظفين)");
-            st.setScene(sc);
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            st.setX((screenBounds.getWidth() - 1360) / 2);
-            st.setY((screenBounds.getHeight() - 760) / 2);
-            st.show();
-        } catch (IOException ex) {
-            AlertDialogs.showErrors(ex);
-        }
-    }
+ 
 
     @FXML
     private void openShifts(ActionEvent event) {
@@ -117,25 +93,7 @@ public class HrScreenMainScreenController implements Initializable {
             AlertDialogs.showErrors(ex);
         }
     }
-
-    @FXML
-    private void openOrganization(ActionEvent event) {
-        try {
-            Parent mainMember = FXMLLoader.load(getClass().getResource(HrScreenOrganization));
-            mainMember.getStylesheets().add(getClass().getResource("/assets/styles/" + prefs.get(THEME, DEFAULT_THEME) + ".css").toExternalForm());
-            Scene sc = new Scene(mainMember);
-            Stage st = new Stage();
-            st.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/logo.png")));
-            st.setTitle("Elbarbary Hospital (الموظفين)");
-            st.setScene(sc);
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            st.setX((screenBounds.getWidth() - 1360) / 2);
-            st.setY((screenBounds.getHeight() - 760) / 2);
-            st.show();
-        } catch (IOException ex) {
-            AlertDialogs.showErrors(ex);
-        }
-    }
+ 
 
     @FXML
     private void openSections(ActionEvent event) {

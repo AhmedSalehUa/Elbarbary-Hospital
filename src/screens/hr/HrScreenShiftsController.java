@@ -102,6 +102,10 @@ public class HrScreenShiftsController implements Initializable {
     private Button formEdite;
     @FXML
     private Button formAdd;
+    @FXML
+    private TextField shiftCost;
+    @FXML
+    private TableColumn<Shifts, String> shiftTabCost;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -174,6 +178,8 @@ public class HrScreenShiftsController implements Initializable {
 
                 shiftStartTime.setValue(LocalTime.parse(selected.getStartTime()));
 
+                shiftCost.setText(selected.getCost());
+                
                 ObservableList<Workdays> items1 = shiftWorkdays.getItems();
                 for (Workdays a : items1) {
                     if (a.getName().equals(selected.getWorkdays())) {
@@ -191,6 +197,8 @@ public class HrScreenShiftsController implements Initializable {
     }
 
     private void intialColumn() {
+        shiftTabCost.setCellValueFactory(new PropertyValueFactory<>("cost"));
+
         shiftTabWorkDays.setCellValueFactory(new PropertyValueFactory<>("workdays"));
 
         shiftTabOvertme.setCellValueFactory(new PropertyValueFactory<>("overtime"));
@@ -226,6 +234,8 @@ public class HrScreenShiftsController implements Initializable {
             shiftLateTime.setText("");
 
             shiftEarlyLeave.setText("");
+            
+            shiftCost.setText("");
 
             shiftWorkdays.getSelectionModel().clearSelection();
 
@@ -472,6 +482,7 @@ public class HrScreenShiftsController implements Initializable {
                                         sh.setIsDaily(Boolean.toString(shiftIsDaily.isSelected()));
                                         sh.setLateTime(shiftLateTime.getText());
                                         sh.setEarlyLeave(shiftEarlyLeave.getText());
+                                        sh.setCost(shiftCost.getText());
                                         sh.Edite();
                                     }
                                 } catch (Exception ex) {
@@ -526,6 +537,7 @@ public class HrScreenShiftsController implements Initializable {
                                     sh.setIsDaily(Boolean.toString(shiftIsDaily.isSelected()));
                                     sh.setLateTime(shiftLateTime.getText());
                                     sh.setEarlyLeave(shiftEarlyLeave.getText());
+                                     sh.setCost(shiftCost.getText());
                                     sh.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);

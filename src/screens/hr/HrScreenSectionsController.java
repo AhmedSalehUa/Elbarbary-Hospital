@@ -50,9 +50,7 @@ public class HrScreenSectionsController implements Initializable {
     @FXML
     private JFXTextField search;
     @FXML
-    private TableView<Sections> secTable;
-    @FXML
-    private TableColumn<Sections, String> secTabOrg;
+    private TableView<Sections> secTable; 
     @FXML
     private TableColumn<Sections, String> secTabName;
     @FXML
@@ -60,9 +58,7 @@ public class HrScreenSectionsController implements Initializable {
     @FXML
     private Label secId;
     @FXML
-    private TextField secName;
-    @FXML
-    private ComboBox<Department> secDep;
+    private TextField secName; 
     @FXML
     private ProgressIndicator progress;
     @FXML
@@ -92,7 +88,7 @@ public class HrScreenSectionsController implements Initializable {
                                     clear();
                                     intialColumn();
                                     getData();
-                                    fillCombo();
+                                    
 
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
@@ -133,20 +129,13 @@ public class HrScreenSectionsController implements Initializable {
                 secId.setText(Integer.toString(selected.getId()));
                 secName.setText(selected.getName());
 
-                ObservableList<Department> items1 = secDep.getItems();
-                for (Department a : items1) {
-                    if (a.getName().equals(selected.getDepartment())) {
-                        secDep.getSelectionModel().select(a);
-                    }
-                }
+                
             }
         });
 
     }
 
-    private void intialColumn() {
-        secTabOrg.setCellValueFactory(new PropertyValueFactory<>("department"));
-
+    private void intialColumn() { 
         secTabName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         secTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -162,9 +151,7 @@ public class HrScreenSectionsController implements Initializable {
             secEdite.setDisable(true);
 
             secAdd.setDisable(false);
-
-            secDep.getSelectionModel().clearSelection();
-            
+ 
             secName.setText("");
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
@@ -184,51 +171,7 @@ public class HrScreenSectionsController implements Initializable {
         }
     }
     ObservableList<Sections> items;
-
-    private void fillCombo() throws Exception {
-        secDep.setItems(Department.getData());
-        secDep.setConverter(new StringConverter<Department>() {
-            @Override
-            public String toString(Department patient) {
-                return patient.getName();
-            }
-
-            @Override
-            public Department fromString(String string) {
-                return null;
-            }
-        });
-        secDep.setCellFactory(cell -> new ListCell<Department>() {
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-
-            {
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-
-            }
-
-            @Override
-            protected void updateItem(Department person, boolean empty) {
-                super.updateItem(person, empty);
-
-                if (!empty && person != null) {
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-                    setGraphic(gridPane);
-                } else {
-
-                    setGraphic(null);
-                }
-            }
-        });
-    }
+ 
 
     @FXML
     private void search(KeyEvent event) {
@@ -334,8 +277,7 @@ public class HrScreenSectionsController implements Initializable {
                                         Sections sec = new Sections();
                                         sec.setId(Integer.parseInt(secId.getText()));
                                         sec.setName(secName.getText());
-                                        sec.setDept_id(secDep.getSelectionModel().getSelectedItem().getId());
-                                        sec.Edite();
+                                         sec.Edite();
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
@@ -382,8 +324,7 @@ public class HrScreenSectionsController implements Initializable {
                                     Sections sec = new Sections();
                                     sec.setId(Integer.parseInt(secId.getText()));
                                     sec.setName(secName.getText());
-                                    sec.setDept_id(secDep.getSelectionModel().getSelectedItem().getId());
-                                    sec.Add();
+                                     sec.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
                                 } finally {

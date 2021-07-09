@@ -29,52 +29,56 @@
 	<parameter name="solfs" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="remains" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="emp_name" class="java.lang.String"/>
+	<parameter name="reward" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT * FROM `att_report` WHERE `emp_id`=$P{emp}  and `date`>=$P{date_from}  and `date`<= $P{date_to} ORDER BY `date`]]>
+		<![CDATA[SELECT * FROM `att_report` WHERE `emp_id`=$P{emp}  and `date`>=$P{date_from}  and `date`<= $P{date_to} ORDER BY `date` ]]>
 	</queryString>
-	<field name="notes" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="statue" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="salary_calc" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="earlyLeave" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="late" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="overtime" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="emp_leave" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="emp_att" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="shift_end" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="shift_start" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="shift_name" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="date" class="java.sql.Date">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="emp_name" class="java.lang.String">
+	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="emp_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="id" class="java.lang.Integer">
+	<field name="emp_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shift_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shift_start" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shift_end" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="emp_att" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="emp_leave" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="overtime" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="late" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="earlyLeave" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shiftCost" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="salary_calc" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="statue" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="notes" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<title>
@@ -89,7 +93,7 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="71" splitType="Stretch">
+		<band height="85" splitType="Stretch">
 			<staticText>
 				<reportElement x="441" y="0" width="114" height="20" uuid="f507f6ec-f6c1-4d36-957f-bfe07521e04d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -126,7 +130,7 @@
 				<text><![CDATA[اجمالي المسحوبات خلال الفترة :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="153" y="40" width="132" height="20" uuid="c628d5e4-a520-417f-a297-4c73e5826f35"/>
+				<reportElement x="153" y="60" width="132" height="20" uuid="c628d5e4-a520-417f-a297-4c73e5826f35"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="15"/>
 				</textElement>
@@ -145,7 +149,7 @@
 				<textFieldExpression><![CDATA[$P{salarys}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="53" y="40" width="100" height="20" uuid="25097d24-3a1e-45b9-9454-f8a83f61203b"/>
+				<reportElement x="53" y="60" width="100" height="20" uuid="25097d24-3a1e-45b9-9454-f8a83f61203b"/>
 				<textFieldExpression><![CDATA[$P{remains}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -155,6 +159,17 @@
 			<textField>
 				<reportElement x="341" y="0" width="100" height="20" uuid="225f2d27-7951-4d32-ae63-3083d772c130"/>
 				<textFieldExpression><![CDATA[$P{emp_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="153" y="40" width="132" height="20" uuid="97a689ed-915f-4687-99eb-b94deb51ecb2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[اجمالي المكافأت خلال الفترة :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="53" y="40" width="100" height="20" uuid="0259a867-a0ab-4a01-8eec-f1107fc48265"/>
+				<textFieldExpression><![CDATA[$P{reward}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -173,92 +188,100 @@
 				<text><![CDATA[حالة المرتب]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="138" y="0" width="46" height="20" uuid="194e8ceb-e8c6-4ffc-ad40-8a0c3e0670dc"/>
+				<reportElement style="style1" x="184" y="0" width="46" height="20" uuid="194e8ceb-e8c6-4ffc-ad40-8a0c3e0670dc"/>
 				<text><![CDATA[انصراف مبكر]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="184" y="0" width="46" height="20" uuid="9f2911bc-7886-4a85-9e82-148921ca4956"/>
+				<reportElement style="style1" x="230" y="0" width="46" height="20" uuid="9f2911bc-7886-4a85-9e82-148921ca4956"/>
 				<text><![CDATA[التاخير]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="230" y="0" width="46" height="20" uuid="71a6955f-b30d-4e59-80a5-75a52bceb767"/>
+				<reportElement style="style1" x="276" y="0" width="46" height="20" uuid="71a6955f-b30d-4e59-80a5-75a52bceb767"/>
 				<text><![CDATA[العمل الاضافي]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="276" y="0" width="46" height="20" uuid="e150e81b-9254-4ade-98ef-de09333cac53"/>
-				<text><![CDATA[emp_leave]]></text>
+				<reportElement style="style1" x="322" y="0" width="37" height="20" uuid="e150e81b-9254-4ade-98ef-de09333cac53"/>
+				<text><![CDATA[الانصراف]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="322" y="0" width="46" height="20" uuid="5023cc8d-0ae5-40f2-abe1-47b82b7c11ff"/>
+				<reportElement style="style1" x="359" y="0" width="37" height="20" uuid="5023cc8d-0ae5-40f2-abe1-47b82b7c11ff"/>
 				<text><![CDATA[الحضور]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="368" y="0" width="46" height="20" uuid="fa434d74-c5f2-45b5-8504-0fd865444678"/>
+				<reportElement style="style1" x="396" y="0" width="37" height="20" uuid="fa434d74-c5f2-45b5-8504-0fd865444678"/>
 				<text><![CDATA[نهاية الحضور]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="414" y="0" width="46" height="20" uuid="7f6d4104-dcd9-4d81-98e2-bfb700812617"/>
+				<reportElement style="style1" x="433" y="0" width="37" height="20" uuid="7f6d4104-dcd9-4d81-98e2-bfb700812617"/>
 				<text><![CDATA[بداية الحضور]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="460" y="0" width="46" height="20" uuid="7d44630b-5489-44dd-b741-cc3df32333d9"/>
+				<reportElement style="style1" x="470" y="0" width="39" height="20" uuid="7d44630b-5489-44dd-b741-cc3df32333d9"/>
 				<text><![CDATA[اسم الميعاد]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="style1" x="506" y="0" width="46" height="20" uuid="7580fb55-ea70-4cf8-8642-f2473181aa55"/>
+				<reportElement style="style1" x="509" y="0" width="46" height="20" uuid="7580fb55-ea70-4cf8-8642-f2473181aa55"/>
 				<text><![CDATA[التاريخ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="138" y="0" width="46" height="20" uuid="b889a61a-ee85-41f3-852f-e26a106932c5"/>
+				<text><![CDATA[سعر الشيفت]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="0" y="0" width="46" height="20" uuid="31083b90-1fbb-4bfd-9411-dffbdb5e92a3"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="46" height="20" uuid="31083b90-1fbb-4bfd-9411-dffbdb5e92a3"/>
 				<textFieldExpression><![CDATA[$F{notes}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="46" y="0" width="46" height="20" uuid="4f4348fa-5834-469b-9ff1-3302e36950e8"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="46" y="0" width="46" height="20" uuid="4f4348fa-5834-469b-9ff1-3302e36950e8"/>
 				<textFieldExpression><![CDATA[$F{statue}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="92" y="0" width="46" height="20" uuid="8c8a351d-7d82-4207-89f3-313445367fc1"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="92" y="0" width="46" height="20" uuid="8c8a351d-7d82-4207-89f3-313445367fc1"/>
 				<textFieldExpression><![CDATA[$F{salary_calc}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="138" y="0" width="46" height="20" uuid="0c28499d-64ea-4c7a-984c-1da2980cde03"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="184" y="0" width="46" height="20" uuid="0c28499d-64ea-4c7a-984c-1da2980cde03"/>
 				<textFieldExpression><![CDATA[$F{earlyLeave}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="184" y="0" width="46" height="20" uuid="e93f9902-1f6b-492e-bc39-32162f4db195"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="230" y="0" width="46" height="20" uuid="e93f9902-1f6b-492e-bc39-32162f4db195"/>
 				<textFieldExpression><![CDATA[$F{late}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="230" y="0" width="46" height="20" uuid="c576cfcc-e92e-4b14-aecd-96a767d8490a"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="276" y="0" width="46" height="20" uuid="c576cfcc-e92e-4b14-aecd-96a767d8490a"/>
 				<textFieldExpression><![CDATA[$F{overtime}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="276" y="0" width="46" height="20" uuid="e7370979-17e6-4a4a-b2b1-2986a778859f"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="322" y="0" width="37" height="20" uuid="e7370979-17e6-4a4a-b2b1-2986a778859f"/>
 				<textFieldExpression><![CDATA[$F{emp_leave}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="322" y="0" width="46" height="20" uuid="fee7aeb1-1810-451a-9101-343033e9a71f"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="359" y="0" width="37" height="20" uuid="fee7aeb1-1810-451a-9101-343033e9a71f"/>
 				<textFieldExpression><![CDATA[$F{emp_att}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="368" y="0" width="46" height="20" uuid="24387373-42bc-492b-a11e-2a6b1767065c"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="396" y="0" width="37" height="20" uuid="24387373-42bc-492b-a11e-2a6b1767065c"/>
 				<textFieldExpression><![CDATA[$F{shift_end}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="414" y="0" width="46" height="20" uuid="0ca4109e-b468-49ae-b854-9564a45d8b76"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="433" y="0" width="37" height="20" uuid="0ca4109e-b468-49ae-b854-9564a45d8b76"/>
 				<textFieldExpression><![CDATA[$F{shift_start}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="460" y="0" width="46" height="20" uuid="e7dae07c-317c-40da-bf1a-3aa0cd36cb45"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="470" y="0" width="39" height="20" uuid="e7dae07c-317c-40da-bf1a-3aa0cd36cb45"/>
 				<textFieldExpression><![CDATA[$F{shift_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement style="style2" positionType="Float" x="506" y="0" width="46" height="20" uuid="ce2bd8de-9c54-4a55-884c-7caa5c88ad28"/>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="509" y="0" width="46" height="20" uuid="ce2bd8de-9c54-4a55-884c-7caa5c88ad28"/>
 				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style2" positionType="Float" stretchType="RelativeToTallestObject" x="138" y="0" width="46" height="20" uuid="669cf787-fb78-402e-a01c-b4d2f589cef5"/>
+				<textFieldExpression><![CDATA[$F{shiftCost}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

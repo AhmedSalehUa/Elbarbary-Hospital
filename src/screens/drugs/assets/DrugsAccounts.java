@@ -118,6 +118,12 @@ public class DrugsAccounts {
         ps.execute();
         return true;
     }
+     public boolean DeleteByPatient() throws Exception {
+        PreparedStatement ps = get.Prepare("DELETE FROM `drg_accounts` WHERE `patient_id`=?");
+        ps.setInt(1, this.paitent_id);
+        ps.execute();
+        return true;
+    }
 
     public static ObservableList<DrugsAccounts> getData() throws Exception {
         ObservableList<DrugsAccounts> data = FXCollections.observableArrayList();

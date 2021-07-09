@@ -135,7 +135,7 @@ public class DrugsMoneyIn {
 
     public static ObservableList<DrugsMoneyIn> getData(int patient_id) throws Exception {
         ObservableList<DrugsMoneyIn> data = FXCollections.observableArrayList();
-        ResultSet rs = get.getReportCon().createStatement().executeQuery("SELECT `drg_money_in`.`id`,`drg_patient_escort`.`name` , `drg_money_in`.`amount`, `drg_money_in`.`date` FROM `drg_money_in`,`drg_patient_escort` WHERE `drg_money_in`.`escort_id`=`drg_patient_escort`.`id` and `drg_money_in`.`patient_id`='" + patient_id + "'");
+        ResultSet rs = get.getReportCon().createStatement().executeQuery("SELECT `drg_money_in`.`id`,`drg_money_in`.`escort_id` , `drg_money_in`.`amount`, `drg_money_in`.`date` FROM `drg_money_in` WHERE `drg_money_in`.`patient_id`='" + patient_id + "'");
         while (rs.next()) {
             data.add(new DrugsMoneyIn(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
         }
