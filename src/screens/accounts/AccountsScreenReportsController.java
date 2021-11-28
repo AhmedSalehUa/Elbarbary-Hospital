@@ -8,16 +8,15 @@ package screens.accounts;
 import assets.classes.AlertDialogs;
 import com.jfoenix.controls.JFXDatePicker;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -43,7 +42,6 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import screens.mainDataScreen.assets.Contract;
-import screens.mainDataScreen.assets.Patients;
 import screens.store.assets.Company;
 
 public class AccountsScreenReportsController implements Initializable {
@@ -247,108 +245,136 @@ public class AccountsScreenReportsController implements Initializable {
     }
 
     private void fillCombo() throws Exception {
-        company.setItems(Company.getData());
-        company.setConverter(new StringConverter<Company>() {
-            @Override
-            public String toString(Company patient) {
-                return patient.getName();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Company> data;
+            ObservableList<Contract> ContractData;
 
             @Override
-            public Company fromString(String string) {
-                return null;
-            }
-        });
-        company.setCellFactory(cell -> new ListCell<Company>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            data = Company.getData();
+                            ContractData = Contract.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-
-            }
-
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-            @Override
-            protected void updateItem(Company person, boolean empty) {
-                super.updateItem(person, empty);
-
-                if (!empty && person != null) {
-
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
-            }
-        });
-        contract.setItems(Contract.getData());
-        contract.setConverter(new StringConverter<Contract>() {
-            @Override
-            public String toString(Contract patient) {
-                return patient.getName();
             }
 
             @Override
-            public Contract fromString(String string) {
-                return null;
+            protected void succeeded() {
+                company.setItems(data);
+                company.setConverter(new StringConverter<Company>() {
+                    @Override
+                    public String toString(Company patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Company fromString(String string) {
+                        return null;
+                    }
+                });
+                company.setCellFactory(cell -> new ListCell<Company>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Company person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                contract.setItems(ContractData);
+                contract.setConverter(new StringConverter<Contract>() {
+                    @Override
+                    public String toString(Contract patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Contract fromString(String string) {
+                        return null;
+                    }
+                });
+                contract.setCellFactory(cell -> new ListCell<Contract>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Contract person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
-        contract.setCellFactory(cell -> new ListCell<Contract>() {
+        };
+        service.start();
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-
-            }
-
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-            @Override
-            protected void updateItem(Contract person, boolean empty) {
-                super.updateItem(person, empty);
-
-                if (!empty && person != null) {
-
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
-            }
-        });
     }
 
     @FXML

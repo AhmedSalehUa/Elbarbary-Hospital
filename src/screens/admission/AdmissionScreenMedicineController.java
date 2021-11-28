@@ -11,8 +11,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -39,7 +37,6 @@ import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import screens.admission.assets.Admission;
 import screens.admission.assets.AdmissionMedicines;
-import screens.admission.assets.AdmissionStatue;
 import screens.store.assets.StoreProdcts;
 
 /**
@@ -96,7 +93,6 @@ public class AdmissionScreenMedicineController implements Initializable {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
                         final CountDownLatch latch = new CountDownLatch(1);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -153,60 +149,89 @@ public class AdmissionScreenMedicineController implements Initializable {
     }
 
     private void fillCombo() throws Exception {
-        admissionMedicineMedicines.setItems(StoreProdcts.getDataForSell("2"));
-        admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
-            @Override
-            public String toString(StoreProdcts patient) {
-                return patient.getProduct();
-            }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<StoreProdcts> dataForSell;
 
             @Override
-            public StoreProdcts fromString(String string) {
-                return null;
-            }
-        });
-        admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblCost = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblCost, 2, 1);
+                            dataForSell = StoreProdcts.getDataForSell("2");
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(StoreProdcts person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                admissionMedicineMedicines.setItems(dataForSell);
+                admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
+                    @Override
+                    public String toString(StoreProdcts patient) {
+                        return patient.getProduct();
+                    }
 
-                if (!empty && person != null) {
+                    @Override
+                    public StoreProdcts fromString(String string) {
+                        return null;
+                    }
+                });
+                admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
 
-                    // Update our Labels
-                    lblid.setText("الكميةالمتاحة: " + person.getAmount());
-                    lblName.setText("الاسم: " + person.getProduct());
-                    lblCost.setText("سعر البيع: " + person.getCostOfSell());
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblCost = new Label();
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblCost, 2, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(StoreProdcts person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("الكميةالمتاحة: " + person.getAmount());
+                            lblName.setText("الاسم: " + person.getProduct());
+                            lblCost.setText("سعر البيع: " + person.getCostOfSell());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
+        };
+        service.start();
+
     }
 
     private void intialColumn() {
@@ -222,8 +247,37 @@ public class AdmissionScreenMedicineController implements Initializable {
     }
 
     private void getData() throws Exception {
-        admissionMedicineTable.setItems(AdmissionMedicines.getData(admission.getId()));
-        items = admissionMedicineTable.getItems();
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<AdmissionMedicines> data;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            data = AdmissionMedicines.getData(admission.getId());
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                admissionMedicineTable.setItems(data);
+                items = data;
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
     ObservableList<AdmissionMedicines> items;
 
@@ -294,7 +348,7 @@ public class AdmissionScreenMedicineController implements Initializable {
                     return new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            //Background work                       
+                              
                             final CountDownLatch latch = new CountDownLatch(1);
                             Platform.runLater(new Runnable() {
                                 @Override
@@ -503,7 +557,34 @@ public class AdmissionScreenMedicineController implements Initializable {
     }
 
     private void setAutoNum() throws Exception {
-        admissionMedicineId.setText(AdmissionMedicines.getAutoNum());
+         progress.setVisible(true); 
+        Service<Void> service = new Service<Void>() { String autoNum;
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                                try {
+                                    
+                                      autoNum = AdmissionMedicines.getAutoNum();
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } 
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+               admissionMedicineId.setText(autoNum);
+                super.succeeded();
+            }
+        };
+        service.start();
+       
     }
 
 }

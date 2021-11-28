@@ -13,7 +13,7 @@ import static assets.classes.statics.*;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
-import db.User;
+import db.User; 
 import elbarbary.hospital.ElBarbaryHospital;
 import java.io.IOException;
 import java.net.URL;

@@ -216,11 +216,11 @@ public class HrScreenIndividualReportController implements Initializable {
 
                                     } else {
                                         if (Integer.parseInt(selectedItem.getSalary()) != 0) {
-                                            double oneDaye = Integer.parseInt(selectedItem.getSalary()) / 30;
+                                            double oneDaye = Integer.parseInt(selectedItem.getSalary());
                                             double salary = oneDaye * Double.parseDouble(allSalary);
                                             System.out.println(salary);
                                             String solfa = db.get.getTableData("SELECT IFNULL(Sum(cast(`amount` as UNSIGNED)),'0') from `att_employee_solfa` WHERE `emp_id`='" + selectedItem.getId() + "'  and `date`>='" + dateFrom.getValue().format(format) + "'  and `date`<= '" + dateTo.getValue().format(format) + "'").getValueAt(0, 0).toString();
-                                           String reward = db.get.getTableData("SELECT IFNULL(Sum(cast(`amount` as UNSIGNED)),'0') from `att_employee_rewards` WHERE `emp_id`='" + selectedItem.getId() + "'  and `date`>='" + dateFrom.getValue().format(format) + "'  and `date`<= '" + dateTo.getValue().format(format) + "'").getValueAt(0, 0).toString();
+                                            String reward = db.get.getTableData("SELECT IFNULL(Sum(cast(`amount` as UNSIGNED)),'0') from `att_employee_rewards` WHERE `emp_id`='" + selectedItem.getId() + "'  and `date`>='" + dateFrom.getValue().format(format) + "'  and `date`<= '" + dateTo.getValue().format(format) + "'").getValueAt(0, 0).toString();
                                             double remaining = salary - Double.parseDouble(solfa);
                                             remaining += Double.parseDouble(reward);
                                             System.out.println(solfa);

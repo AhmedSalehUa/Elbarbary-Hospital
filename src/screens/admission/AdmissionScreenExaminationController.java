@@ -36,9 +36,7 @@ import javafx.util.StringConverter;
 import screens.admission.assets.Admission;
 import screens.admission.assets.Examination;
 import screens.mainDataScreen.assets.Clincs;
-import screens.mainDataScreen.assets.Contract;
 import screens.mainDataScreen.assets.Doctors;
-import screens.mainDataScreen.assets.Patients;
 
 /**
  * FXML Controller class
@@ -94,7 +92,6 @@ public class AdmissionScreenExaminationController implements Initializable {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
                         final CountDownLatch latch = new CountDownLatch(1);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -104,102 +101,8 @@ public class AdmissionScreenExaminationController implements Initializable {
                                     clear();
                                     initialColumns();
                                     updateData();
-                                    examinationClinic.setItems(Clincs.getData());
-                                    examinationType.getItems().add("كشف");
-                                    examinationType.getItems().add("اعادة");
-                                    examinationType.getItems().add("استشارة");
-                                    examinationDoctor.setItems(Doctors.getData());
-                                    examinationDoctor.setConverter(new StringConverter<Doctors>() {
-                                        @Override
-                                        public String toString(Doctors contract) {
-                                            return contract.getName();
-                                        }
+                                    fillCombo();
 
-                                        @Override
-                                        public Doctors fromString(String string) {
-                                            return null;
-                                        }
-                                    });
-                                    examinationDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
-
-                                        GridPane gridPane = new GridPane();
-                                        Label lblid = new Label();
-                                        Label lblName = new Label();
-                                        Label lblQuali = new Label();
-
-                                        {
-
-                                            gridPane.getColumnConstraints().addAll(
-                                                    new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                                                    new ColumnConstraints(100, 100, 100)
-                                            );
-
-                                            gridPane.add(lblid, 0, 1);
-                                            gridPane.add(lblName, 1, 1);
-                                            gridPane.add(lblQuali, 2, 1);
-
-                                        }
-
-                                        @Override
-                                        protected void updateItem(Doctors person, boolean empty) {
-                                            super.updateItem(person, empty);
-
-                                            if (!empty && person != null) {
-                                                lblid.setText("م: " + Integer.toString(person.getId()));
-                                                lblName.setText("الاسم: " + person.getName());
-                                                lblQuali.setText("التخصص: " + person.getQualification_name());
-
-                                                setGraphic(gridPane);
-                                            } else {
-                                                setGraphic(null);
-                                            }
-                                        }
-                                    });
-                                    examinationClinic.setConverter(new StringConverter<Clincs>() {
-                                        @Override
-                                        public String toString(Clincs patient) {
-                                            return patient.getName();
-                                        }
-
-                                        @Override
-                                        public Clincs fromString(String string) {
-                                            return null;
-                                        }
-                                    });
-                                    examinationClinic.setCellFactory(cell -> new ListCell<Clincs>() {
-
-                                        GridPane gridPane = new GridPane();
-                                        Label lblid = new Label();
-                                        Label lblName = new Label();
-
-                                        {
-
-                                            gridPane.getColumnConstraints().addAll(
-                                                    new ColumnConstraints(100, 100, 100),
-                                                    new ColumnConstraints(100, 100, 100)
-                                            );
-
-                                            gridPane.add(lblid, 0, 1);
-                                            gridPane.add(lblName, 1, 1);
-
-                                        }
-
-                                        @Override
-                                        protected void updateItem(Clincs person, boolean empty) {
-                                            super.updateItem(person, empty);
-
-                                            if (!empty && person != null) {
-
-                                                lblid.setText("م: " + Integer.toString(person.getId()));
-                                                lblName.setText("الاسم: " + person.getName());
-
-                                                setGraphic(gridPane);
-                                            } else {
-
-                                                setGraphic(null);
-                                            }
-                                        }
-                                    });
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
                                 } finally {
@@ -256,32 +159,150 @@ public class AdmissionScreenExaminationController implements Initializable {
     }
     ObservableList<Examination> items;
 
-    public void updateData() {
-        process.setVisible(true);
-        Service<Void> service2 = new Service<Void>() {
+    public void fillCombo() {
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Clincs> clincData;
+            ObservableList<Doctors> DoctorData;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
-                        final CountDownLatch latch = new CountDownLatch(1);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
+                        try {
+                            clincData = Clincs.getData();
+                            DoctorData = Doctors.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
-                                try {
-                                    examinationTable.setItems(Examination.getData(admission.getId()));
+            }
 
-                                } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
-                                } finally {
-                                    latch.countDown();
-                                }
-                            }
+            @Override
+            protected void succeeded() {
+                examinationClinic.setItems(clincData);
+                examinationType.getItems().add("كشف");
+                examinationType.getItems().add("اعادة");
+                examinationType.getItems().add("استشارة");
+                examinationDoctor.setItems(DoctorData);
+                examinationDoctor.setConverter(new StringConverter<Doctors>() {
+                    @Override
+                    public String toString(Doctors contract) {
+                        return contract.getName();
+                    }
 
-                        });
-                        latch.await();
+                    @Override
+                    public Doctors fromString(String string) {
+                        return null;
+                    }
+                });
+                examinationDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblQuali = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblQuali, 2, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Doctors person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblQuali.setText("التخصص: " + person.getQualification_name());
+
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+                examinationClinic.setConverter(new StringConverter<Clincs>() {
+                    @Override
+                    public String toString(Clincs patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Clincs fromString(String string) {
+                        return null;
+                    }
+                });
+                examinationClinic.setCellFactory(cell -> new ListCell<Clincs>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Clincs person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            setGraphic(gridPane);
+                        } else {
+
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
+            }
+        };
+        service.start();
+
+    }
+
+    public void updateData() {
+        process.setVisible(true);
+        Service<Void> service2 = new Service<Void>() {
+            ObservableList<Examination> data;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+
+                        try {
+                            data = Examination.getData(admission.getId());
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
 
                         return null;
                     }
@@ -292,7 +313,8 @@ public class AdmissionScreenExaminationController implements Initializable {
             @Override
             protected void succeeded() {
                 process.setVisible(false);
-                items = examinationTable.getItems();
+                examinationTable.setItems(data);
+                items = data;
                 super.succeeded();
             }
         };
@@ -302,34 +324,23 @@ public class AdmissionScreenExaminationController implements Initializable {
     public void updateDataParent() {
         process.setVisible(true);
         Service<Void> service2 = new Service<Void>() {
+            ObservableList<Examination> data;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
-                        final CountDownLatch latch = new CountDownLatch(1);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
 
-                                try {
-                                    clear();
-                                    examinationTable.setItems(Examination.getData(admission.getId()));
-
-                                    parentController.getAdmissionDataToTable();
-                                    parentController.setSlectedItem(admission);
-                                    parentController.updateParent();
-                                } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
-                                } finally {
-                                    latch.countDown();
-                                }
-                            }
-
-                        });
-                        latch.await();
-
+                        try {
+                            clear();
+                            data = Examination.getData(admission.getId());
+                            parentController.getAdmissionDataToTable();
+                            parentController.setSlectedItem(admission);
+                            parentController.updateParent();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
                         return null;
                     }
                 };
@@ -339,7 +350,8 @@ public class AdmissionScreenExaminationController implements Initializable {
             @Override
             protected void succeeded() {
                 process.setVisible(false);
-                items = examinationTable.getItems();
+                examinationTable.setItems(data);
+                items = data;
                 super.succeeded();
             }
         };
@@ -376,6 +388,8 @@ public class AdmissionScreenExaminationController implements Initializable {
         } else {
             process.setVisible(true);
             Service<Void> service2 = new Service<Void>() {
+                boolean ok = true;
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -403,6 +417,7 @@ public class AdmissionScreenExaminationController implements Initializable {
                                         }
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
+                                        ok = false;
                                     } finally {
                                         latch.countDown();
                                     }
@@ -420,7 +435,9 @@ public class AdmissionScreenExaminationController implements Initializable {
                 @Override
                 protected void succeeded() {
                     process.setVisible(false);
-                    updateDataParent();
+                    if (ok) {
+                        updateDataParent();
+                    }
                     super.succeeded();
                 }
             };
@@ -437,6 +454,8 @@ public class AdmissionScreenExaminationController implements Initializable {
         } else {
             process.setVisible(true);
             Service<Void> service2 = new Service<Void>() {
+                boolean ok = true;
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -466,6 +485,7 @@ public class AdmissionScreenExaminationController implements Initializable {
                                         }
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
+                                        ok = false;
                                     } finally {
                                         latch.countDown();
                                     }
@@ -483,7 +503,9 @@ public class AdmissionScreenExaminationController implements Initializable {
                 @Override
                 protected void succeeded() {
                     process.setVisible(false);
-                    updateDataParent();
+                    if (ok) {
+                        updateDataParent();
+                    }
                     super.succeeded();
                 }
             };
@@ -502,6 +524,8 @@ public class AdmissionScreenExaminationController implements Initializable {
             System.out.println(Integer.parseInt(examinationId.getText()) + " " + admission.getId() + " " + examinationType.getSelectionModel().getSelectedItem() + " " + examinationDoctor.getSelectionModel().getSelectedItem().getId() + " " + examinationClinic.getSelectionModel().getSelectedItem().getId());
 
             Service<Void> service2 = new Service<Void>() {
+                boolean ok = true;
+
                 @Override
                 protected Task<Void> createTask() {
                     return new Task<Void>() {
@@ -523,6 +547,7 @@ public class AdmissionScreenExaminationController implements Initializable {
                                         ex.Add();
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
+                                        ok = false;
                                     } finally {
                                         latch.countDown();
                                     }
@@ -540,7 +565,9 @@ public class AdmissionScreenExaminationController implements Initializable {
                 @Override
                 protected void succeeded() {
                     process.setVisible(false);
-                    updateDataParent();
+                    if (ok) {
+                        updateDataParent();
+                    }
                     super.succeeded();
                 }
             };
@@ -584,11 +611,33 @@ public class AdmissionScreenExaminationController implements Initializable {
     }
 
     private void setAutoNum() {
-        try {
-            examinationId.setText(Examination.getAutoNum());
-        } catch (Exception e) {
-            AlertDialogs.showErrors(e);
-        }
+        Service<Void> service = new Service<Void>() {
+            String autoNum;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            String autoNum = Examination.getAutoNum();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                examinationId.setText(autoNum);
+                super.succeeded();
+            }
+        };
+        service.start();
 
     }
 

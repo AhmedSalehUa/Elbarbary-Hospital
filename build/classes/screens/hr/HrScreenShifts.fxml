@@ -92,12 +92,6 @@
                         </Label>
                         <JFXTimePicker fx:id="shiftEndTime" prefHeight="28.0" prefWidth="316.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
                         <JFXTimePicker fx:id="shiftStartTime" prefHeight="28.0" prefWidth="292.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                        <TextField id="contractFields" fx:id="shiftCost" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="2" />
-                        <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="111.0" text="سعر الشيفت" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
                      </children>
                   </GridPane>
                   <HBox alignment="CENTER" spacing="5.0">

@@ -120,9 +120,7 @@ public class HrScreenCalcAttendController implements Initializable {
     @FXML
     private TableColumn<EmployeeAttendance, String> earlyLeave;
     @FXML
-    private Button save;
-    @FXML
-    private TableColumn<EmployeeAttendance, String> shiftCost;
+    private Button save; 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -210,8 +208,6 @@ public class HrScreenCalcAttendController implements Initializable {
 
         statueOfAtt.setCellValueFactory(new PropertyValueFactory<>("Statue"));
 
-        shiftCost.setCellValueFactory(new PropertyValueFactory<>("shiftCost"));
-
         salaryVal.setCellValueFactory(new PropertyValueFactory<>("salaryValue"));
 
         late.setCellValueFactory(new PropertyValueFactory<>("empLate"));
@@ -293,14 +289,6 @@ public class HrScreenCalcAttendController implements Initializable {
                         lateRule = LateRules.getData();
                         leaveMasters = LeaveMaster.getData();
                         attendance = Attendence.getDataInInterval(from.getValue().format(format), to.getValue().format(format));
-//                    if (lite.excuteNon("delete from att_attendance")) {
-//                        Statement createStatement = lite.getCon().createStatement();
-//                         for (Attendence att : attendance) {
-//                            String sql = "INSERT INTO `att_attendance`(`employee_id`, `date`,`time`,`statue`) VALUES ('" + att.getEmpId() + "','" + att.getDate() + "','" + att.getTime() + "','" + att.getStatue() + "')";
-//                            createStatement.addBatch(sql);
-//                        }
-//                        createStatement.executeBatch();
-//                    }
                         employes = Employee.getData();
                         holidays = Holidays.getData();
                         System.out.println("end getDataFromServerToLocal");
@@ -361,8 +349,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                 // System.out.println();
                                 empAtt.setEmpId(emp.getId());
                                 empAtt.setEmpName(emp.getName());
-                                empAtt.setDate(date.format(format));
-                                empAtt.setShiftCost(coordinates.get("cost").toString());
+                                empAtt.setDate(date.format(format)); 
                                 //   System.out.println("before isEarlyLeave");
                                 int earlyLeave1 = isEarlyLeave(date, emp.getId());
                                 if (isHoliday(date, sh.getWorkdays())) {
@@ -734,6 +721,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                 if (empAtt.getStatue().equals("غياب")) {
                                     empAtt.setSalaryValue("0");
                                 }
+                                
 //                                if (empAtt.getSalaryValue().equals("1") || empAtt.getSalaryValue().equals("0")) {
 //                                } else {
 //                                    double val = Double.parseDouble(empAtt.getSalaryValue()) / total_minutes_of_shift;
@@ -828,8 +816,7 @@ public class HrScreenCalcAttendController implements Initializable {
                         employeeAttendance.setStatue("غياب");
                         coordinates.put("shift", empShifts.get(0));
                         coordinates.put("attend", "00:00");
-                        coordinates.put("leave", "00:00");
-                        coordinates.put("cost", "0");
+                        coordinates.put("leave", "00:00"); 
                         return coordinates;
                     }
 //                    if (empShifts.size() == 1) {
@@ -851,8 +838,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                 employeeAttendance.setStatue("غياب");
                                 coordinates.put("shift", empShifts.get(0));
                                 coordinates.put("attend", "00:00");
-                                coordinates.put("leave", "00:00");
-                                coordinates.put("cost", "0");
+                                coordinates.put("leave", "00:00"); 
                                 return coordinates;
                             }
                             //         System.out.println("daily");
@@ -949,7 +935,7 @@ public class HrScreenCalcAttendController implements Initializable {
                                 leaveReturned = leaveReturnedCom;
                             }
                             /* */
- /*  if (minendcom <= 0 && minstartcom <= 0) {
+                            /*  if (minendcom <= 0 && minstartcom <= 0) {
                                  if (minendcom > minend && minstartcom > minstart) {
                                     id = idcom;
                                     minstart = minstartcom;
@@ -978,8 +964,7 @@ public class HrScreenCalcAttendController implements Initializable {
                             employeeAttendance.setStatue("حضور");
                             coordinates.put("shift", s);
                             coordinates.put("attend", attendReturned);
-                            coordinates.put("leave", leaveReturned);
-                            coordinates.put("cost", s.getCost());
+                            coordinates.put("leave", leaveReturned); 
                             return coordinates;
 
                         }
@@ -987,8 +972,7 @@ public class HrScreenCalcAttendController implements Initializable {
 
                     coordinates.put("shift", shifts.get(0));
                     coordinates.put("attend", "00:00");
-                    coordinates.put("leave", "00:00");
-                    coordinates.put("cost", "0");
+                    coordinates.put("leave", "00:00"); 
                     return coordinates;
                 }
 
@@ -1012,7 +996,7 @@ public class HrScreenCalcAttendController implements Initializable {
                         protected Void call() throws Exception {
                             //Background work                       
                             try {
-                                PreparedStatement ps = db.get.Prepare("INSERT IGNORE INTO `att_report`(`emp_id`, `emp_name`, `date`, `shift_name`, `shift_start`, `shift_end`, `emp_att`, `emp_leave`, `overtime`, `late`, `earlyLeave`, `shiftCost`, `salary_calc`, `statue`, `notes`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                                PreparedStatement ps = db.get.Prepare("INSERT IGNORE INTO `att_report`(`emp_id`, `emp_name`, `date`, `shift_name`, `shift_start`, `shift_end`, `emp_att`, `emp_leave`, `overtime`, `late`, `earlyLeave`, `salary_calc`, `statue`, `notes`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                                 ObservableList<EmployeeAttendance> items = table.getItems();
 //                                System.out.println(items.size());
                                 for (EmployeeAttendance a : items) {
@@ -1029,11 +1013,10 @@ public class HrScreenCalcAttendController implements Initializable {
                                         ps.setString(8, a.getEarlyLeave());
                                         ps.setString(9, a.getEmpOvertime());
                                         ps.setString(10, a.getEmpLate());
-                                        ps.setString(11, a.getEarlyLeave());
-                                        ps.setString(12, a.getShiftCost());
-                                        ps.setString(13, a.getSalaryValue());
-                                        ps.setString(14, a.getStatue());
-                                        ps.setString(15, a.getNotes());
+                                        ps.setString(11, a.getEarlyLeave()); 
+                                        ps.setString(12, a.getSalaryValue());
+                                        ps.setString(13, a.getStatue());
+                                        ps.setString(14, a.getNotes());
                                         ps.addBatch();
 //                                        System.out.println(a.getEmpId());
                                     }

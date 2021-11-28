@@ -11,8 +11,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -39,7 +37,6 @@ import javafx.util.StringConverter;
 import screens.admission.assets.Admission;
 import screens.admission.assets.AdmissionContract;
 import screens.mainDataScreen.assets.ContractServices;
-import screens.mainDataScreen.assets.ContractServicesName;
 
 /**
  * FXML Controller class
@@ -183,6 +180,8 @@ public class AdmissionScreenContractController implements Initializable {
     private void serviceContractDelete(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -210,6 +209,7 @@ public class AdmissionScreenContractController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -227,13 +227,13 @@ public class AdmissionScreenContractController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                try {
+                if (ok) {
+                    clear();
+
                     getData();
                     updateParent();
-                } catch (Exception ex) {
-                    AlertDialogs.showErrors(ex);
                 }
+
                 super.succeeded();
             }
         };
@@ -244,6 +244,8 @@ public class AdmissionScreenContractController implements Initializable {
     private void serviceContractEdite(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -271,6 +273,7 @@ public class AdmissionScreenContractController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -288,12 +291,12 @@ public class AdmissionScreenContractController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                try {
+                if (ok) {
+                    clear();
+
                     getData();
                     updateParent();
-                } catch (Exception ex) {
-                    AlertDialogs.showErrors(ex);
+
                 }
                 super.succeeded();
             }
@@ -305,6 +308,8 @@ public class AdmissionScreenContractController implements Initializable {
     private void serviceContractAdd(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -324,6 +329,7 @@ public class AdmissionScreenContractController implements Initializable {
                                     ad.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -341,12 +347,12 @@ public class AdmissionScreenContractController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                try {
+                if (ok) {
+                    clear();
+
                     getData();
                     updateParent();
-                } catch (Exception ex) {
-                    AlertDialogs.showErrors(ex);
+
                 }
                 super.succeeded();
             }
@@ -363,68 +369,125 @@ public class AdmissionScreenContractController implements Initializable {
         serviceContractTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
     }
 
-    private void getData() throws Exception {
+    private void getData() {
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<AdmissionContract> data;
 
-        serviceContractTable.setItems(AdmissionContract.getData(admission.getId()));
-        items = serviceContractTable.getItems();
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+
+                            data = AdmissionContract.getData(admission.getId());
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                serviceContractTable.setItems(data);
+                items = data;
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
     ObservableList<AdmissionContract> items;
 
     private void fillCombo() throws Exception {
-        serviceContractServices.setItems(ContractServices.getDataFromName(admission.getContract_name()));
-        serviceContractServices.setConverter(new StringConverter<ContractServices>() {
-            @Override
-            public String toString(ContractServices patient) {
-                return patient.getService();
-            }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<ContractServices> dataFromName;
 
             @Override
-            public ContractServices fromString(String string) {
-                return null;
-            }
-        });
-        serviceContractServices.setCellFactory(cell -> new ListCell<ContractServices>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            dataFromName = ContractServices.getDataFromName(admission.getContract_name());
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblCost = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblCost, 2, 1);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(ContractServices person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                serviceContractServices.setItems(dataFromName);
+                serviceContractServices.setConverter(new StringConverter<ContractServices>() {
+                    @Override
+                    public String toString(ContractServices patient) {
+                        return patient.getService();
+                    }
 
-                if (!empty && person != null) {
+                    @Override
+                    public ContractServices fromString(String string) {
+                        return null;
+                    }
+                });
+                serviceContractServices.setCellFactory(cell -> new ListCell<ContractServices>() {
 
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getService());
-                    lblCost.setText("السعر: " + person.getCost());
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblCost = new Label();
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblCost, 2, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(ContractServices person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getService());
+                            lblCost.setText("السعر: " + person.getCost());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
+        };
+        service.start();
+
     }
 
     private void updateParent() {
@@ -450,6 +513,36 @@ public class AdmissionScreenContractController implements Initializable {
     }
 
     private void setAutoNum() throws Exception {
-        serviceContractId.setText(AdmissionContract.getAutoNum());
+
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            String autoNum;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            autoNum = AdmissionContract.getAutoNum();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                serviceContractId.setText(autoNum);
+
+                super.succeeded();
+            }
+        };
+        service.start();
     }
 }

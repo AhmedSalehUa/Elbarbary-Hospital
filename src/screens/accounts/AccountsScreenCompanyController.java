@@ -15,8 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -38,7 +36,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import screens.accounts.assets.CompanyAccounts;
 import screens.store.assets.Company;
@@ -99,7 +96,7 @@ public class AccountsScreenCompanyController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         comAccDate.setConverter(new StringConverter<LocalDate>() {
+        comAccDate.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -210,7 +207,7 @@ public class AccountsScreenCompanyController implements Initializable {
 
                 comAccAmount.setText(selected.getAmount());
                 comAccDate.setValue(LocalDate.parse(selected.getDate()));
-                
+
                 ObservableList<Invoice> items1 = comAccInvoices.getItems();
                 for (Invoice a : items1) {
                     if (a.getId() == selected.getInvoiceid()) {
@@ -264,59 +261,120 @@ public class AccountsScreenCompanyController implements Initializable {
     }
 
     private void getData() throws Exception {
-        compTable.setItems(Company.getData());
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Company> data;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            data = Company.getData();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                compTable.setItems(data);
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     private void fillCombo(int id) throws Exception {
-        comAccInvoices.setItems(Invoice.getData(id));
-        comAccInvoices.setConverter(new StringConverter<Invoice>() {
-            @Override
-            public String toString(Invoice patient) {
-                return Integer.toString(patient.getId());
-            }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Invoice> data;
 
             @Override
-            public Invoice fromString(String string) {
-                return null;
-            }
-        });
-        comAccInvoices.setCellFactory(cell -> new ListCell<Invoice>() {
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            data = Invoice.getData(id);
 
-            {
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
             @Override
-            protected void updateItem(Invoice person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                comAccInvoices.setItems(data);
+                comAccInvoices.setConverter(new StringConverter<Invoice>() {
+                    @Override
+                    public String toString(Invoice patient) {
+                        return Integer.toString(patient.getId());
+                    }
 
-                if (!empty && person != null) {
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("التاريخ: " + person.getDate());
-                    setGraphic(gridPane);
-                } else {
-                    setGraphic(null);
-                }
+                    @Override
+                    public Invoice fromString(String string) {
+                        return null;
+                    }
+                });
+                comAccInvoices.setCellFactory(cell -> new ListCell<Invoice>() {
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    {
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Invoice person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("التاريخ: " + person.getDate());
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
+        };
+        service.start();
 
     }
 
     @FXML
     private void formEdite(ActionEvent event) {
-        CompanyAccounts comp = comAccTable.getSelectionModel().getSelectedItem();
+
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+            CompanyAccounts comp = comAccTable.getSelectionModel().getSelectedItem();
+            CompanyAccounts com = new CompanyAccounts();
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -335,7 +393,7 @@ public class AccountsScreenCompanyController implements Initializable {
 
                                     Optional<ButtonType> result = alert.showAndWait();
                                     if (result.get() == ButtonType.OK) {
-                                        CompanyAccounts com = new CompanyAccounts();
+
                                         com.setId(comp.getId());
                                         com.setCompanyId(comp.getCompanyId());
                                         com.setInvoiceid(comAccInvoices.getSelectionModel().getSelectedItem().getId());
@@ -349,6 +407,7 @@ public class AccountsScreenCompanyController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -367,10 +426,12 @@ public class AccountsScreenCompanyController implements Initializable {
             protected void succeeded() {
                 try {
                     progress.setVisible(false);
-                    clear();
+                    if (ok) {
+                        clear();
 
-                    comAccTable.setItems(CompanyAccounts.getData(comp.getCompanyId()));
-                    fillCombo(comp.getCompanyId());
+                        comAccTable.setItems(CompanyAccounts.getData(comp.getCompanyId()));
+                        fillCombo(comp.getCompanyId());
+                    }
                     super.succeeded();
                 } catch (Exception ex) {
                     AlertDialogs.showErrors(ex);
@@ -385,6 +446,8 @@ public class AccountsScreenCompanyController implements Initializable {
         CompanyAccounts companyId = comAccTable.getItems().get(0);
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -408,6 +471,7 @@ public class AccountsScreenCompanyController implements Initializable {
                                     com.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -426,10 +490,12 @@ public class AccountsScreenCompanyController implements Initializable {
             protected void succeeded() {
                 try {
                     progress.setVisible(false);
-                    clear();
+                    if (ok) {
+                        clear();
 
-                    comAccTable.setItems(CompanyAccounts.getData(companyId.getCompanyId()));
-                    fillCombo(companyId.getCompanyId());
+                        comAccTable.setItems(CompanyAccounts.getData(companyId.getCompanyId()));
+                        fillCombo(companyId.getCompanyId());
+                    }
                     super.succeeded();
                 } catch (Exception ex) {
                     AlertDialogs.showErrors(ex);
@@ -449,6 +515,8 @@ public class AccountsScreenCompanyController implements Initializable {
         CompanyAccounts comp = comAccTable.getSelectionModel().getSelectedItem();
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -473,6 +541,7 @@ public class AccountsScreenCompanyController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -491,10 +560,12 @@ public class AccountsScreenCompanyController implements Initializable {
             protected void succeeded() {
                 try {
                     progress.setVisible(false);
-                    clear();
+                    if (ok) {
+                        clear();
 
-                    comAccTable.setItems(CompanyAccounts.getData(comp.getCompanyId()));
-                    fillCombo(comp.getCompanyId());
+                        comAccTable.setItems(CompanyAccounts.getData(comp.getCompanyId()));
+                        fillCombo(comp.getCompanyId());
+                    }
                     super.succeeded();
                 } catch (Exception ex) {
                     AlertDialogs.showErrors(ex);

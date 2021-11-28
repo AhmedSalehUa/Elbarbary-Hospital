@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+ 
 package screens.accounts;
 
 import assets.classes.AlertDialogs;
@@ -47,7 +43,6 @@ import javafx.util.StringConverter;
 import screens.accounts.assets.AccountsYields;
 import screens.accounts.assets.YieldsCategory;
 import screens.admission.assets.Admission;
-import screens.reception.ReceptionScreenController;
 import screens.reception.assets.ReceptionYields;
 
 /**
@@ -304,27 +299,104 @@ public class AccountsScreenYieldsController implements Initializable {
     }
 
     private void getAutoNum() throws Exception {
-        yieldId.setText(ReceptionYields.getAutoNum());
-        yieldOtherId.setText(AccountsYields.getAutoNum());
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            String receptionId;
+            String AccountId;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            receptionId = ReceptionYields.getAutoNum();
+                            AccountId = AccountsYields.getAutoNum();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                yieldId.setText(receptionId);
+                yieldOtherId.setText(AccountId);
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     private void getData() {
-        try {
-            yieldTable.setItems(ReceptionYields.getDataAccounts());
-            items = yieldTable.getItems();
-            yieldOtherTable.setItems(AccountsYields.getData());
-            itemsCat = yieldOtherTable.getItems();
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<ReceptionYields> dataAccounts;
+            ObservableList<AccountsYields> data;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            dataAccounts = ReceptionYields.getDataAccounts();
+                            data = AccountsYields.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                yieldTable.setItems(dataAccounts);
+                items = yieldTable.getItems();
+                yieldOtherTable.setItems(data);
+                itemsCat = yieldOtherTable.getItems();
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
     ObservableList<ReceptionYields> items;
     ObservableList<AccountsYields> itemsCat;
 
     private void fillCombo() {
-        try {
+        progress.setVisible(true); 
+        Service<Void> service = new Service<Void>() { ObservableList<YieldsCategory> YieldsData;ObservableList<Admission> dataNotPaied;
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                                try {
+                                    YieldsData = YieldsCategory.getData();
+                                    dataNotPaied = Admission.getDataNotPaied();
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } 
+                        return null;
+                    }
+                };
 
-            yieldOtherCat.setItems(YieldsCategory.getData());
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+              
+            yieldOtherCat.setItems(YieldsData);
             yieldOtherCat.setConverter(new StringConverter<YieldsCategory>() {
                 @Override
                 public String toString(YieldsCategory patient) {
@@ -375,7 +447,7 @@ public class AccountsScreenYieldsController implements Initializable {
                     }
                 }
             });
-            yieldAdmission.setItems(Admission.getDataNotPaied());
+            yieldAdmission.setItems(dataNotPaied);
             yieldAdmission.setConverter(new StringConverter<Admission>() {
                 @Override
                 public String toString(Admission patient) {
@@ -429,9 +501,11 @@ public class AccountsScreenYieldsController implements Initializable {
                     }
                 }
             });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                super.succeeded();
+            }
+        };
+        service.start();
+       
 
     }
 
@@ -467,7 +541,7 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formDelete(ActionEvent event) {
         progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {boolean ok = true;
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -491,7 +565,7 @@ public class AccountsScreenYieldsController implements Initializable {
                                         r.Delete();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
+                                    AlertDialogs.showErrors(ex);ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -508,10 +582,10 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                progress.setVisible(false);
+                progress.setVisible(false); if (ok) {
                 clear();
                 getData();
-                fillCombo();
+                fillCombo();}
                 super.succeeded();
             }
         };
@@ -521,7 +595,7 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formEdite(ActionEvent event) {
         progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {boolean ok = true;
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -550,7 +624,7 @@ public class AccountsScreenYieldsController implements Initializable {
                                         r.Edite();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
+                                    AlertDialogs.showErrors(ex);ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -567,10 +641,10 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                progress.setVisible(false);
+                progress.setVisible(false); if (ok) {
                 clear();
                 getData();
-                fillCombo();
+                fillCombo();}
                 super.succeeded();
             }
         };
@@ -580,7 +654,7 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formAdd(ActionEvent event) {
         progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {boolean ok = true;
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -601,7 +675,7 @@ public class AccountsScreenYieldsController implements Initializable {
                                     r.setAdmission_id(yieldAdmission.getSelectionModel().getSelectedItem().getId());
                                     r.Add();
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
+                                    AlertDialogs.showErrors(ex);ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -618,10 +692,10 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                progress.setVisible(false);
+                progress.setVisible(false); if (ok) {
                 clear();
                 getData();
-                fillCombo();
+                fillCombo();}
                 super.succeeded();
             }
         };
@@ -713,7 +787,7 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formOtherDelete(ActionEvent event) {
         OtherProgress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {boolean ok = true;
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -738,7 +812,7 @@ public class AccountsScreenYieldsController implements Initializable {
                                         r.Delete();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
+                                    AlertDialogs.showErrors(ex);ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -755,10 +829,10 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                OtherProgress.setVisible(false);
+                OtherProgress.setVisible(false); if (ok) {
                 clear();
                 getData();
-                fillCombo();
+                fillCombo();}
                 super.succeeded();
             }
         };
@@ -768,7 +842,7 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formOtherEdite(ActionEvent event) {
         OtherProgress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {boolean ok = true;
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -797,7 +871,7 @@ public class AccountsScreenYieldsController implements Initializable {
                                         r.Edite();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
+                                    AlertDialogs.showErrors(ex);ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -814,10 +888,10 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                OtherProgress.setVisible(false);
+                OtherProgress.setVisible(false); if (ok) {
                 clear();
                 getData();
-                fillCombo();
+                fillCombo();}
                 super.succeeded();
             }
         };
@@ -827,7 +901,7 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formOtherAdd(ActionEvent event) {
         OtherProgress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {boolean ok = true;
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -848,7 +922,7 @@ public class AccountsScreenYieldsController implements Initializable {
                                     r.setCat_id(yieldOtherCat.getSelectionModel().getSelectedItem().getId());
                                     r.Add();
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
+                                    AlertDialogs.showErrors(ex);ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -865,10 +939,10 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                OtherProgress.setVisible(false);
+                OtherProgress.setVisible(false); if (ok) {
                 clear();
                 getData();
-                fillCombo();
+                fillCombo();}
                 super.succeeded();
             }
         };

@@ -11,8 +11,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -79,7 +77,6 @@ public class AccountsScreenAccountsController implements Initializable {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
                         final CountDownLatch latch = new CountDownLatch(1);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -163,16 +160,69 @@ public class AccountsScreenAccountsController implements Initializable {
     }
 
     private void getAutoNum() throws Exception {
-        accId.setText(Accounts.getAutoNum());
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            String autoNum;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            autoNum = Accounts.getAutoNum();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                accId.setText(autoNum);
+                super.succeeded();
+            }
+        };
+        service.start();
     }
 
     private void getData() {
-        try {
-            accTable.setItems(Accounts.getData());
-            items = accTable.getItems();
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Accounts> data;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            data = Accounts.getData();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                accTable.setItems(data);
+                items = data;
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
     ObservableList<Accounts> items;
 
@@ -207,12 +257,13 @@ public class AccountsScreenAccountsController implements Initializable {
     private void formDelete(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
                         final CountDownLatch latch = new CountDownLatch(1);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -232,6 +283,7 @@ public class AccountsScreenAccountsController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -249,8 +301,10 @@ public class AccountsScreenAccountsController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                getData();
+                if (ok) {
+                    clear();
+                    getData();
+                }
                 super.succeeded();
             }
         };
@@ -261,6 +315,8 @@ public class AccountsScreenAccountsController implements Initializable {
     private void formEdite(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -287,6 +343,7 @@ public class AccountsScreenAccountsController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -304,8 +361,10 @@ public class AccountsScreenAccountsController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                getData();
+                if (ok) {
+                    clear();
+                    getData();
+                }
                 super.succeeded();
             }
         };
@@ -316,6 +375,8 @@ public class AccountsScreenAccountsController implements Initializable {
     private void formAdd(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -334,6 +395,7 @@ public class AccountsScreenAccountsController implements Initializable {
                                     acc.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -351,8 +413,10 @@ public class AccountsScreenAccountsController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                getData();
+                if (ok) {
+                    clear();
+                    getData();
+                }
                 super.succeeded();
             }
         };

@@ -38,7 +38,7 @@
                         <TableView id="contractTable" fx:id="empTable" prefHeight="451.0" prefWidth="915.0">
                            <columns>
                               <TableColumn fx:id="empTabSection" prefWidth="407.0" text="القسم" />
-                              <TableColumn fx:id="empTabSalary" prefWidth="407.0" text="المرتب" />
+                              <TableColumn fx:id="empTabSalary" prefWidth="407.0" text="سعر الساعة" />
                               <TableColumn fx:id="empTabAge" editable="false" minWidth="0.0" prefWidth="70.0" text="السن" />
                               <TableColumn fx:id="empTabTele" prefWidth="407.0" text="رقم التلفون" />
                               <TableColumn fx:id="empTabAdress" prefWidth="407.0" text="العنوان" />

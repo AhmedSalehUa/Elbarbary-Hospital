@@ -16,8 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -186,7 +184,7 @@ public class AccountsScreenExpensesController implements Initializable {
 
     private void intialColumn() {
         accTabUser.setCellValueFactory(new PropertyValueFactory<>("user"));
-        
+
         accTabNotes.setCellValueFactory(new PropertyValueFactory<>("notes"));
 
         accTabDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -220,71 +218,154 @@ public class AccountsScreenExpensesController implements Initializable {
     }
 
     private void getAutoNum() throws Exception {
-        accId.setText(Expenses.getAutoNum());
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            String autoNum;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            autoNum = Expenses.getAutoNum();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                accId.setText(autoNum);
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     private void getData() {
-        try {
-            accTable.setItems(Expenses.getData());
-            items = accTable.getItems();
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Expenses> data;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            data = Expenses.getData();
+
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                accTable.setItems(data);
+                items = accTable.getItems();
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
     ObservableList<Expenses> items;
 
     private void fillCombo() throws Exception {
-        accCategory.setItems(Category.getData());
-        accCategory.setConverter(new StringConverter<Category>() {
-            @Override
-            public String toString(Category patient) {
-                return patient.getName();
-            }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Category> data;
 
             @Override
-            public Category fromString(String string) {
-                return null;
-            }
-        });
-        accCategory.setCellFactory(cell -> new ListCell<Category>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
+                            data = Category.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(Category person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                accCategory.setItems(data);
+                accCategory.setConverter(new StringConverter<Category>() {
+                    @Override
+                    public String toString(Category patient) {
+                        return patient.getName();
+                    }
 
-                if (!empty && person != null) {
+                    @Override
+                    public Category fromString(String string) {
+                        return null;
+                    }
+                });
+                accCategory.setCellFactory(cell -> new ListCell<Category>() {
 
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("التصنيف: " + person.getName());
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Category person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("التصنيف: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
+        };
+        service.start();
+
     }
 
     @FXML
@@ -311,7 +392,7 @@ public class AccountsScreenExpensesController implements Initializable {
     }
 
     @FXML
-    private void addCategory(MouseEvent event) { 
+    private void addCategory(MouseEvent event) {
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Add Cat Name");
         dialog.setHeaderText("اضافة تصنيف جديد");
@@ -347,7 +428,7 @@ public class AccountsScreenExpensesController implements Initializable {
                                 @Override
                                 protected void succeeded() {
                                     try {
-                                      fillCombo();
+                                        fillCombo();
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
                                     }
@@ -374,6 +455,8 @@ public class AccountsScreenExpensesController implements Initializable {
 
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -399,6 +482,7 @@ public class AccountsScreenExpensesController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -416,8 +500,10 @@ public class AccountsScreenExpensesController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                getData();
+                if (ok) {
+                    clear();
+                    getData();
+                }
                 super.succeeded();
             }
         };
@@ -428,6 +514,8 @@ public class AccountsScreenExpensesController implements Initializable {
     private void formEdite(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -458,6 +546,7 @@ public class AccountsScreenExpensesController implements Initializable {
                                     }
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -475,8 +564,10 @@ public class AccountsScreenExpensesController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                getData();
+                if (ok) {
+                    clear();
+                    getData();
+                }
                 super.succeeded();
             }
         };
@@ -487,6 +578,8 @@ public class AccountsScreenExpensesController implements Initializable {
     private void formAdd(ActionEvent event) {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -505,10 +598,11 @@ public class AccountsScreenExpensesController implements Initializable {
                                     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                                     ex.setDate(accDate.getValue().format(format));
                                     ex.setNotes(accNotes.getText());
-                                    ex.setAcc_id(prefs.getInt(MAIN_ACC_ID,1));
+                                    ex.setAcc_id(prefs.getInt(MAIN_ACC_ID, 1));
                                     ex.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -526,8 +620,10 @@ public class AccountsScreenExpensesController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                clear();
-                getData();
+                if (ok) {
+                    clear();
+                    getData();
+                }
                 super.succeeded();
             }
         };

@@ -62,7 +62,6 @@
                         <TableColumn fx:id="notes" prefWidth="75.0" text="ملاحظات" />
                       <TableColumn fx:id="statueOfAtt" prefWidth="75.0" text="حالة الحضور" />
                         <TableColumn fx:id="salaryVal" prefWidth="75.0" text="حساب المرتب" />
-                        <TableColumn fx:id="shiftCost" prefWidth="75.0" text="سعر الشيفت" />
                         <TableColumn fx:id="earlyLeave" prefWidth="75.0" text="انصراف قبل المدة المسموح بها" />
                         <TableColumn fx:id="late" prefWidth="75.0" text="التاخير عن المسموح به" />
                         <TableColumn fx:id="ov" prefWidth="75.0" text="الوقت الاضافي" />

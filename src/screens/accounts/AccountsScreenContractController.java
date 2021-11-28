@@ -6,71 +6,37 @@
 package screens.accounts;
 
 import assets.classes.AlertDialogs;
-import assets.classes.AutoCompleteBox;
-import assets.classes.ComboBoxAutoComplete;
-import static assets.classes.statics.DEFAULT_THEME;
 import static assets.classes.statics.RECEPTION_ACC_ID;
-import static assets.classes.statics.THEME;
 import static assets.classes.statics.USER_ID;
 import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXDrawer;
-import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
-import de.jensd.fx.glyphs.materialicons.MaterialIconView;
 import elbarbary.hospital.ElBarbaryHospital;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
-import org.controlsfx.control.textfield.TextFields;
 import screens.admission.assets.Admission;
-import screens.admission.assets.AdmissionSpacfication;
-import screens.admission.assets.AdmissionStatue;
-import screens.admission.assets.AdmissionType;
 import screens.mainDataScreen.assets.Contract;
-import screens.mainDataScreen.assets.Patients;
-import screens.reception.ReceptionScreenController;
 import screens.reception.assets.ReceptionYields;
 
 /**
@@ -126,7 +92,7 @@ public class AccountsScreenContractController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         from.setConverter(new StringConverter<LocalDate>() {
+        from.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -145,7 +111,7 @@ public class AccountsScreenContractController implements Initializable {
                 return LocalDate.parse(dateString, dateTimeFormatter);
             }
         });
-          to.setConverter(new StringConverter<LocalDate>() {
+        to.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -171,7 +137,6 @@ public class AccountsScreenContractController implements Initializable {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        //Background work                       
                         final CountDownLatch latch = new CountDownLatch(1);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -235,56 +200,85 @@ public class AccountsScreenContractController implements Initializable {
     }
 
     private void fillCombo() throws Exception {
-        contracts.setItems(Contract.getData());
-        contracts.setConverter(new StringConverter<Contract>() {
-            @Override
-            public String toString(Contract patient) {
-                return patient.getName();
-            }
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Contract> data;
 
             @Override
-            public Contract fromString(String string) {
-                return null;
-            }
-        });
-        contracts.setCellFactory(cell -> new ListCell<Contract>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
+                            data = Contract.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(Contract person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                contracts.setItems(data);
+                contracts.setConverter(new StringConverter<Contract>() {
+                    @Override
+                    public String toString(Contract patient) {
+                        return patient.getName();
+                    }
 
-                if (!empty && person != null) {
+                    @Override
+                    public Contract fromString(String string) {
+                        return null;
+                    }
+                });
+                contracts.setCellFactory(cell -> new ListCell<Contract>() {
 
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Contract person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
+        };
+        service.start();
+
     }
 
     @FXML
@@ -318,16 +312,19 @@ public class AccountsScreenContractController implements Initializable {
             }
         }
     }
+    boolean okThis = true;
 
     @FXML
     private void payAll(ActionEvent event) {
         ObservableList<Admission> items = admissionTable.getItems();
+
         if (items.size() == 0) {
             AlertDialogs.showError("الجدول فارغ");
         } else {
             for (Admission a : items) {
                 progress.setVisible(true);
                 Service<Void> service = new Service<Void>() {
+
                     @Override
                     protected Task<Void> createTask() {
                         return new Task<Void>() {
@@ -349,6 +346,7 @@ public class AccountsScreenContractController implements Initializable {
                                             r.Add();
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
+                                            okThis = false;
                                         } finally {
                                             latch.countDown();
                                         }
@@ -373,7 +371,9 @@ public class AccountsScreenContractController implements Initializable {
                 service.start();
 
             }
-            clear();
+            if (okThis) {
+                clear();
+            }
         }
     }
 

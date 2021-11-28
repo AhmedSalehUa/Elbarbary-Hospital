@@ -105,13 +105,11 @@ public class StoreScreenInvoicesShowController implements Initializable {
     String repName = " ";
     String sql = "SELECT `medicine_invoices`.`id`, `medicine_company`.`name`, `medicine_invoices`.`date`, `medicine_invoices`.`total`, `medicine_invoices`.`discount`, `medicine_invoices`.`discount_percent`, `medicine_invoices`.`total_after_descount`, `medicine_invoices`.`notes` FROM  `medicine_company`, `medicine_invoices` WHERE `medicine_invoices`.`company_id`= `medicine_company`.`id` ";
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) { dateFrom.setConverter(new StringConverter<LocalDate>() {
-            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        dateFrom.setConverter(new StringConverter<LocalDate>() {
             @Override
             public String toString(LocalDate localDate) {
                 if (localDate == null) {
@@ -127,10 +125,9 @@ public class StoreScreenInvoicesShowController implements Initializable {
                 }
                 return LocalDate.parse(dateString, dateTimeFormatter);
             }
-        }); dateTo.setConverter(new StringConverter<LocalDate>() {
-            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            @Override
+        });
+        dateTo.setConverter(new StringConverter<LocalDate>() {
+              @Override
             public String toString(LocalDate localDate) {
                 if (localDate == null) {
                     return "";
@@ -340,7 +337,7 @@ public class StoreScreenInvoicesShowController implements Initializable {
                         st.execute(oneSql);
                         Statement stt = db.get.getReportCon().createStatement();
                         String twoSql = "INSERT INTO `rep_invoices` " + sql;
-                         stt.execute(twoSql);
+                        stt.execute(twoSql);
                         return null;
                     }
                 };

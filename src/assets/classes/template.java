@@ -164,6 +164,41 @@ public class template {
             }
         };
         service.start();
+    
+     progress.setVisible(true); 
+        Service<Void> service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                                try {
+                                    
+
+                                } catch (Exception ex) {
+                                    AlertDialogs.showErrors(ex);
+                                } 
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+               clear();getData();
+                super.succeeded();
+            }
+        };
+        service.start();
+    
+    boolean ok = true;
+    ok = false;
+    if (ok) {
+                    clear();
+                    getData();
+                }
       serviceTabName.setCellValueFactory(new PropertyValueFactory<>("name"));
          .setCellValueFactory(new PropertyValueFactory<>(""));
     
