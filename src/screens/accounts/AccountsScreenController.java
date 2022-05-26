@@ -59,6 +59,8 @@ public class AccountsScreenController implements Initializable {
     private Button accountYields;
     @FXML
     private Button accounts;
+    @FXML
+    private Button accountTransactions;
 
     /**
      * Initializes the controller class.
@@ -111,6 +113,8 @@ public class AccountsScreenController implements Initializable {
                 accounts.setStyle(" -fx-background-color: -mainColor-dark; ");
                 accountContracts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-light; ");
+
                 accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
@@ -132,6 +136,8 @@ public class AccountsScreenController implements Initializable {
                 accountContracts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accounts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-light; ");
+
                 accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
                 Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
@@ -151,6 +157,8 @@ public class AccountsScreenController implements Initializable {
                 accountYields.setStyle(" -fx-background-color: -mainColor-dark; ");
                 accountContracts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accounts.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-light; ");
+
                 accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
@@ -170,6 +178,8 @@ public class AccountsScreenController implements Initializable {
             try {
                 accountContracts.setStyle(" -fx-background-color: -mainColor-dark; ");
                 accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-light; ");
+
                 accounts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
@@ -193,6 +203,8 @@ public class AccountsScreenController implements Initializable {
                 accounts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-light; ");
+
                 accountExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
                 Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
                 if (User.canAccess("accountMedicineCompany")) {
@@ -204,18 +216,42 @@ public class AccountsScreenController implements Initializable {
                 AlertDialogs.showErrors(ex);
             }
 
-        }); accountReports.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+        });
+        accountReports.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
 
             try {
                 accountReports.setStyle(" -fx-background-color: -mainColor-dark; ");
                 accountContracts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accounts.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-light; ");
+
                 accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
                 accountExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
                 Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
                 if (User.canAccess("AccountsScreenReports")) {
-                    node = FXMLLoader.load(getClass().getResource(AccountsScreenReport)); 
+                    node = FXMLLoader.load(getClass().getResource(AccountsScreenReport));
+                }
+                borderpane.setCenter(node);
+            } catch (IOException ex) {
+
+                AlertDialogs.showErrors(ex);
+            }
+
+        });
+        accountTransactions.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+
+            try {
+                accountTransactions.setStyle(" -fx-background-color: -mainColor-dark; ");
+                accountContracts.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountReports.setStyle(" -fx-background-color: -mainColor-light; ");
+                accounts.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountYields.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountMedicineCompany.setStyle(" -fx-background-color: -mainColor-light; ");
+                accountExpenses.setStyle(" -fx-background-color: -mainColor-light; ");
+                Parent node = FXMLLoader.load(getClass().getResource(NoPermission));
+                if (User.canAccess("accountTransactions")) {
+                    node = FXMLLoader.load(getClass().getResource("/screens/drugs/DrugsScreenMoneyTransactions.fxml"));
                 }
                 borderpane.setCenter(node);
             } catch (IOException ex) {

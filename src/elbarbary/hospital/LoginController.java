@@ -153,6 +153,7 @@ public class LoginController implements Initializable {
                                             prefs.put(USER_ROLE, us.getRole());
                                             ResultSet rs = db.get.getReportCon().createStatement().executeQuery("select attribute,value from static_values");
                                             while (rs.next()) {
+                                                System.out.println(rs.getString(1) +"   "+rs.getString(2));
                                                 prefs.put(rs.getString(1), rs.getString(2));
                                             }
 

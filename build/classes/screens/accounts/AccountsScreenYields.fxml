@@ -27,7 +27,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <HBox layoutX="-53.0" layoutY="31.0" prefHeight="362.0" prefWidth="1335.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox layoutX="-53.0" layoutY="31.0" prefHeight="428.0" prefWidth="1321.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
@@ -36,7 +36,7 @@
                                     <JFXTextField fx:id="search" focusColor="BLACK" labelFloat="true" onKeyPressed="#search" onKeyReleased="#search" onKeyTyped="#search" prefHeight="25.0" prefWidth="184.0" promptText="Search" />
                                  </children>
                               </HBox>
-                              <TableView id="contractTable" fx:id="yieldTable" prefHeight="308.0" prefWidth="847.0">
+                              <TableView id="contractTable" fx:id="yieldTable" prefHeight="308.0" prefWidth="847.0" VBox.vgrow="ALWAYS">
                                  <columns>
                                     <TableColumn fx:id="yieldTabUser" prefWidth="407.0" text="اسم المستلم" />
                                     <TableColumn fx:id="yieldTabDate" prefWidth="407.0" text="التاريخ" />
@@ -50,17 +50,18 @@
                               </TableView>
                            </children>
                         </VBox>
-                        <VBox alignment="BOTTOM_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                        <VBox alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <GridPane prefHeight="258.0" prefWidth="399.0" vgap="10.0">
+                              <GridPane prefHeight="258.0" prefWidth="399.0" vgap="10.0" VBox.vgrow="ALWAYS">
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="246.0" minWidth="10.0" prefWidth="246.0" />
-                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="134.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="272.0" minWidth="10.0" prefWidth="262.0" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="137.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="99.0" minHeight="0.0" prefHeight="38.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="41.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
@@ -92,6 +93,12 @@
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="130.0" text="الى حساب" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="yieldAccTo" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="219.0" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
                               <HBox spacing="5.0">
@@ -117,7 +124,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <HBox prefHeight="362.0" prefWidth="1335.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox prefHeight="425.0" prefWidth="1321.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
@@ -126,7 +133,7 @@
                                     <JFXTextField fx:id="searchOther" focusColor="BLACK" labelFloat="true" onKeyPressed="#searchOther" onKeyReleased="#searchOther" onKeyTyped="#search" prefHeight="25.0" prefWidth="184.0" promptText="Search" />
                                  </children>
                               </HBox>
-                              <TableView id="contractTable" fx:id="yieldOtherTable" prefHeight="308.0" prefWidth="847.0">
+                              <TableView id="contractTable" fx:id="yieldOtherTable" prefHeight="308.0" prefWidth="847.0" VBox.vgrow="ALWAYS">
                                  <columns>
                                     <TableColumn fx:id="yieldOtherTabUser" prefWidth="407.0" text="اسم المستلم" />
                                     <TableColumn fx:id="yieldOtherTabDate" prefWidth="407.0" text="التاريخ" />
@@ -140,17 +147,18 @@
                               </TableView>
                            </children>
                         </VBox>
-                        <VBox alignment="BOTTOM_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                        <VBox alignment="BOTTOM_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <GridPane prefHeight="258.0" prefWidth="399.0" vgap="10.0">
+                              <GridPane prefHeight="258.0" prefWidth="399.0" vgap="10.0" VBox.vgrow="ALWAYS">
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="246.0" minWidth="10.0" prefWidth="246.0" />
-                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="134.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="276.0" minWidth="10.0" prefWidth="276.0" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="123.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="99.0" minHeight="0.0" prefHeight="38.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="41.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
@@ -183,6 +191,12 @@
                                        </font>
                                     </Label>
                                     <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="130.0" text="التاريخ" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="yieldOherAccTo" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="219.0" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="130.0" text="الى حساب" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="20.0" />
                                        </font>

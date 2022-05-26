@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -38,7 +40,6 @@ public class DrugsScreenShowAccController implements Initializable {
     @FXML
     private ProgressIndicator progress;
 
-   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.progress.setVisible(true);
@@ -73,7 +74,8 @@ public class DrugsScreenShowAccController implements Initializable {
 
                 super.succeeded();
             }
-        };service.start();
+        };
+        service.start();
     }
 
     private void clear() {
@@ -81,61 +83,96 @@ public class DrugsScreenShowAccController implements Initializable {
     }
 
     private void fillCombo() {
-        try {
-            patient.setItems(DrugsPatients.getData());
-            patient.setConverter(new StringConverter<DrugsPatients>() {
-                @Override
-                public String toString(DrugsPatients patient) {
-                    return patient.getName();
-                }
+         
+            Service<Void> service = new Service<Void>() {
+                ObservableList<DrugsPatients> clientData;
+                ObservableList<DrugsPatients> clientDataSearch;
 
                 @Override
-                public DrugsPatients fromString(String string) {
-                    return null;
-                }
-            });
-            patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            try {
 
-                // Create our layout here to be reused for each ListCell
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
-
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100),
-                            new ColumnConstraints(100, 100, 100)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
+                                clientData = DrugsPatients.getData();
+                            } catch (Exception ex) {
+                                AlertDialogs.showErrors(ex);
+                            }
+                            return null;
+                        }
+                    };
 
                 }
 
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
                 @Override
-                protected void updateItem(DrugsPatients person, boolean empty) {
-                    super.updateItem(person, empty);
+                protected void succeeded() {
+                    progress.setVisible(false);
+                    patient.setItems(clientData);
+                    patient.setEditable(true);
+                    patient.setOnKeyReleased((event) -> {
 
-                    if (!empty && person != null) {
+                        if (patient.getEditor().getText().length() == 0) {
+                            patient.setItems(clientData);
+                        } else {
+                            clientDataSearch = FXCollections.observableArrayList();
 
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
+                            for (DrugsPatients a : clientData) {
+                                if (a.getName().contains(patient.getEditor().getText())) {
+                                    clientDataSearch.add(a);
+                                }
+                            }
+                            patient.setItems(clientDataSearch);
+                            patient.show();
+                        }
+                    });
+                    patient.setConverter(new StringConverter<DrugsPatients>() {
+                        @Override
+                        public String toString(DrugsPatients object) {
+                            return object.getName();
+                        }
 
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
-                    } else {
-                        // Nothing to display here
-                        setGraphic(null);
-                    }
+                        @Override
+                        public DrugsPatients fromString(String string) {
+                            return null;
+                        }
+                    });
+                    patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
+
+                        GridPane gridPane = new GridPane();
+                        Label lblid = new Label();
+                        Label lblName = new Label();
+
+                        {
+                            gridPane.getColumnConstraints().addAll(
+                                    new ColumnConstraints(50, 50, 50),
+                                    new ColumnConstraints(200, 200, 200)
+                            );
+
+                            gridPane.add(lblid, 0, 1);
+                            gridPane.add(lblName, 1, 1);
+                        }
+
+                        @Override
+                        protected void updateItem(DrugsPatients person, boolean empty) {
+                            super.updateItem(person, empty);
+
+                            if (!empty && person != null) {
+
+                                lblid.setText("م: " + Integer.toString(person.getId()));
+                                lblName.setText("الاسم: " + person.getName());
+                                setGraphic(gridPane);
+                            } else {
+                                setGraphic(null);
+                            }
+                        }
+                    });
+                    super.succeeded();
                 }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+            };
+            service.start();
+
+         
     }
 
     @FXML
@@ -144,10 +181,10 @@ public class DrugsScreenShowAccController implements Initializable {
             AlertDialogs.showError("اختار المريض اولا");
         } else {
             try {
-                String to = db.get.getTableData("SELECT  `remaining` FROM `drg_accounts` WHERE  `patient_id` ='"+patient.getSelectionModel().getSelectedItem().getId()+"'").getValueAt(0, 0).toString();
+                String to = db.get.getTableData("SELECT  `remaining` FROM `drg_accounts` WHERE  `patient_id` ='" + patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId() + "'").getValueAt(0, 0).toString();
                 total.setText(to);
             } catch (Exception ex) {
-               AlertDialogs.showErrors(ex);
+                AlertDialogs.showErrors(ex);
             }
         }
     }

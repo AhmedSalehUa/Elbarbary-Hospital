@@ -8,8 +8,7 @@ import java.sql.ResultSet;
 import java.util.prefs.Preferences;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javax.swing.JTable;
-import screens.accounts.assets.AccountTransactions;
+import javax.swing.JTable; 
 
 public class DrugsPatientExpenses {
 
@@ -102,7 +101,7 @@ public class DrugsPatientExpenses {
 
         DrugsAccounts.addToTotalSpended(this.acc_id, this.amount);
         DrugsAccounts.removeFromRemaining(this.acc_id, this.amount);
-        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), this.amount);
+//        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), this.amount);
 
         PreparedStatement ps = get.Prepare("INSERT INTO `drg_patient_expenses`(`id`, `patient_id`, `acc_id`, `cat_id`, `amount`, `date`,`notes`) VALUES (?,?,?,?,?,?,?)");
         ps.setInt(1, this.id);
@@ -121,7 +120,7 @@ public class DrugsPatientExpenses {
         JTable am = get.getTableData("SELECT `acc_id`,`amount` FROM `drg_patient_expenses` WHERE `id`='" + this.id + "'");
         DrugsAccounts.removeFromTotalSpended(Integer.parseInt(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
         DrugsAccounts.addToRemaining(Integer.parseInt(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
-        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), am.getValueAt(0, 1).toString());
+//        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), am.getValueAt(0, 1).toString());
 
         PreparedStatement ps = get.Prepare("UPDATE `drg_patient_expenses` SET `patient_id`=?,`acc_id`=?,`cat_id`=?,`amount`=?,`date`=?,`notes`=? WHERE `id`=?");
         ps.setInt(7, this.id);
@@ -133,7 +132,7 @@ public class DrugsPatientExpenses {
         ps.setString(6, this.notes);
         DrugsAccounts.removeFromRemaining(this.acc_id, this.amount);
         DrugsAccounts.addToTotalSpended(this.acc_id, this.amount);
-        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), this.amount);
+//        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), this.amount);
 
         ps.execute();
         return true;
@@ -144,7 +143,7 @@ public class DrugsPatientExpenses {
         JTable am = get.getTableData("SELECT `acc_id`,`amount` FROM `drg_patient_expenses` WHERE `id`='" + this.id + "'");
         DrugsAccounts.removeFromTotalSpended(Integer.parseInt(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
         DrugsAccounts.addToRemaining(Integer.parseInt(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
-        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), am.getValueAt(0, 1).toString());
+//        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), am.getValueAt(0, 1).toString());
 
         PreparedStatement ps = get.Prepare("DELETE FROM `drg_patient_expenses` WHERE `id`=?");
         ps.setInt(1, this.id);

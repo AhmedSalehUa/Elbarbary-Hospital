@@ -23,24 +23,24 @@
 	</style>
 	<parameter name="patient_id" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT `drg_patient_medicine`.`id`,`medicine`.`name`, `drg_patient_medicine`.`amount`, `drg_patient_medicine`.`cost_for_one`, `total_cost`,`drg_patient_medicine`.`medicine_id` FROM `drg_patient_medicine`,`medicine` WHERE `drg_patient_medicine`.`patient_id` =$P{patient_id} and `medicine`.`id` in (SELECT stores_medicines.medicine_id from stores_medicines where stores_medicines.id = `drg_patient_medicine`.`medicine_id`)]]>
+		<![CDATA[SELECT `drg_patient_medicine`.`id`,`medicine`.`name`, sum(cast(`drg_patient_medicine`.`amount`as unsigned)) as 'amount', sum(cast(`drg_patient_medicine`.`cost_for_one`as unsigned)) as 'cost_for_one', sum(cast(`total_cost`as unsigned)) as 'total_cost',`drg_patient_medicine`.`medicine_id` FROM `drg_patient_medicine`,`medicine` WHERE `drg_patient_medicine`.`patient_id` =$P{patient_id}  and `medicine`.`id` in (SELECT stores_medicines.medicine_id from stores_medicines where stores_medicines.id = `drg_patient_medicine`.`medicine_id`) GROUP by `medicine`.`name`]]>
 	</queryString>
-	<field name="medicine_id" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="total_cost" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="cost_for_one" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="amount" class="java.lang.String">
+	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="id" class="java.lang.Integer">
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost_for_one" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_cost" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="medicine_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<pageHeader>

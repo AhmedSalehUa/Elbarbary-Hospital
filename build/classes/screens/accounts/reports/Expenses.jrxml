@@ -26,7 +26,7 @@
 	<parameter name="date_to" class="java.lang.String"/>
 	<parameter name="subrepo" class="java.lang.Boolean"/>
 	<queryString>
-		<![CDATA[SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name` as 'group', `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`date`>=$P{date_from} and `expenses`.`date`<=$P{date_to}]]>
+		<![CDATA[SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name` as 'group', `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`date`>=$P{date_from} and `expenses`.`date`<=$P{date_to} ORDER by 'group' asc]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -71,7 +71,7 @@
 					<text><![CDATA[التاريخ]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="style2" x="243" y="10" width="100" height="20" uuid="ed2ac843-f5d4-4a6d-b069-51dac4fe0e52"/>
+					<reportElement style="style2" x="226" y="10" width="100" height="20" uuid="ed2ac843-f5d4-4a6d-b069-51dac4fe0e52"/>
 					<textFieldExpression><![CDATA[$F{group}]]></textFieldExpression>
 				</textField>
 			</band>
@@ -149,7 +149,7 @@
 				<reportElement style="style2" x="288" y="0" width="111" height="20" uuid="e8b252ff-12c5-4b2b-94f2-bf84ca5e99c7"/>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="yyyy/MM/dd">
 				<reportElement style="style2" x="399" y="0" width="111" height="20" uuid="54bdbcb4-cb07-4e5b-8168-1a73f74a1d77"/>
 				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
 			</textField>

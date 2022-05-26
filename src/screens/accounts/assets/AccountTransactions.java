@@ -140,7 +140,7 @@ public class AccountTransactions {
     }
 
     public boolean Edite() throws Exception {
-        prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
+        prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class); 
         JTable tab = db.get.getTableData("SELECT `acc_id_from`, `acc_id_to`, `amount` FROM `acc_transactions` WHERE `id`='" + id + "'");
         addAmountToAccount(Integer.parseInt(tab.getValueAt(0, 0).toString()), tab.getValueAt(0, 2).toString());
         removeAmountFromAccount(Integer.parseInt(tab.getValueAt(0, 1).toString()), tab.getValueAt(0, 2).toString());
@@ -184,7 +184,7 @@ public class AccountTransactions {
         Double a = Double.parseDouble(db.get.getTableData("select credit from accounts where id='" + id + "'").getValueAt(0, 0).toString()) + Double.parseDouble(amount);
         PreparedStatement ps = db.get.Prepare("UPDATE `accounts` SET `credit`=? WHERE `id`=?");
         ps.setString(1, Double.toString(a));
-        ps.setInt(2, id);
+        ps.setInt(2, id); 
         ps.execute();
         return true;
     }
@@ -196,7 +196,7 @@ public class AccountTransactions {
         } else {
             PreparedStatement ps = db.get.Prepare("UPDATE `accounts` SET `credit`=? WHERE `id`=?");
             ps.setString(1, Double.toString(a));
-            ps.setInt(2, id);
+            ps.setInt(2, id); 
             ps.execute();
             return true;
         }

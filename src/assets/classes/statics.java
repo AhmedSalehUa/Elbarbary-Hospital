@@ -27,10 +27,10 @@ public class statics {
     public static String USER_NAME = "user_name";
     public static String USER_ROLE = "user_role";
 
-    public static String RECEPTION_ACC_ID = "resption_id";
-    public static String MAIN_ACC_ID = "main_acc_id";
-    public static String DRUGS_ACCOUNT_ID = "drugs_acc_id";
-    public static String DRUGS_BRANCH_ACCOUNT_ID = "drugs_branch_acc_id";
+    public static String RECEPTION_ACC_ID = "RECEPTION_ACC_ID";
+    public static String MAIN_ACC_ID = "MAIN_ACC_ID";
+    public static String DRUGS_ACCOUNT_ID = "DRUGS_ACCOUNT_ID";
+    public static String DRUGS_BRANCH_ACCOUNT_ID = "DRUGS_BRANCH_ACCOUNT_ID";
 
     public static String PYTHON_PATH = "py_path";
 //    public static String PYTHON_PATH_DEFAULT = "python D:\\Downloads\\zk\\pyzk-master\\pyzk-master\\";

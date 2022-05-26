@@ -1,4 +1,3 @@
- 
 package screens.accounts;
 
 import assets.classes.AlertDialogs;
@@ -15,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -40,6 +40,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import screens.accounts.assets.Accounts;
 import screens.accounts.assets.AccountsYields;
 import screens.accounts.assets.YieldsCategory;
 import screens.admission.assets.Admission;
@@ -119,6 +120,10 @@ public class AccountsScreenYieldsController implements Initializable {
     private Button formOtherEdite;
     @FXML
     private Button formOtherAdd;
+    @FXML
+    private ComboBox<Accounts> yieldAccTo;
+    @FXML
+    private ComboBox<Accounts> yieldOherAccTo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -373,19 +378,31 @@ public class AccountsScreenYieldsController implements Initializable {
     ObservableList<AccountsYields> itemsCat;
 
     private void fillCombo() {
-        progress.setVisible(true); 
-        Service<Void> service = new Service<Void>() { ObservableList<YieldsCategory> YieldsData;ObservableList<Admission> dataNotPaied;
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<YieldsCategory> YieldsData;
+            ObservableList<Admission> dataNotPaied;
+            ObservableList<Accounts> accs;
+
+            ObservableList<Accounts> accsEx;
+            ObservableList<YieldsCategory> YieldsDataSearch;
+            ObservableList<Admission> dataNotPaiedSearch;
+            ObservableList<Accounts> accsSearch;
+            ObservableList<Accounts> accsExSearch;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                                try {
-                                    YieldsData = YieldsCategory.getData();
-                                    dataNotPaied = Admission.getDataNotPaied();
-                                } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);
-                                } 
+                        try {
+                            YieldsData = YieldsCategory.getData();
+                            dataNotPaied = Admission.getDataNotPaied();
+                            accs = Accounts.getData();
+                            accsEx = Accounts.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
                         return null;
                     }
                 };
@@ -395,117 +412,266 @@ public class AccountsScreenYieldsController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-              
-            yieldOtherCat.setItems(YieldsData);
-            yieldOtherCat.setConverter(new StringConverter<YieldsCategory>() {
-                @Override
-                public String toString(YieldsCategory patient) {
-                    return patient.getName();
-                }
+                yieldAccTo.setItems(accs);
+                yieldAccTo.setEditable(true);
+                yieldAccTo.setOnKeyReleased((event) -> {
 
-                @Override
-                public YieldsCategory fromString(String string) {
-                    return null;
-                }
-            });
-            yieldOtherCat.setCellFactory(cell -> new ListCell<YieldsCategory>() {
-
-                // Create our layout here to be reused for each ListCell
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
-
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100),
-                            new ColumnConstraints(100, 100, 100)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-                @Override
-                protected void updateItem(YieldsCategory person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
+                    if (yieldAccTo.getEditor().getText().length() == 0) {
+                        yieldAccTo.setItems(accs);
                     } else {
-                        // Nothing to display here
-                        setGraphic(null);
+                        accsSearch = FXCollections.observableArrayList();
+
+                        for (Accounts a : accs) {
+                            if (a.getName().contains(yieldAccTo.getEditor().getText())) {
+                                accsSearch.add(a);
+                            }
+                        }
+                        yieldAccTo.setItems(accsSearch);
+                        yieldAccTo.show();
                     }
-                }
-            });
-            yieldAdmission.setItems(dataNotPaied);
-            yieldAdmission.setConverter(new StringConverter<Admission>() {
-                @Override
-                public String toString(Admission patient) {
-                    yieldCredit.setText(patient.getTotalCost());
-                    return patient.getPatient_name();
-                }
+                });
+                yieldAccTo.setConverter(new StringConverter<Accounts>() {
+                    @Override
+                    public String toString(Accounts patient) {
+                        return patient.getName();
+                    }
 
-                @Override
-                public Admission fromString(String string) {
-                    return null;
-                }
-            });
-            yieldAdmission.setCellFactory(cell -> new ListCell<Admission>() {
+                    @Override
+                    public Accounts fromString(String string) {
+                        return null;
+                    }
+                });
+                yieldAccTo.setCellFactory(cell -> new ListCell<Accounts>() {
 
-                // Create our layout here to be reused for each ListCell
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
-                Label lblAmount = new Label();
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
 
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                            new ColumnConstraints(100, 100, 100)
-                    );
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
 
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-                    gridPane.add(lblAmount, 2, 1);
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
 
-                }
+                    }
 
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-                @Override
-                protected void updateItem(Admission person, boolean empty) {
-                    super.updateItem(person, empty);
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Accounts person, boolean empty) {
+                        super.updateItem(person, empty);
 
-                    if (!empty && person != null) {
+                        if (!empty && person != null) {
 
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getPatient_name());
-                        lblAmount.setText("المبلغ: " + person.getTotalCost());
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
+                            lblid.setText("الحساب: " + person.getName());
+                            lblName.setText("االرصيد: " + person.getCredite());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                yieldOherAccTo.setItems(accsEx);
+                yieldOherAccTo.setEditable(true);
+                yieldOherAccTo.setOnKeyReleased((event) -> {
+
+                    if (yieldOherAccTo.getEditor().getText().length() == 0) {
+                        yieldOherAccTo.setItems(accsEx);
                     } else {
-                        // Nothing to display here
-                        setGraphic(null);
+                        accsExSearch = FXCollections.observableArrayList();
+
+                        for (Accounts a : accsEx) {
+                            if (a.getName().contains(yieldOherAccTo.getEditor().getText())) {
+                                accsExSearch.add(a);
+                            }
+                        }
+                        yieldOherAccTo.setItems(accsExSearch);
+                        yieldOherAccTo.show();
                     }
-                }
-            });
+                });
+                yieldOherAccTo.setConverter(new StringConverter<Accounts>() {
+                    @Override
+                    public String toString(Accounts patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Accounts fromString(String string) {
+                        return null;
+                    }
+                });
+                yieldOherAccTo.setCellFactory(cell -> new ListCell<Accounts>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Accounts person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            lblid.setText("الحساب: " + person.getName());
+                            lblName.setText("االرصيد: " + person.getCredite());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                yieldOtherCat.setItems(YieldsData);
+                yieldOtherCat.setEditable(true);
+                yieldOtherCat.setOnKeyReleased((event) -> {
+
+                    if (yieldOtherCat.getEditor().getText().length() == 0) {
+                        yieldOtherCat.setItems(YieldsData);
+                    } else {
+                        YieldsDataSearch = FXCollections.observableArrayList();
+
+                        for (YieldsCategory a : YieldsData) {
+                            if (a.getName().contains(yieldOtherCat.getEditor().getText())) {
+                                YieldsDataSearch.add(a);
+                            }
+                        }
+                        yieldOtherCat.setItems(YieldsDataSearch);
+                        yieldOtherCat.show();
+                    }
+                });
+                yieldOtherCat.setConverter(new StringConverter<YieldsCategory>() {
+                    @Override
+                    public String toString(YieldsCategory patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public YieldsCategory fromString(String string) {
+                        return null;
+                    }
+                });
+                yieldOtherCat.setCellFactory(cell -> new ListCell<YieldsCategory>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(YieldsCategory person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                yieldAdmission.setItems(dataNotPaied);
+                yieldAdmission.setConverter(new StringConverter<Admission>() {
+                    @Override
+                    public String toString(Admission patient) {
+                        yieldCredit.setText(patient.getTotalCost());
+                        return patient.getPatient_name();
+                    }
+
+                    @Override
+                    public Admission fromString(String string) {
+                        return null;
+                    }
+                });
+                yieldAdmission.setCellFactory(cell -> new ListCell<Admission>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblAmount = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblAmount, 2, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Admission person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getPatient_name());
+                            lblAmount.setText("المبلغ: " + person.getTotalCost());
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
                 super.succeeded();
             }
         };
         service.start();
-       
 
     }
 
@@ -541,7 +707,9 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formDelete(ActionEvent event) {
         progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {boolean ok = true;
+        Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -565,7 +733,8 @@ public class AccountsScreenYieldsController implements Initializable {
                                         r.Delete();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);ok = false;
+                                    AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -582,10 +751,12 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                progress.setVisible(false); if (ok) {
-                clear();
-                getData();
-                fillCombo();}
+                progress.setVisible(false);
+                if (ok) {
+                    clear();
+                    getData();
+                    fillCombo();
+                }
                 super.succeeded();
             }
         };
@@ -595,7 +766,9 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formEdite(ActionEvent event) {
         progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {boolean ok = true;
+        Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -616,15 +789,17 @@ public class AccountsScreenYieldsController implements Initializable {
                                     if (result.get() == ButtonType.OK) {
                                         ReceptionYields r = new ReceptionYields();
                                         r.setId(Integer.parseInt(yieldId.getText()));
-                                        r.setAcc_id(Integer.parseInt(prefs.get(MAIN_ACC_ID, "2")));
+                                        
+                                        r.setAcc_id(yieldAccTo.getItems().get(yieldAccTo.getSelectionModel().getSelectedIndex()).getId());
                                         r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                         r.setAmount(yieldCredit.getText());
-                                        r.setDate(yieldDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                                        r.setAdmission_id(yieldAdmission.getSelectionModel().getSelectedItem().getId());
+                                        r.setDate(yieldDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))); 
+                                        r.setAdmission_id(yieldAdmission.getItems().get(yieldAdmission.getSelectionModel().getSelectedIndex()).getId());
                                         r.Edite();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);ok = false;
+                                    AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -641,10 +816,12 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                progress.setVisible(false); if (ok) {
-                clear();
-                getData();
-                fillCombo();}
+                progress.setVisible(false);
+                if (ok) {
+                    clear();
+                    getData();
+                    fillCombo();
+                }
                 super.succeeded();
             }
         };
@@ -654,7 +831,9 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formAdd(ActionEvent event) {
         progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {boolean ok = true;
+        Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -668,14 +847,15 @@ public class AccountsScreenYieldsController implements Initializable {
                                 try {
                                     ReceptionYields r = new ReceptionYields();
                                     r.setId(Integer.parseInt(yieldId.getText()));
-                                    r.setAcc_id(Integer.parseInt(prefs.get(MAIN_ACC_ID, "2")));
-                                    r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
+                                    r.setAcc_id(yieldAccTo.getItems().get(yieldAccTo.getSelectionModel().getSelectedIndex()).getId());
+                                        r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                     r.setAmount(yieldCredit.getText());
                                     r.setDate(yieldDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                                    r.setAdmission_id(yieldAdmission.getSelectionModel().getSelectedItem().getId());
+                                    r.setAdmission_id(yieldAdmission.getItems().get(yieldAdmission.getSelectionModel().getSelectedIndex()).getId());
                                     r.Add();
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);ok = false;
+                                    AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -692,10 +872,12 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                progress.setVisible(false); if (ok) {
-                clear();
-                getData();
-                fillCombo();}
+                progress.setVisible(false);
+                if (ok) {
+                    clear();
+                    getData();
+                    fillCombo();
+                }
                 super.succeeded();
             }
         };
@@ -787,7 +969,9 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formOtherDelete(ActionEvent event) {
         OtherProgress.setVisible(true);
-        Service<Void> service = new Service<Void>() {boolean ok = true;
+        Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -812,7 +996,8 @@ public class AccountsScreenYieldsController implements Initializable {
                                         r.Delete();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);ok = false;
+                                    AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -829,10 +1014,12 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                OtherProgress.setVisible(false); if (ok) {
-                clear();
-                getData();
-                fillCombo();}
+                OtherProgress.setVisible(false);
+                if (ok) {
+                    clear();
+                    getData();
+                    fillCombo();
+                }
                 super.succeeded();
             }
         };
@@ -842,7 +1029,9 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formOtherEdite(ActionEvent event) {
         OtherProgress.setVisible(true);
-        Service<Void> service = new Service<Void>() {boolean ok = true;
+        Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -863,15 +1052,18 @@ public class AccountsScreenYieldsController implements Initializable {
                                     if (result.get() == ButtonType.OK) {
                                         AccountsYields r = new AccountsYields();
                                         r.setId(Integer.parseInt(yieldOtherId.getText()));
-                                        r.setAcc_id(Integer.parseInt(prefs.get(MAIN_ACC_ID, "2")));
-                                        r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
+                                        r.setAcc_id(yieldOherAccTo.getItems().get(yieldOherAccTo.getSelectionModel().getSelectedIndex()).getId());
+                                          r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                         r.setAmount(yieldOtherCredit.getText());
                                         r.setDate(yieldOtherDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                                        r.setCat_id(yieldOtherCat.getSelectionModel().getSelectedItem().getId());
+                                       
+                                        
+                                        r.setCat_id(yieldOtherCat.getItems().get(yieldOtherCat.getSelectionModel().getSelectedIndex()).getId());
                                         r.Edite();
                                     }
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);ok = false;
+                                    AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -888,10 +1080,12 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                OtherProgress.setVisible(false); if (ok) {
-                clear();
-                getData();
-                fillCombo();}
+                OtherProgress.setVisible(false);
+                if (ok) {
+                    clear();
+                    getData();
+                    fillCombo();
+                }
                 super.succeeded();
             }
         };
@@ -901,7 +1095,9 @@ public class AccountsScreenYieldsController implements Initializable {
     @FXML
     private void formOtherAdd(ActionEvent event) {
         OtherProgress.setVisible(true);
-        Service<Void> service = new Service<Void>() {boolean ok = true;
+        Service<Void> service = new Service<Void>() {
+            boolean ok = true;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -915,14 +1111,15 @@ public class AccountsScreenYieldsController implements Initializable {
                                 try {
                                     AccountsYields r = new AccountsYields();
                                     r.setId(Integer.parseInt(yieldOtherId.getText()));
-                                    r.setAcc_id(Integer.parseInt(prefs.get(MAIN_ACC_ID, "2")));
-                                    r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
+                                    r.setAcc_id(yieldOherAccTo.getItems().get(yieldOherAccTo.getSelectionModel().getSelectedIndex()).getId());
+                                        r.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                     r.setAmount(yieldOtherCredit.getText());
                                     r.setDate(yieldOtherDate.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                                    r.setCat_id(yieldOtherCat.getSelectionModel().getSelectedItem().getId());
+                                    r.setCat_id(yieldOtherCat.getItems().get(yieldOtherCat.getSelectionModel().getSelectedIndex()).getId());
                                     r.Add();
                                 } catch (Exception ex) {
-                                    AlertDialogs.showErrors(ex);ok = false;
+                                    AlertDialogs.showErrors(ex);
+                                    ok = false;
                                 } finally {
                                     latch.countDown();
                                 }
@@ -939,10 +1136,12 @@ public class AccountsScreenYieldsController implements Initializable {
 
             @Override
             protected void succeeded() {
-                OtherProgress.setVisible(false); if (ok) {
-                clear();
-                getData();
-                fillCombo();}
+                OtherProgress.setVisible(false);
+                if (ok) {
+                    clear();
+                    getData();
+                    fillCombo();
+                }
                 super.succeeded();
             }
         };

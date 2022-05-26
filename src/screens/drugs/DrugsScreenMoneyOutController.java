@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -204,60 +205,101 @@ public class DrugsScreenMoneyOutController implements Initializable {
     ObservableList<DrugsMoneyOut> items;
 
     private void fillCombo() {
-        try {
-            patient.setItems(DrugsPatients.getData());
-            patient.setConverter(new StringConverter<DrugsPatients>() {
-                @Override
-                public String toString(DrugsPatients patient) {
-                    return patient.getName();
-                }
+            Service<Void> service = new Service<Void>() {
+            ObservableList<DrugsPatients> data;
+            ObservableList<DrugsPatients> dataSearch;
 
-                @Override
-                public DrugsPatients fromString(String string) {
-                    return null;
-                }
-            });
-            patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
-
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100),
-                            new ColumnConstraints(100, 100, 100)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-                @Override
-                protected void updateItem(DrugsPatients person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
-                    } else {
-                        // Nothing to display here
-                        setGraphic(null);
+                            data = DrugsPatients.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
                     }
-                }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                patient.setItems(data);
+                patient.setEditable(true);
+                patient.setOnKeyReleased((event) -> {
+
+                    if (patient.getEditor().getText().length() == 0) {
+                        patient.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (DrugsPatients a : data) {
+                            if (a.getName().contains(patient.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        patient.setItems(dataSearch);
+                        patient.show();
+                    }
+                });
+                patient.setConverter(new StringConverter<DrugsPatients>() {
+                    @Override
+                    public String toString(DrugsPatients patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public DrugsPatients fromString(String string) {
+                        return null;
+                    }
+                });
+                patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(DrugsPatients person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+            }
+        };
+        service.start();
     }
 
     private void fillEscortCombo(int patient) {
@@ -321,7 +363,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
     @FXML
     private void show(ActionEvent event) {
         try {
-            int id1 = patient.getSelectionModel().getSelectedItem().getId();
+            int id1 =patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId();
             getData(id1);
             fillEscortCombo(id1);
             ObservableList<DrugsAccounts> data = DrugsAccounts.getData(id1);
@@ -369,7 +411,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
                                         } else {
                                             d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
                                         }
-                                        d.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
+                                        d.setPatient_id(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                                         d.Delete();
                                     }
                                 } catch (Exception ex) {
@@ -391,7 +433,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                getData(patient.getSelectionModel().getSelectedItem().getId());
+                getData(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                 clear();
                 updateParent();
                 super.succeeded();
@@ -431,7 +473,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
                                         } else {
                                             d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
                                         }
-                                        d.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
+                                        d.setPatient_id(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                                         d.Edite();
                                     }
                                 } catch (Exception ex) {
@@ -453,7 +495,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                getData(patient.getSelectionModel().getSelectedItem().getId());
+                getData(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                 clear();
                 updateParent();
                 super.succeeded();
@@ -486,7 +528,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
                                     } else {
                                         d.setEscort_id(escort.getSelectionModel().getSelectedItem().getId());
                                     }
-                                    d.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
+                                    d.setPatient_id(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                                     d.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
@@ -507,7 +549,7 @@ public class DrugsScreenMoneyOutController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                getData(patient.getSelectionModel().getSelectedItem().getId());
+                getData(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                 clear();
                 updateParent();
                 super.succeeded();

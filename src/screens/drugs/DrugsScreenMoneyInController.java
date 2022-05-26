@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -19,24 +20,20 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import screens.drugs.assets.DrugsMoneyIn;
 import screens.drugs.assets.DrugsPatients;
@@ -145,7 +142,7 @@ public class DrugsScreenMoneyInController
                 date.setValue(LocalDate.parse(selected.getDate()));
                 ObservableList<DrugsPatientsEscort> items1 = escort.getItems();
                 for (DrugsPatientsEscort a : items1) {
-                    if (a.getId()==Integer.parseInt(selected.getEscort_name())) {
+                    if (a.getId() == Integer.parseInt(selected.getEscort_name())) {
                         escort.getSelectionModel().select(a);
                     }
                 }
@@ -190,61 +187,102 @@ public class DrugsScreenMoneyInController
     }
 
     private void fillCombo() {
-        try {
-            patient.setItems(DrugsPatients.getData());
-            patient.setConverter(new StringConverter<DrugsPatients>() {
-                @Override
-                public String toString(DrugsPatients patient) {
-                    return patient.getName();
-                }
 
-                @Override
-                public DrugsPatients fromString(String string) {
-                    return null;
-                }
-            });
-            patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
+        Service<Void> service = new Service<Void>() {
+            ObservableList<DrugsPatients> data;
+            ObservableList<DrugsPatients> dataSearch;
 
-                // Create our layout here to be reused for each ListCell
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100),
-                            new ColumnConstraints(100, 100, 100)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-                @Override
-                protected void updateItem(DrugsPatients person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
-                    } else {
-                        // Nothing to display here
-                        setGraphic(null);
+                            data = DrugsPatients.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
                     }
-                }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                patient.setItems(data);
+                patient.setEditable(true);
+                patient.setOnKeyReleased((event) -> {
+
+                    if (patient.getEditor().getText().length() == 0) {
+                        patient.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (DrugsPatients a : data) {
+                            if (a.getName().contains(patient.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        patient.setItems(dataSearch);
+                        patient.show();
+                    }
+                });
+                patient.setConverter(new StringConverter<DrugsPatients>() {
+                    @Override
+                    public String toString(DrugsPatients patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public DrugsPatients fromString(String string) {
+                        return null;
+                    }
+                });
+                patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(DrugsPatients person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+            }
+        };
+        service.start();
     }
 
     private void fillEscortCombo(int patientId) {
@@ -333,7 +371,7 @@ public class DrugsScreenMoneyInController
                                     if (result.get() == ButtonType.OK) {
                                         DrugsMoneyIn mo = new DrugsMoneyIn();
                                         mo.setId(Integer.parseInt(id.getText()));
-                                        mo.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
+                                        mo.setPatient_id(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                                         mo.setAmount(amount.getText());
                                         mo.Delete();
                                     }
@@ -355,7 +393,7 @@ public class DrugsScreenMoneyInController
             protected void succeeded() {
                 progress.setVisible(false);
                 clear();
-                getData(patient.getSelectionModel().getSelectedItem().getId());
+                getData(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                 updateParent();
                 super.succeeded();
             }
@@ -415,7 +453,7 @@ public class DrugsScreenMoneyInController
             protected void succeeded() {
                 progress.setVisible(false);
                 clear();
-                getData(patient.getSelectionModel().getSelectedItem().getId());
+                getData(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                 updateParent();
                 super.succeeded();
             }
@@ -440,7 +478,7 @@ public class DrugsScreenMoneyInController
                                 try {
                                     DrugsMoneyIn mo = new DrugsMoneyIn();
                                     mo.setId(Integer.parseInt(id.getText()));
-                                    mo.setPatient_id(patient.getSelectionModel().getSelectedItem().getId());
+                                    mo.setPatient_id(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                                     mo.setAmount(amount.getText());
                                     mo.setDate(date.getValue().format(format));
                                     if (escort.getSelectionModel().getSelectedIndex() == -1) {
@@ -467,7 +505,7 @@ public class DrugsScreenMoneyInController
             protected void succeeded() {
                 progress.setVisible(false);
                 clear();
-                getData(((DrugsPatients) DrugsScreenMoneyInController.this.patient.getSelectionModel().getSelectedItem()).getId());
+                getData(patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId());
                 updateParent();
                 super.succeeded();
             }
@@ -510,7 +548,7 @@ public class DrugsScreenMoneyInController
             AlertDialogs.showError("اختار حساب المريض اولا");
         } else {
 
-            int id1 = patient.getSelectionModel().getSelectedItem().getId();
+            int id1 = patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId();
             fillEscortCombo(id1);
             getData(id1);
         }

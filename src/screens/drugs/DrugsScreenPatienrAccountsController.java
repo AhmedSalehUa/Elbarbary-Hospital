@@ -17,11 +17,9 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -38,7 +36,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -50,7 +47,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javax.imageio.ImageIO;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -70,14 +66,12 @@ import screens.drugs.assets.DrugsRoom;
 import screens.drugs.assets.DrugsServices;
 import screens.mainDataScreen.assets.Doctors;
 import screens.mainDataScreen.assets.DoctorsServices;
-import screens.mainDataScreen.assets.Patients;
 import screens.store.assets.StoreProdcts;
 import screens.store.assets.Stores;
 
 public class DrugsScreenPatienrAccountsController
         implements Initializable {
 
-    @FXML
     private JFXTextField search;
     @FXML
     private TableView<DrugsAccounts> accountTable;
@@ -101,8 +95,6 @@ public class DrugsScreenPatienrAccountsController
     private AnchorPane MoneyIn;
     @FXML
     private AnchorPane MoneyOut;
-    @FXML
-    private JFXTextField search11;
     @FXML
     private TableView<DrugsMedicines> admissionMedicineTable;
     @FXML
@@ -137,8 +129,6 @@ public class DrugsScreenPatienrAccountsController
     private Button serviceEdite;
     @FXML
     private Button serviceAdd;
-    @FXML
-    private JFXTextField search1;
     @FXML
     private TableView<DrugsServices> serviceTable;
     @FXML
@@ -234,8 +224,6 @@ public class DrugsScreenPatienrAccountsController
     @FXML
     private Button roomAdd;
     @FXML
-    private JFXTextField search12;
-    @FXML
     private TableView<DrugsRoom> roomTable;
     @FXML
     private TableColumn<DrugsRoom, String> roomTabCost;
@@ -247,10 +235,26 @@ public class DrugsScreenPatienrAccountsController
     private AnchorPane MoneyTransactions;
     @FXML
     private Button print;
+    @FXML
+    private JFXTextField accSearch;
+    @FXML
+    private Button updateExite;
+    @FXML
+    private Button updateEntrance;
+    @FXML
+    private TableColumn<DrugsAccounts, String> accountTabExiteDate;
+    @FXML
+    private TableColumn<DrugsAccounts, String> accountTabEntranceDate;
+    @FXML
+    private JFXTextField medicineSearch;
+    @FXML
+    private JFXTextField servicesSearch;
+    @FXML
+    private JFXTextField dailyRoomSearch;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         serviceDate.setConverter(new StringConverter<LocalDate>() {
+        serviceDate.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -269,7 +273,7 @@ public class DrugsScreenPatienrAccountsController
                 return LocalDate.parse(dateString, dateTimeFormatter);
             }
         });
-          roomDate.setConverter(new StringConverter<LocalDate>() {
+        roomDate.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -462,6 +466,8 @@ public class DrugsScreenPatienrAccountsController
     }
 
     private void intialColumn() {
+        accountTabExiteDate.setCellValueFactory(new PropertyValueFactory("DateOfExite"));
+        accountTabEntranceDate.setCellValueFactory(new PropertyValueFactory("DateOfEntrance"));
         accountTabRoom.setCellValueFactory(new PropertyValueFactory("room"));
         accountTabRemaining.setCellValueFactory(new PropertyValueFactory("remaining"));
         accountTabtotalSpended.setCellValueFactory(new PropertyValueFactory("total_spended"));
@@ -501,10 +507,6 @@ public class DrugsScreenPatienrAccountsController
         }
     }
 
-    @FXML
-    private void search(KeyEvent event) {
-    }
-
     public void updateParent() {
         getData();
         if (selectedAccount != null) {
@@ -522,7 +524,8 @@ public class DrugsScreenPatienrAccountsController
             dailyCredit.setText("");
             dailyDate.setValue(null);
             dailyNotes.setText("");
-            dailyCategory.getItems();
+            dailyCategory.getSelectionModel().clearSelection();
+            dailyCategory.getEditor().setText("");
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
         }
@@ -548,21 +551,24 @@ public class DrugsScreenPatienrAccountsController
 
     @FXML
     private void dailySearch(KeyEvent event) {
-        FilteredList<DrugsPatientExpenses> filteredData = new FilteredList(this.dailyItems, p -> true);
+        FilteredList<DrugsPatientExpenses> filteredData = new FilteredList<>(dailyItems, p -> true);
 
         filteredData.setPredicate(pa -> {
-            if (this.search.getText() == null || this.search.getText().isEmpty()) {
+
+            if (dailySearch.getText() == null || dailySearch.getText().isEmpty()) {
                 return true;
             }
 
-            String lowerCaseFilter = this.search.getText().toLowerCase();
+            String lowerCaseFilter = dailySearch.getText().toLowerCase();
 
             return (pa.getCat_name().contains(lowerCaseFilter) || pa.getDate().contains(lowerCaseFilter));
+
         });
 
-        SortedList<DrugsPatientExpenses> sortedData = new SortedList(filteredData);
-        sortedData.comparatorProperty().bind((ObservableValue) dailyTable.comparatorProperty());
-        this.dailyTable.setItems(sortedData);
+        SortedList< DrugsPatientExpenses> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(dailyTable.comparatorProperty());
+        dailyTable.setItems(sortedData);
+
     }
 
     @FXML
@@ -593,7 +599,7 @@ public class DrugsScreenPatienrAccountsController
 
                                         ex.setPatient_id(selectedAccount.getPaitent_id());
                                         ex.setAcc_id(selectedAccount.getId());
-                                        ex.setCat_id(dailyCategory.getSelectionModel().getSelectedItem().getId());
+                                        ex.setCat_id(dailyCategory.getItems().get(dailyCategory.getSelectionModel().getSelectedIndex()).getId());
                                         ex.setNotes(dailyNotes.getText());
                                         ex.setDate(dailyDate.getValue().format(format));
                                         ex.setAmount(dailyCredit.getText());
@@ -648,7 +654,7 @@ public class DrugsScreenPatienrAccountsController
 
                                         ex.setPatient_id(selectedAccount.getPaitent_id());
                                         ex.setAcc_id(selectedAccount.getId());
-                                        ex.setCat_id(dailyCategory.getSelectionModel().getSelectedItem().getId());
+                                        ex.setCat_id(dailyCategory.getItems().get(dailyCategory.getSelectionModel().getSelectedIndex()).getId());
                                         ex.setNotes(dailyNotes.getText());
                                         ex.setDate(dailyDate.getValue().format(format));
                                         ex.setAmount(dailyCredit.getText());
@@ -696,7 +702,7 @@ public class DrugsScreenPatienrAccountsController
                                     ex.setId(Integer.parseInt(dailyId.getText()));
                                     ex.setPatient_id(selectedAccount.getPaitent_id());
                                     ex.setAcc_id(selectedAccount.getId());
-                                    ex.setCat_id(dailyCategory.getSelectionModel().getSelectedItem().getId());
+                                    ex.setCat_id(dailyCategory.getItems().get(dailyCategory.getSelectionModel().getSelectedIndex()).getId());
                                     ex.setNotes(dailyNotes.getText());
                                     ex.setDate(dailyDate.getValue().format(format));
                                     ex.setAmount(dailyCredit.getText());
@@ -740,100 +746,184 @@ public class DrugsScreenPatienrAccountsController
     }
 
     private void fillExpensesCombo() {
-        try {
-            this.dailyCategory.setItems(DrugsCategeroy.getData());
-            this.dailyCategory.setConverter(new StringConverter<DrugsCategeroy>() {
-                public String toString(DrugsCategeroy patient) {
-                    return patient.getName();
-                }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<DrugsCategeroy> dailyCategoryData;
+            ObservableList<DrugsCategeroy> dailyCategoryDataSearch;
 
-                public DrugsCategeroy fromString(String string) {
-                    return null;
-                }
-            });
-            this.dailyCategory.setCellFactory(cell -> new ListCell<DrugsCategeroy>() {
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(50, 50, 50),
-                            new ColumnConstraints(150, 150, 150)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                protected void updateItem(DrugsCategeroy person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-
-                        this.lblid.setText("م: " + Integer.toString(person.getId()));
-                        this.lblName.setText("الاسم: " + person.getName());
-                        setGraphic((Node) this.gridPane);
-                    } else {
-                        setGraphic(null);
+                            dailyCategoryData = DrugsCategeroy.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
                     }
-                }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                dailyCategory.setItems(dailyCategoryData); 
+                dailyCategory.setEditable(true);
+                dailyCategory.setOnKeyReleased((event) -> {
+
+                    if (dailyCategory.getEditor().getText().length() == 0) {
+                        dailyCategory.setItems(dailyCategoryData);
+                    } else {
+                        dailyCategoryDataSearch = FXCollections.observableArrayList();
+
+                        for (DrugsCategeroy a : dailyCategoryData) {
+                            if (a.getName().contains(dailyCategory.getEditor().getText())) {
+                                dailyCategoryDataSearch.add(a);
+                            }
+                        }
+                        dailyCategory.setItems(dailyCategoryDataSearch);
+                        dailyCategory.show();
+                    }
+                });
+                dailyCategory.setConverter(new StringConverter<DrugsCategeroy>() {
+                    public String toString(DrugsCategeroy patient) {
+                        return patient.getName();
+                    }
+
+                    public DrugsCategeroy fromString(String string) {
+                        return null;
+                    }
+                });
+                dailyCategory.setCellFactory(cell -> new ListCell<DrugsCategeroy>() {
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(50, 50, 50),
+                                new ColumnConstraints(150, 150, 150)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    protected void updateItem(DrugsCategeroy person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            this.lblid.setText("م: " + Integer.toString(person.getId()));
+                            this.lblName.setText("الاسم: " + person.getName());
+                            setGraphic((Node) this.gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     private void getMedicine(String storeId) throws Exception {
-        this.admissionMedicineMedicines.setItems(StoreProdcts.getDataForSell(storeId));
-        this.admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
-            public String toString(StoreProdcts patient) {
-                return patient.getProduct();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<StoreProdcts> storeData;
+            ObservableList<StoreProdcts> storeDataSearch;
 
-            public StoreProdcts fromString(String string) {
-                return null;
-            }
-        });
-        this.admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblCost = new Label();
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblCost, 2, 1);
+                            storeData = StoreProdcts.getDataForSell(storeId);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            protected void updateItem(StoreProdcts person, boolean empty) {
-                super.updateItem(person, empty);
+            @Override
+            protected void succeeded() {
+                admissionMedicineMedicines.setItems(storeData);
+                admissionMedicineMedicines.setEditable(true);
+                admissionMedicineMedicines.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (admissionMedicineMedicines.getEditor().getText().length() == 0) {
+                        admissionMedicineMedicines.setItems(storeData);
+                    } else {
+                        storeDataSearch = FXCollections.observableArrayList();
 
-                    this.lblid.setText("الكميةالمتاحة: " + person.getAmount());
-                    this.lblName.setText("الاسم: " + person.getProduct());
-                    this.lblCost.setText("سعر البيع: " + person.getCostOfSell());
+                        for (StoreProdcts a : storeData) {
+                            if (a.getProduct().contains(admissionMedicineMedicines.getEditor().getText())) {
+                                storeDataSearch.add(a);
+                            }
+                        }
+                        admissionMedicineMedicines.setItems(storeDataSearch);
+                        admissionMedicineMedicines.show();
+                    }
+                });
+                admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
+                    public String toString(StoreProdcts patient) {
+                        return patient.getProduct();
+                    }
 
-                    setGraphic((Node) this.gridPane);
-                } else {
+                    public StoreProdcts fromString(String string) {
+                        return null;
+                    }
+                });
+                admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblCost = new Label();
 
-                    setGraphic(null);
-                }
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblCost, 2, 1);
+
+                    }
+
+                    protected void updateItem(StoreProdcts person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            this.lblid.setText("الكميةالمتاحة: " + person.getAmount());
+                            this.lblName.setText("الاسم: " + person.getProduct());
+                            this.lblCost.setText("سعر البيع: " + person.getCostOfSell());
+
+                            setGraphic((Node) this.gridPane);
+                        } else {
+
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
+        };
+        service.start();
     }
 
     @FXML
@@ -841,7 +931,7 @@ public class DrugsScreenPatienrAccountsController
         if (this.admissionMedicineStore.getSelectionModel().getSelectedIndex() != -1) {
 
             try {
-                getMedicine(Integer.toString(admissionMedicineStore.getSelectionModel().getSelectedItem().getId()));
+                getMedicine(Integer.toString(admissionMedicineStore.getItems().get(admissionMedicineStore.getSelectionModel().getSelectedIndex()).getId()));
             } catch (Exception ex) {
                 AlertDialogs.showErrors(ex);
             }
@@ -873,7 +963,7 @@ public class DrugsScreenPatienrAccountsController
                                     if (result.get() == ButtonType.OK) {
                                         DrugsMedicines dg = new DrugsMedicines();
                                         dg.setId(Integer.parseInt(admissionMedicineId.getText()));
-                                        StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                        StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                         dg.setMedicine_id(selectedItem.getId());
                                         dg.setAmount(admissionMedicineAmount.getText());
                                         dg.setCost_of_one(selectedItem.getCostOfSell());
@@ -925,7 +1015,7 @@ public class DrugsScreenPatienrAccountsController
 
                                     Optional<ButtonType> result = alert.showAndWait();
                                     if (result.get() == ButtonType.OK) {
-                                        StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                        StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                         if (Double.parseDouble(selectedItem.getAmount()) < Double.parseDouble(admissionMedicineAmount.getText())) {
                                             AlertDialogs.showError("الكمية المتاحة لا تكفي لصرف الكمية المطلوبة");
                                         } else {
@@ -979,7 +1069,7 @@ public class DrugsScreenPatienrAccountsController
                             Platform.runLater(new Runnable() {
                                 public void run() {
                                     try {
-                                        StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                        StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                         if (Double.parseDouble(selectedItem.getAmount()) < Double.parseDouble(admissionMedicineAmount.getText())) {
                                             AlertDialogs.showError("الكمية المتاحة لا تكفي لصرف الكمية المطلوبة");
                                         } else {
@@ -1032,48 +1122,93 @@ public class DrugsScreenPatienrAccountsController
     }
 
     private void fillMedicineCombos() throws Exception {
-        admissionMedicineStore.setItems(Stores.getData());
-        admissionMedicineStore.setConverter(new StringConverter<Stores>() {
-            public String toString(Stores patient) {
-                return patient.getName();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Stores> storeData;
+            ObservableList<Stores> storeDataSearch;
 
-            public Stores fromString(String string) {
-                return null;
-            }
-        });
-        admissionMedicineStore.setCellFactory(cell -> new ListCell<Stores>() {
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100));
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
+                            storeData = Stores.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            protected void updateItem(Stores person, boolean empty) {
-                super.updateItem(person, empty);
+            @Override
+            protected void succeeded() {
+                admissionMedicineStore.setItems(storeData);
+                admissionMedicineStore.setEditable(true);
+                admissionMedicineStore.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (admissionMedicineStore.getEditor().getText().length() == 0) {
+                        admissionMedicineStore.setItems(storeData);
+                    } else {
+                        storeDataSearch = FXCollections.observableArrayList();
 
-                    lblid.setText("اسم المخزن: " + person.getName());
-                    lblName.setText("النوع: " + person.getType());
+                        for (Stores a : storeData) {
+                            if (a.getName().contains(admissionMedicineStore.getEditor().getText())) {
+                                storeDataSearch.add(a);
+                            }
+                        }
+                        admissionMedicineStore.setItems(storeDataSearch);
+                        admissionMedicineStore.show();
+                    }
+                });
+                admissionMedicineStore.setConverter(new StringConverter<Stores>() {
+                    public String toString(Stores patient) {
+                        return patient.getName();
+                    }
 
-                    setGraphic((Node) gridPane);
-                } else {
+                    public Stores fromString(String string) {
+                        return null;
+                    }
+                });
+                admissionMedicineStore.setCellFactory(cell -> new ListCell<Stores>() {
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
 
-                    setGraphic(null);
-                }
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100));
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    protected void updateItem(Stores person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            lblid.setText("اسم المخزن: " + person.getName());
+                            lblName.setText("النوع: " + person.getType());
+
+                            setGraphic((Node) gridPane);
+                        } else {
+
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
+        };
+        service.start();
+
     }
 
     private void clearMedicine() {
@@ -1081,6 +1216,7 @@ public class DrugsScreenPatienrAccountsController
             admissionMedicineId.setText(DrugsMedicines.getAutoNum());
             admissionMedicineAmount.setText("");
             admissionMedicineMedicines.getSelectionModel().clearSelection();
+            admissionMedicineMedicines.getEditor().setText("");
             medicineAdd.setDisable(false);
             medicineDelete.setDisable(true);
             medicineEdite.setDisable(true);
@@ -1110,7 +1246,9 @@ public class DrugsScreenPatienrAccountsController
             serviceDelete.setDisable(true);
             serviceEdite.setDisable(true);
             serviceDoctor.getSelectionModel().clearSelection();
+            serviceDoctor.getEditor().setText("");
             serviceService.getSelectionModel().clearSelection();
+            serviceService.getEditor().setText("");
             serviceAdd.setDisable(false);
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
@@ -1118,129 +1256,211 @@ public class DrugsScreenPatienrAccountsController
     }
 
     private void fillServicesCombo() {
-        try {
-            serviceDoctor.setItems(Doctors.getData());
-            serviceDoctor.setConverter(new StringConverter<Doctors>() {
-                @Override
-                public String toString(Doctors patient) {
-                    return patient.getName();
-                }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Doctors> doctorData;
+            ObservableList<Doctors> doctorDataSearch;
 
-                @Override
-                public Doctors fromString(String string) {
-                    return null;
-                }
-            });
-            serviceDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-                // Create our layout here to be reused for each ListCell
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
-
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(100, 100, 100),
-                            new ColumnConstraints(100, 100, 100)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-                @Override
-                protected void updateItem(Doctors person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
-                    } else {
-                        // Nothing to display here
-                        setGraphic(null);
+                            doctorData = Doctors.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
                     }
-                }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                serviceDoctor.setItems(doctorData);
+                serviceDoctor.setEditable(true);
+                serviceDoctor.setOnKeyReleased((event) -> {
+
+                    if (serviceDoctor.getEditor().getText().length() == 0) {
+                        serviceDoctor.setItems(doctorData);
+                    } else {
+                        doctorDataSearch = FXCollections.observableArrayList();
+
+                        for (Doctors a : doctorData) {
+                            if (a.getName().contains(serviceDoctor.getEditor().getText())) {
+                                doctorDataSearch.add(a);
+                            }
+                        }
+                        serviceDoctor.setItems(doctorDataSearch);
+                        serviceDoctor.show();
+                    }
+                });
+                serviceDoctor.setConverter(new StringConverter<Doctors>() {
+                    @Override
+                    public String toString(Doctors patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Doctors fromString(String string) {
+                        return null;
+                    }
+                });
+                serviceDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Doctors person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     private void getDoctorServices(int id) {
-        try {
-            serviceService.setItems(DoctorsServices.getData(Integer.toString(id)));
-            serviceService.setConverter(new StringConverter<DoctorsServices>() {
-                @Override
-                public String toString(DoctorsServices patient) {
-                    return patient.getName();
-                }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<DoctorsServices> serviceData;
+            ObservableList<DoctorsServices> serviceDataSearch;
 
-                @Override
-                public DoctorsServices fromString(String string) {
-                    return null;
-                }
-            });
-            serviceService.setCellFactory(cell -> new ListCell<DoctorsServices>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-                // Create our layout here to be reused for each ListCell
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
-                Label lblCost = new Label();
-
-                // Static block to configure our layout
-                {
-                    // Ensure all our column widths are constant
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
-                            new ColumnConstraints(100, 100, 100)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-                    gridPane.add(lblCost, 2, 1);
-
-                }
-
-                // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-                @Override
-                protected void updateItem(DoctorsServices person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-
-                        // Update our Labels
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-                        lblCost.setText("التكلفة: " + person.getCost());
-
-                        // Set this ListCell's graphicProperty to display our GridPane
-                        setGraphic(gridPane);
-                    } else {
-                        // Nothing to display here
-                        setGraphic(null);
+                            serviceData = DoctorsServices.getData(Integer.toString(id));
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
                     }
-                }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                serviceService.setItems(serviceData);
+                serviceService.setEditable(true);
+                serviceService.setOnKeyReleased((event) -> {
+
+                    if (serviceService.getEditor().getText().length() == 0) {
+                        serviceService.setItems(serviceData);
+                    } else {
+                        serviceDataSearch = FXCollections.observableArrayList();
+
+                        for (DoctorsServices a : serviceData) {
+                            if (a.getName().contains(serviceService.getEditor().getText())) {
+                                serviceDataSearch.add(a);
+                            }
+                        }
+                        serviceService.setItems(serviceDataSearch);
+                        serviceService.show();
+                    }
+                });
+                serviceService.setConverter(new StringConverter<DoctorsServices>() {
+                    @Override
+                    public String toString(DoctorsServices patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public DoctorsServices fromString(String string) {
+                        return null;
+                    }
+                });
+                serviceService.setCellFactory(cell -> new ListCell<DoctorsServices>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblCost = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblCost, 2, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(DoctorsServices person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblCost.setText("التكلفة: " + person.getCost());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
+            }
+        };
+        service.start();
+
     }
 
     @FXML
     private void getDoctorServices(ActionEvent event) {
         if (serviceDoctor.getSelectionModel().getSelectedIndex() == -1) {
         } else {
-            getDoctorServices(serviceDoctor.getSelectionModel().getSelectedItem().getId());
+            getDoctorServices(serviceDoctor.getItems().get(serviceDoctor.getSelectionModel().getSelectedIndex()).getId());
         }
     }
 
@@ -1275,9 +1495,9 @@ public class DrugsScreenPatienrAccountsController
                                         ds.setId(Integer.parseInt(serviceId.getText()));
                                         ds.setAcc_id(Integer.parseInt(prefs.get("DRUGS_ACCOUNT_ID", "2")));
                                         ds.setPatient_id(selectedAccount.getPaitent_id());
-                                        ds.setDoctor_id(serviceDoctor.getSelectionModel().getSelectedItem().getId());
-                                        ds.setService_id(serviceService.getSelectionModel().getSelectedItem().getId());
-                                        ds.setCost(serviceService.getSelectionModel().getSelectedItem().getCost());
+                                        ds.setDoctor_id(serviceDoctor.getItems().get(serviceDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                        ds.setService_id(serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex()).getId());
+                                        ds.setCost(serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex()).getCost());
                                         ds.setDate(serviceDate.getValue().format(format));
                                         ds.Delete();
                                     }
@@ -1331,9 +1551,9 @@ public class DrugsScreenPatienrAccountsController
                                         ds.setId(Integer.parseInt(serviceId.getText()));
                                         ds.setAcc_id(Integer.parseInt(prefs.get("DRUGS_ACCOUNT_ID", "2")));
                                         ds.setPatient_id(selectedAccount.getPaitent_id());
-                                        ds.setDoctor_id(serviceDoctor.getSelectionModel().getSelectedItem().getId());
-                                        ds.setService_id(serviceService.getSelectionModel().getSelectedItem().getId());
-                                        ds.setCost(serviceService.getSelectionModel().getSelectedItem().getCost());
+                                        ds.setDoctor_id(serviceDoctor.getItems().get(serviceDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                        ds.setService_id(serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex()).getId());
+                                        ds.setCost(serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex()).getCost());
                                         ds.setDate(serviceDate.getValue().format(format));
                                         ds.Edite();
                                     }
@@ -1381,9 +1601,9 @@ public class DrugsScreenPatienrAccountsController
                                     ds.setId(Integer.parseInt(serviceId.getText()));
                                     ds.setAcc_id(Integer.parseInt(prefs.get("DRUGS_ACCOUNT_ID", "2")));
                                     ds.setPatient_id(selectedAccount.getPaitent_id());
-                                    ds.setDoctor_id(serviceDoctor.getSelectionModel().getSelectedItem().getId());
-                                    ds.setService_id(serviceService.getSelectionModel().getSelectedItem().getId());
-                                    ds.setCost(serviceService.getSelectionModel().getSelectedItem().getCost());
+                                    ds.setDoctor_id(serviceDoctor.getItems().get(serviceDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                    ds.setService_id(serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex()).getId());
+                                    ds.setCost(serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex()).getCost());
                                     ds.setDate(serviceDate.getValue().format(format));
                                     ds.Add();
                                 } catch (Exception ex) {
@@ -1685,7 +1905,6 @@ public class DrugsScreenPatienrAccountsController
                                 JasperReport surmedRepsubJasperReport = (JasperReport) JRLoader.loadObject(surmedRep);
                                 hash.put("services", surmedRepsubJasperReport);
 
-                                 
                                 InputStream a = getClass().getResourceAsStream("/screens/drugs/reports/PatientFile.jrxml");
                                 JasperDesign design = JRXmlLoader.load(a);
                                 JasperReport jasperreport = JasperCompileManager.compileReport(design);
@@ -1711,6 +1930,141 @@ public class DrugsScreenPatienrAccountsController
             };
             service.start();
         }
+    }
+
+    @FXML
+    private void accSearch(KeyEvent event) {
+        FilteredList<DrugsAccounts> filteredData = new FilteredList<>(accountItems, p -> true);
+
+        filteredData.setPredicate(pa -> {
+
+            if (accSearch.getText() == null || accSearch.getText().isEmpty()) {
+                return true;
+            }
+
+            String lowerCaseFilter = accSearch.getText().toLowerCase();
+
+            return (pa.getPatient_name().contains(lowerCaseFilter));
+
+        });
+
+        SortedList< DrugsAccounts> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(accountTable.comparatorProperty());
+        accountTable.setItems(sortedData);
+    }
+
+    @FXML
+    private void updateExite(ActionEvent event) {
+        if (this.accountTable.getSelectionModel().getSelectedIndex() == -1) {
+            AlertDialogs.showError("ختار لحساب اولا");
+        } else {
+            TextInputDialog dialog = new TextInputDialog(accountTable.getSelectionModel().getSelectedItem().getDateOfExite());
+            dialog.setTitle("updateEntrance");
+            dialog.setHeaderText("تاريخ الخروج");
+            dialog.setContentText("التاريخ");
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                int id = accountTable.getSelectionModel().getSelectedItem().getId();
+                try {
+                    DrugsAccounts.UpdateExite(id, result.get());
+                } catch (Exception ex) {
+                    AlertDialogs.showErrors(ex);
+                }
+                updateParent();
+            }
+        }
+    }
+
+    @FXML
+    private void updateEntrance(ActionEvent event) {
+        if (this.accountTable.getSelectionModel().getSelectedIndex() == -1) {
+            AlertDialogs.showError("ختار لحساب اولا");
+        } else {
+            TextInputDialog dialog = new TextInputDialog(accountTable.getSelectionModel().getSelectedItem().getDateOfEntrance());
+            dialog.setTitle("updateEntrance");
+            dialog.setHeaderText("تاريخ الدخول");
+            dialog.setContentText("التاريخ");
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                int id = accountTable.getSelectionModel().getSelectedItem().getId();
+                try {
+                    DrugsAccounts.UpdateEntrance(id, result.get());
+                } catch (Exception ex) {
+                    AlertDialogs.showErrors(ex);
+                }
+                updateParent();
+            }
+        }
+    }
+
+    @FXML
+    private void medicineSearch(KeyEvent event) {
+        FilteredList<DrugsMedicines> filteredData = new FilteredList<>(medicineItems, p -> true);
+
+        filteredData.setPredicate(pa -> {
+
+            if (medicineSearch.getText() == null || medicineSearch.getText().isEmpty()) {
+                return true;
+            }
+
+            String lowerCaseFilter = medicineSearch.getText().toLowerCase();
+
+            return (pa.getMedicine().contains(lowerCaseFilter)
+                    || pa.getAmount().contains(lowerCaseFilter)
+                    || pa.getTotal_cost().contains(lowerCaseFilter));
+
+        });
+
+        SortedList<DrugsMedicines> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(admissionMedicineTable.comparatorProperty());
+        admissionMedicineTable.setItems(sortedData);
+    }
+
+    @FXML
+    private void servicesSearch(KeyEvent event) {
+        FilteredList<DrugsServices> filteredData = new FilteredList<>(servicesItems, p -> true);
+
+        filteredData.setPredicate(pa -> {
+
+            if (servicesSearch.getText() == null || servicesSearch.getText().isEmpty()) {
+                return true;
+            }
+
+            String lowerCaseFilter = servicesSearch.getText().toLowerCase();
+
+            return (pa.getDoctor().contains(lowerCaseFilter)
+                    || pa.getService().contains(lowerCaseFilter)
+                    || pa.getDate().contains(lowerCaseFilter));
+
+        });
+
+        SortedList< DrugsServices> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(serviceTable.comparatorProperty());
+        serviceTable.setItems(sortedData);
+    }
+
+    @FXML
+    private void dailyRoomSearch(KeyEvent event) {
+        FilteredList<DrugsRoom> filteredData = new FilteredList<>(roomItems, p -> true);
+
+        filteredData.setPredicate(pa -> {
+
+            if (dailyRoomSearch.getText() == null || dailyRoomSearch.getText().isEmpty()) {
+                return true;
+            }
+
+            String lowerCaseFilter = dailyRoomSearch.getText().toLowerCase();
+
+            return (pa.getCost().contains(lowerCaseFilter)
+                    || pa.getDate().contains(lowerCaseFilter));
+
+        });
+
+        SortedList< DrugsRoom> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(roomTable.comparatorProperty());
+        roomTable.setItems(sortedData);
     }
 
 }

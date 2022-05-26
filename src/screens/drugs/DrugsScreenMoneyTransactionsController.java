@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -95,7 +96,7 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         date.setConverter(new StringConverter<LocalDate>() {
+        date.setConverter(new StringConverter<LocalDate>() {
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             @Override
@@ -213,6 +214,11 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
         Edite.setDisable(true);
 
         Add.setDisable(false);
+        from.getSelectionModel().clearSelection();
+        from.getEditor().setText("");
+        
+        to.getSelectionModel().clearSelection();
+        to.getEditor().setText("");
     }
 
     private void getAutoNum() {
@@ -235,92 +241,153 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
     }
 
     private void fillCombo() {
-        try {
-            from.setItems(Accounts.getData());
-            from.setConverter(new StringConverter<Accounts>() {
-                @Override
-                public String toString(Accounts patient) {
-                    return patient.getName();
-                }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Accounts> dataFrom;
+            ObservableList<Accounts> dataFromSearch;
+            ObservableList<Accounts> dataTo;
+            ObservableList<Accounts> dataToSearch;
 
-                @Override
-                public Accounts fromString(String string) {
-                    return null;
-                }
-            });
-            from.setCellFactory(cell -> new ListCell<Accounts>() {
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-                {
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(50, 50, 50),
-                            new ColumnConstraints(150, 150, 150)
-                    );
-
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                @Override
-                protected void updateItem(Accounts person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-                        setGraphic(gridPane);
-                    } else {
-                        setGraphic(null);
+                            dataFrom = Accounts.getData();
+                            dataTo = Accounts.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
                     }
-                }
-            });
-            to.setItems(Accounts.getData());
-            to.setConverter(new StringConverter<Accounts>() {
-                @Override
-                public String toString(Accounts patient) {
-                    return patient.getName();
-                }
+                };
 
-                @Override
-                public Accounts fromString(String string) {
-                    return null;
-                }
-            });
-            to.setCellFactory(cell -> new ListCell<Accounts>() {
-                GridPane gridPane = new GridPane();
-                Label lblid = new Label();
-                Label lblName = new Label();
+            }
 
-                {
-                    gridPane.getColumnConstraints().addAll(
-                            new ColumnConstraints(50, 50, 50),
-                            new ColumnConstraints(150, 150, 150)
-                    );
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
+                from.setItems(dataFrom);
+                from.setEditable(true);
+                from.setOnKeyReleased((event) -> {
 
-                    gridPane.add(lblid, 0, 1);
-                    gridPane.add(lblName, 1, 1);
-
-                }
-
-                @Override
-                protected void updateItem(Accounts person, boolean empty) {
-                    super.updateItem(person, empty);
-
-                    if (!empty && person != null) {
-                        lblid.setText("م: " + Integer.toString(person.getId()));
-                        lblName.setText("الاسم: " + person.getName());
-                        setGraphic(gridPane);
+                    if (from.getEditor().getText().length() == 0) {
+                        from.setItems(dataFrom);
                     } else {
-                        setGraphic(null);
+                        dataFromSearch = FXCollections.observableArrayList();
+
+                        for (Accounts a : dataFrom) {
+                            if (a.getName().contains(from.getEditor().getText()) ) {
+                                dataFromSearch.add(a);
+                            }
+                        }
+                        from.setItems(dataFromSearch);
+                        from.show();
                     }
-                }
-            });
-        } catch (Exception ex) {
-            AlertDialogs.showErrors(ex);
-        }
+                });
+                from.setConverter(new StringConverter<Accounts>() {
+                    @Override
+                    public String toString(Accounts patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Accounts fromString(String string) {
+                        return null;
+                    }
+                });
+                from.setCellFactory(cell -> new ListCell<Accounts>() {
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    {
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(50, 50, 50),
+                                new ColumnConstraints(150, 150, 150)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Accounts person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+                to.setItems(dataTo);
+                to.setEditable(true);
+                to.setOnKeyReleased((event) -> {
+
+                    if (to.getEditor().getText().length() == 0) {
+                        to.setItems(dataTo);
+                    } else {
+                        dataToSearch = FXCollections.observableArrayList();
+
+                        for (Accounts a : dataTo) {
+                            if (a.getName().contains(to.getEditor().getText()) ) {
+                                dataToSearch.add(a);
+                            }
+                        }
+                        to.setItems(dataToSearch);
+                        to.show();
+                    }
+                });
+                to.setConverter(new StringConverter<Accounts>() {
+                    @Override
+                    public String toString(Accounts patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Accounts fromString(String string) {
+                        return null;
+                    }
+                });
+                to.setCellFactory(cell -> new ListCell<Accounts>() {
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    {
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(50, 50, 50),
+                                new ColumnConstraints(150, 150, 150)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Accounts person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+            }
+        };
+        service.start();
+
     }
 
     void setParents(DrugsScreenPatienrAccountsController accountsController) {
@@ -367,7 +434,7 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
     private void Delete(ActionEvent event) {
         if (from.getSelectionModel().getSelectedIndex() == -1 || to.getSelectionModel().getSelectedIndex() == -1) {
             AlertDialogs.showError("يجب اختيار الحيابين اولا");
-        } else if (from.getSelectionModel().getSelectedItem().getId() == to.getSelectionModel().getSelectedItem().getId()) {
+        } else if (from.getItems().get(from.getSelectionModel().getSelectedIndex()).getId() == to.getItems().get(to.getSelectionModel().getSelectedIndex()).getId()) {
             AlertDialogs.showError("يجب ان يكون الحسابين مختلفين");
         } else {
             progress.setVisible(true);
@@ -392,8 +459,8 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
                                         if (result.get() == ButtonType.OK) {
                                             DrugsMoneyTransactions tr = new DrugsMoneyTransactions();
                                             tr.setId(Integer.parseInt(id.getText()));
-                                            tr.setFrom_acc_id(from.getSelectionModel().getSelectedItem().getId());
-                                            tr.setTo_acc_id(to.getSelectionModel().getSelectedItem().getId());
+                                            tr.setFrom_acc_id(from.getItems().get(from.getSelectionModel().getSelectedIndex()).getId());
+                                            tr.setTo_acc_id(to.getItems().get(to.getSelectionModel().getSelectedIndex()).getId());
                                             tr.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                             tr.setAmount(amount.getText());
                                             tr.setDate(date.getValue().format(format));
@@ -429,7 +496,7 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
     private void Edite(ActionEvent event) {
         if (from.getSelectionModel().getSelectedIndex() == -1 || to.getSelectionModel().getSelectedIndex() == -1) {
             AlertDialogs.showError("يجب اختيار الحيابين اولا");
-        } else if (from.getSelectionModel().getSelectedItem().getId() == to.getSelectionModel().getSelectedItem().getId()) {
+        } else if (from.getItems().get(from.getSelectionModel().getSelectedIndex()).getId() == to.getItems().get(to.getSelectionModel().getSelectedIndex()).getId()) {
             AlertDialogs.showError("يجب ان يكون الحسابين مختلفين");
         } else {
             progress.setVisible(true);
@@ -454,8 +521,8 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
                                         if (result.get() == ButtonType.OK) {
                                             DrugsMoneyTransactions tr = new DrugsMoneyTransactions();
                                             tr.setId(Integer.parseInt(id.getText()));
-                                            tr.setFrom_acc_id(from.getSelectionModel().getSelectedItem().getId());
-                                            tr.setTo_acc_id(to.getSelectionModel().getSelectedItem().getId());
+                                            tr.setFrom_acc_id(from.getItems().get(from.getSelectionModel().getSelectedIndex()).getId());
+                                            tr.setTo_acc_id(to.getItems().get(to.getSelectionModel().getSelectedIndex()).getId());
                                             tr.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                             tr.setAmount(amount.getText());
                                             tr.setDate(date.getValue().format(format));
@@ -491,7 +558,7 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
     private void Add(ActionEvent event) {
         if (from.getSelectionModel().getSelectedIndex() == -1 || to.getSelectionModel().getSelectedIndex() == -1) {
             AlertDialogs.showError("يجب اختيار الحيابين اولا");
-        } else if (from.getSelectionModel().getSelectedItem().getId() == to.getSelectionModel().getSelectedItem().getId()) {
+        } else if (from.getItems().get(from.getSelectionModel().getSelectedIndex()).getId() == to.getItems().get(to.getSelectionModel().getSelectedIndex()).getId()) {
             AlertDialogs.showError("يجب ان يكون الحسابين مختلفين");
         } else {
             progress.setVisible(true);
@@ -509,8 +576,8 @@ public class DrugsScreenMoneyTransactionsController implements Initializable {
                                     try {
                                         DrugsMoneyTransactions tr = new DrugsMoneyTransactions();
                                         tr.setId(Integer.parseInt(id.getText()));
-                                        tr.setFrom_acc_id(from.getSelectionModel().getSelectedItem().getId());
-                                        tr.setTo_acc_id(to.getSelectionModel().getSelectedItem().getId());
+                                            tr.setFrom_acc_id(from.getItems().get(from.getSelectionModel().getSelectedIndex()).getId());
+                                            tr.setTo_acc_id(to.getItems().get(to.getSelectionModel().getSelectedIndex()).getId());
                                         tr.setUser_id(Integer.parseInt(prefs.get(USER_ID, "0")));
                                         tr.setAmount(amount.getText());
                                         tr.setDate(date.getValue().format(format));

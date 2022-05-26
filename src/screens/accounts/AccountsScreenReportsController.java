@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -247,7 +248,9 @@ public class AccountsScreenReportsController implements Initializable {
     private void fillCombo() throws Exception {
         Service<Void> service = new Service<Void>() {
             ObservableList<Company> data;
+            ObservableList<Company> dataSearch;
             ObservableList<Contract> ContractData;
+            ObservableList<Contract> ContractDataSearch;
 
             @Override
             protected Task<Void> createTask() {
@@ -269,6 +272,23 @@ public class AccountsScreenReportsController implements Initializable {
             @Override
             protected void succeeded() {
                 company.setItems(data);
+                company.setEditable(true);
+                company.setOnKeyReleased((event) -> {
+
+                    if (company.getEditor().getText().length() == 0) {
+                        company.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (Company a : data) {
+                            if (a.getName().contains(company.getEditor().getText()) ) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        company.setItems(dataSearch);
+                        company.show();
+                    }
+                });
                 company.setConverter(new StringConverter<Company>() {
                     @Override
                     public String toString(Company patient) {
@@ -320,6 +340,23 @@ public class AccountsScreenReportsController implements Initializable {
                     }
                 });
                 contract.setItems(ContractData);
+                contract.setEditable(true);
+                contract.setOnKeyReleased((event) -> {
+
+                    if (contract.getEditor().getText().length() == 0) {
+                        contract.setItems(ContractData);
+                    } else {
+                        ContractDataSearch = FXCollections.observableArrayList();
+
+                        for (Contract a : ContractData) {
+                            if (a.getName().contains(contract.getEditor().getText()) ) {
+                                ContractDataSearch.add(a);
+                            }
+                        }
+                        contract.setItems(ContractDataSearch);
+                        contract.show();
+                    }
+                });
                 contract.setConverter(new StringConverter<Contract>() {
                     @Override
                     public String toString(Contract patient) {
@@ -485,8 +522,8 @@ public class AccountsScreenReportsController implements Initializable {
                 hash.put("logo", image);
                 hash.put("date_from", contractFrom.getValue().format(format));
                 hash.put("date_to", contractTo.getValue().format(format));
-                hash.put("contract_id", Integer.toString(contract.getSelectionModel().getSelectedItem().getId()));
-                hash.put("contract_name", contract.getSelectionModel().getSelectedItem().getName());
+                hash.put("contract_id", Integer.toString(contract.getItems().get(contract.getSelectionModel().getSelectedIndex()).getId()));
+                hash.put("contract_name", contract.getItems().get(contract.getSelectionModel().getSelectedIndex()).getName());
 
                 InputStream suprepo = getClass().getResourceAsStream("/screens/mainDataScreen/reports/Admissions.jasper");
                 JasperReport subJasperReport = (JasperReport) JRLoader.loadObject(suprepo);
@@ -529,6 +566,8 @@ public class AccountsScreenReportsController implements Initializable {
         }
     }
 
+
+
     @FXML
     private void printCompany(ActionEvent event) {
         if (companyFrom.getValue() == null || companyTo.getValue() == null || company.getSelectionModel().getSelectedIndex() == -1) {
@@ -541,8 +580,8 @@ public class AccountsScreenReportsController implements Initializable {
                 hash.put("logo", image);
                 hash.put("date_from", companyFrom.getValue().format(format));
                 hash.put("date_to", companyTo.getValue().format(format));
-                hash.put("company_id", Integer.toString(company.getSelectionModel().getSelectedItem().getId()));
-                hash.put("company_name", company.getSelectionModel().getSelectedItem().getName());
+                hash.put("company_id", Integer.toString(company.getItems().get(company.getSelectionModel().getSelectedIndex()).getId()));
+                hash.put("company_name", company.getItems().get(company.getSelectionModel().getSelectedIndex()).getName());
 
                 InputStream a = getClass().getResourceAsStream("/screens/accounts/reports/CompanyAccounts.jrxml");
                 JasperDesign design = JRXmlLoader.load(a);

@@ -18,23 +18,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1240.0" stylesheets="@../../assets/styles/darkMode.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="screens.drugs.DrugsScreenMoneyTransactionsController">
+<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1240.0" stylesheets="@../../assets/styles/darkMode.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.drugs.DrugsScreenMoneyTransactionsController">
    <children>
       <HBox prefWidth="1245.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox prefHeight="462.0" prefWidth="810.0" spacing="5.0">
+            <VBox prefHeight="462.0" prefWidth="810.0" spacing="5.0" HBox.hgrow="ALWAYS">
                <children>
                   <HBox>
                      <children>
                         <JFXTextField fx:id="search" focusColor="BLACK" labelFloat="true" onKeyPressed="#search" onKeyReleased="#search" onKeyTyped="#search" prefHeight="25.0" prefWidth="184.0" promptText="Search" />
                      </children>
                   </HBox>
-                  <TableView id="patientTable" fx:id="tab" prefHeight="428.0" prefWidth="893.0">
+                  <TableView id="patientTable" fx:id="tab" prefHeight="428.0" prefWidth="893.0" VBox.vgrow="ALWAYS">
                      <columns>
                         <TableColumn fx:id="tabUser" editable="false" minWidth="0.0" prefWidth="70.0" text="المستخدم" />
-                        <TableColumn fx:id="tabTo" editable="false" prefWidth="169.0" text="من حساب" />
-                        <TableColumn fx:id="TabFrom" editable="false" minWidth="0.0" prefWidth="70.0" text="الي حساب" />
+                        <TableColumn fx:id="tabTo" editable="false" prefWidth="169.0" text="الي حساب" />
+                        <TableColumn fx:id="TabFrom" editable="false" minWidth="0.0" prefWidth="70.0" text="من حساب" />
                         <TableColumn fx:id="tabDate" editable="false" prefWidth="169.0" text="التاريخ" />
                         <TableColumn fx:id="tabAmount" editable="false" prefWidth="169.0" text="المبلغ" />
                         <TableColumn fx:id="tabId" editable="false" minWidth="0.0" prefWidth="30.0" text="م" />
@@ -45,9 +44,9 @@
                   </TableView>
                </children>
             </VBox>
-            <VBox alignment="BOTTOM_CENTER" spacing="10.0">
+            <VBox alignment="TOP_CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
-                  <GridPane prefHeight="388.0" prefWidth="399.0" vgap="10.0">
+                  <GridPane alignment="CENTER" prefHeight="388.0" prefWidth="399.0" vgap="10.0" VBox.vgrow="ALWAYS">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="246.0" minWidth="10.0" prefWidth="246.0" />
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="134.0" />

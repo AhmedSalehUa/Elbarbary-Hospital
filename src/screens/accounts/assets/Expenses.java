@@ -30,18 +30,21 @@ public class Expenses {
     String amount;
     int user_id;
     String user;
+    String details;
+
     String notes;
 
     public Expenses() {
     }
 
-    public Expenses(int id, String acc, String cat, String date, String amount, String user, String notes) {
+    public Expenses(int id, String acc, String cat, String date, String amount, String user, String details, String notes) {
         this.id = id;
         this.acc = acc;
         this.cat = cat;
         this.date = date;
         this.amount = amount;
         this.user = user;
+        this.details = details;
         this.notes = notes;
     }
 
@@ -101,10 +104,6 @@ public class Expenses {
         this.user = user;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
     public int getAcc_id() {
         return acc_id;
     }
@@ -121,35 +120,50 @@ public class Expenses {
         this.acc = acc;
     }
 
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }
 
     public boolean Add() throws Exception {
-        prefs =  Preferences.userNodeForPackage(ElBarbaryHospital.class);
-        PreparedStatement ps = db.get.Prepare("INSERT INTO `expenses`(`cat_id`, `date`, `amount`, `user_id`, `notes`,`acc_id`) VALUES (?,?,?,?,?,?)");
+        prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
+        PreparedStatement ps = db.get.Prepare("INSERT INTO `expenses`(`cat_id`, `date`, `amount`, `user_id`, `notes`,`acc_id`,`details`) VALUES (?,?,?,?,?,?,?)");
         ps.setInt(1, cat_id);
         ps.setString(2, date);
         ps.setString(3, amount);
-        ps.setInt(4,Integer.parseInt( prefs.get(USER_ID, "0")));
+        ps.setInt(4, Integer.parseInt(prefs.get(USER_ID, "0")));
         ps.setString(5, notes);
         ps.setInt(6, acc_id);
+        ps.setString(7, details);
         removeAmountFromAccount();
         ps.execute();
         return true;
     }
 
-    public boolean Edite() throws Exception { prefs =  Preferences.userNodeForPackage(ElBarbaryHospital.class);
+    public boolean Edite() throws Exception {
+        prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
         JTable am = db.get.getTableData("SELECT `acc_id`,`amount` FROM `expenses` WHERE `id`='" + id + "'");
         addAmountToAccount(am.getValueAt(0, 0).toString(), am.getValueAt(0, 1).toString());
-        PreparedStatement ps = db.get.Prepare("UPDATE `expenses` SET `cat_id`=?,`date`=?,`amount`=?,`user_id`=?,`notes`=?,`acc_id`=? WHERE `id`=?");
+        PreparedStatement ps = db.get.Prepare("UPDATE `expenses` SET `cat_id`=?,`date`=?,`amount`=?,`user_id`=?,`details`=?,`notes`=?,`acc_id`=? WHERE `id`=?");
         ps.setInt(1, cat_id);
         ps.setString(2, date);
         ps.setString(3, amount);
-        ps.setInt(4, Integer.parseInt(prefs.get(USER_ID,"0"))); 
-        ps.setString(5, notes);
-        ps.setInt(6, acc_id);
-        ps.setInt(7, id);
+        ps.setInt(4, Integer.parseInt(prefs.get(USER_ID, "0")));
+        ps.setString(5, details);
+        ps.setString(6, notes);
+        ps.setInt(7, acc_id);
+        ps.setInt(8, id);
         removeAmountFromAccount();
         ps.execute();
         return true;
@@ -166,17 +180,18 @@ public class Expenses {
 
     public static ObservableList<Expenses> getData() throws Exception {
         ObservableList<Expenses> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name`, `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id`");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name`, `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`details`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id`");
         while (rs.next()) {
-            data.add(new Expenses(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)));
+            data.add(new Expenses(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8)));
         }
         return data;
     }
-     public static ObservableList<Expenses> getReceptionData() throws Exception {
+
+    public static ObservableList<Expenses> getReceptionData() throws Exception {
         ObservableList<Expenses> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name`, `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`cat_id` in(SELECT `cat_id` FROM `reception_cat`)");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name`, `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`details`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`cat_id` in(SELECT `cat_id` FROM `reception_cat`)");
         while (rs.next()) {
-            data.add(new Expenses(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)));
+            data.add(new Expenses(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8)));
         }
         return data;
     }
@@ -196,7 +211,7 @@ public class Expenses {
 
     public boolean removeAmountFromAccount() throws Exception {
         Double a = Double.parseDouble(db.get.getTableData("select credit from accounts where `id`='" + acc_id + "'").getValueAt(0, 0).toString()) - Double.parseDouble(amount);
-        if(a<0){
+        if (a < 0) {
             throw new Exception("الرصيد فالحساب لا يكفي");
         }
         PreparedStatement ps = db.get.Prepare("UPDATE `accounts` SET `credit`=? WHERE `id`=?");

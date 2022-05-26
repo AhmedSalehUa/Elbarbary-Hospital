@@ -4,7 +4,6 @@ import assets.classes.AlertDialogs;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.events.JFXDrawerEvent;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import de.jensd.fx.glyphs.materialicons.MaterialIconView;
 import java.io.File;
@@ -19,6 +18,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -34,7 +34,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -49,7 +48,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import screens.drugs.assets.DrugsAccounts;
 import screens.drugs.assets.DrugsPatients;
@@ -203,40 +201,40 @@ public class DrugsScreenPatientController
                         Platform.runLater(new Runnable() {
                             public void run() {
                                 try {
-                                    DrugsScreenPatientController.this.clear();
-                                    DrugsScreenPatientController.this.setTableColumns();
-                                    DrugsScreenPatientController.this.getDataToTable();
-                                    DrugsScreenPatientController.this.fillCombo();
+                                    clear();
+                                    setTableColumns();
+                                    getDataToTable();
+                                    fillCombo();
 
-                                    double drawerx = DrugsScreenPatientController.this.drawer.getLayoutX();
-                                    double drawery = DrugsScreenPatientController.this.drawer.getLayoutY();
-                                    DrugsScreenPatientController.this.drawer.setLayoutX(drawerx + 600.0D);
-                                    DrugsScreenPatientController.this.drawer.setLayoutY(drawery);
-                                    DrugsScreenPatientController.this.drawer.setVisible(false);
-                                    DrugsScreenPatientController.this.drawer.setMaxWidth(0.0D);
+                                    double drawerx = drawer.getLayoutX();
+                                    double drawery = drawer.getLayoutY();
+                                    drawer.setLayoutX(drawerx + 600.0D);
+                                    drawer.setLayoutY(drawery);
+                                    drawer.setVisible(false);
+                                    drawer.setMaxWidth(0.0D);
 
-                                    DrugsScreenPatientController.this.drawer.setOnDrawerOpening(e -> {
-                                        DrugsScreenPatientController.this.drawer.setLayoutX(drawerx);
+                                    drawer.setOnDrawerOpening(e -> {
+                                        drawer.setLayoutX(drawerx);
 
-                                        DrugsScreenPatientController.this.drawer.setLayoutY(drawery);
+                                        drawer.setLayoutY(drawery);
 
-                                        DrugsScreenPatientController.this.drawer.setMaxWidth(600.0D);
+                                        drawer.setMaxWidth(600.0D);
                                     });
-                                    DrugsScreenPatientController.this.drawer.setOnDrawerClosed(e -> {
-                                        DrugsScreenPatientController.this.drawer.setLayoutX(drawerx + 600.0D);
+                                    drawer.setOnDrawerClosed(e -> {
+                                        drawer.setLayoutX(drawerx + 600.0D);
 
-                                        DrugsScreenPatientController.this.drawer.setLayoutY(drawery);
+                                        drawer.setLayoutY(drawery);
 
-                                        DrugsScreenPatientController.this.drawer.setVisible(false);
-                                        DrugsScreenPatientController.this.drawer.setMaxWidth(0.0D);
+                                        drawer.setVisible(false);
+                                        drawer.setMaxWidth(0.0D);
                                     });
-                                    DrugsScreenPatientController.this.ham.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                                        DrugsScreenPatientController.this.drawer.setVisible(true);
+                                    ham.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                                        drawer.setVisible(true);
 
-                                        if (DrugsScreenPatientController.this.drawer.isOpened()) {
-                                            DrugsScreenPatientController.this.drawer.close();
+                                        if (drawer.isOpened()) {
+                                            drawer.close();
                                         } else {
-                                            DrugsScreenPatientController.this.drawer.open();
+                                            drawer.open();
                                         }
                                     });
                                 } catch (Exception ex) {
@@ -254,7 +252,7 @@ public class DrugsScreenPatientController
             }
 
             protected void succeeded() {
-                DrugsScreenPatientController.this.progress.setVisible(false);
+                progress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -264,161 +262,228 @@ public class DrugsScreenPatientController
             if (this.patientTable.getSelectionModel().getSelectedIndex() == -1) {
                 this.escortTable.setItems(null);
             } else {
-                this.patientAdd.setDisable(true);
+                patientAdd.setDisable(true);
 
-                this.patientEdite.setDisable(false);
+                patientEdite.setDisable(false);
 
-                this.patientDelete.setDisable(false);
+                patientDelete.setDisable(false);
 
-                this.patientNew.setDisable(false);
-                DrugsPatients pa = (DrugsPatients) this.patientTable.getSelectionModel().getSelectedItem();
-                this.patientId.setText(Integer.toString(pa.getId()));
-                this.patientName.setText(pa.getName());
-                this.patientAddress.setText(pa.getAddress());
-                this.patientAge.setText(pa.getAge());
-                this.patientTele1.setText(pa.getTele1());
-                this.patientTele2.setText(pa.getTele2());
-                this.patientNational.setText(pa.getNational_id());
-                this.patientGiagnose.setText(pa.getDiagnosis());
-                this.patientDateOfBirth.setValue(LocalDate.parse(pa.getDateOfBirth()));
-                this.patientGovernment.setText(pa.getGovernment());
-                this.patientGender.getSelectionModel().select(pa.getGender());
-                ObservableList<TransferOrganization> items = this.patientTransName.getItems();
+                patientNew.setDisable(false);
+                DrugsPatients pa = patientTable.getSelectionModel().getSelectedItem();
+                patientId.setText(Integer.toString(pa.getId()));
+                patientName.setText(pa.getName());
+                patientAddress.setText(pa.getAddress());
+                patientAge.setText(pa.getAge());
+                patientTele1.setText(pa.getTele1());
+                patientTele2.setText(pa.getTele2());
+                patientNational.setText(pa.getNational_id());
+                patientGiagnose.setText(pa.getDiagnosis());
+                patientDateOfBirth.setValue(LocalDate.parse(pa.getDateOfBirth()));
+                patientGovernment.setText(pa.getGovernment());
+                patientGender.getSelectionModel().select(pa.getGender());
+                ObservableList<TransferOrganization> items = patientTransName.getItems();
                 for (TransferOrganization a : items) {
                     if (a.getName().equals(pa.getTranportOrg())) {
-                        this.patientTransName.getSelectionModel().select(a);
+                        patientTransName.getSelectionModel().select(a);
                     }
                 }
                 ObservableList<Doctors> items1 = this.patientDoctor.getItems();
                 for (Doctors a : items1) {
                     if (a.getName().equals(pa.getDoctor_name())) {
-                        this.patientDoctor.getSelectionModel().select(a);
+                        patientDoctor.getSelectionModel().select(a);
                     }
                 }
                 try {
-                    this.escortProgress.setVisible(true);
-                    this.escortTable.setItems(DrugsPatientsEscort.getData(Integer.toString(pa.getId())));
-                    this.Escortitems = this.escortTable.getItems();
+                    escortProgress.setVisible(true);
+                    escortTable.setItems(DrugsPatientsEscort.getData(Integer.toString(pa.getId())));
+                    Escortitems = this.escortTable.getItems();
                     clearEscort();
-                    this.escortProgress.setVisible(false);
+                    escortProgress.setVisible(false);
                 } catch (Exception ex) {
                     AlertDialogs.showErrors(ex);
                 }
             }
         });
-        this.escortTable.setOnMouseClicked(e -> {
-            if (this.escortTable.getSelectionModel().getSelectedIndex() != -1) {
-                DrugsPatientsEscort ps = (DrugsPatientsEscort) this.escortTable.getSelectionModel().getSelectedItem();
-                this.escortAdd.setDisable(true);
-                this.escortEdite.setDisable(false);
-                this.escortDelete.setDisable(false);
-                this.escortNew.setDisable(false);
-                this.escortId.setText(Integer.toString(ps.getId()));
-                this.escortName.setText(ps.getName());
-                this.escortRelation.setText(ps.getRelation());
-                this.escortAddress.setText(ps.getAddress());
-                this.escortNational.setText(ps.getNationaId());
-                this.escortPhoto.setText("");
-                this.escortTele1.setText(ps.getTele1());
-                this.escortTele2.setText(ps.getTele2());
+        escortTable.setOnMouseClicked(e -> {
+            if (escortTable.getSelectionModel().getSelectedIndex() != -1) {
+                DrugsPatientsEscort ps = escortTable.getSelectionModel().getSelectedItem();
+                escortAdd.setDisable(true);
+                escortEdite.setDisable(false);
+                escortDelete.setDisable(false);
+                escortNew.setDisable(false);
+                escortId.setText(Integer.toString(ps.getId()));
+                escortName.setText(ps.getName());
+                escortRelation.setText(ps.getRelation());
+                escortAddress.setText(ps.getAddress());
+                escortNational.setText(ps.getNationaId());
+                escortPhoto.setText("");
+                escortTele1.setText(ps.getTele1());
+                escortTele2.setText(ps.getTele2());
             }
         });
     }
 
     private void fillCombo() throws Exception {
-        this.patientGender.getItems().add("ذكر");
-        this.patientGender.getItems().add("انثي");
-        this.patientTransName.setItems(TransferOrganization.getData());
-        this.patientTransName.setConverter(new StringConverter<TransferOrganization>() {
-            public String toString(TransferOrganization contract) {
-                return contract.getName();
-            }
+        patientGender.getItems().add("ذكر");
+        patientGender.getItems().add("انثي");
+        Service<Void> service = new Service<Void>() {
+            ObservableList<TransferOrganization> transferData;
+            ObservableList<TransferOrganization> transferDataSearch;
+            ObservableList<Doctors> docData;
+            ObservableList<Doctors> docDataSearch;
 
-            public TransferOrganization fromString(String string) {
-                return null;
-            }
-        });
-        this.patientTransName.setCellFactory(cell -> new ListCell<TransferOrganization>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
+                            transferData = TransferOrganization.getData();
+                            docData = Doctors.getData();
 
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            protected void updateItem(TransferOrganization person, boolean empty) {
-                super.updateItem(person, empty);
+            @Override
+            protected void succeeded() {
 
-                if (!empty && person != null) {
+                patientDoctor.setItems(docData);
+                patientDoctor.setEditable(true);
+                patientDoctor.setOnKeyReleased((event) -> {
 
-                    this.lblid.setText("م: " + Integer.toString(person.getId()));
-                    this.lblName.setText("الاسم: " + person.getName());
+                    if (patientDoctor.getEditor().getText().length() == 0) {
+                        patientDoctor.setItems(docData);
+                    } else {
+                        docDataSearch = FXCollections.observableArrayList();
 
-                    setGraphic((Node) this.gridPane);
-                } else {
+                        for (Doctors a : docData) {
+                            if (a.getName().contains(patientDoctor.getEditor().getText())) {
+                                docDataSearch.add(a);
+                            }
+                        }
+                        patientDoctor.setItems(docDataSearch);
+                        patientDoctor.show();
+                    }
+                });
+                patientDoctor.setConverter(new StringConverter<Doctors>() {
+                    public String toString(Doctors contract) {
+                        return contract.getName();
+                    }
 
-                    setGraphic(null);
-                }
+                    public Doctors fromString(String string) {
+                        return null;
+                    }
+                });
+                patientDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblQuali = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblQuali, 2, 1);
+
+                    }
+
+                    protected void updateItem(Doctors person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblQuali.setText("التخصص: " + person.getQualification_name());
+
+                            setGraphic((Node) this.gridPane);
+                        } else {
+
+                            setGraphic(null);
+                        }
+                    }
+                }); 
+                patientTransName.setItems(transferData);
+                patientTransName.setEditable(true);
+                patientTransName.setOnKeyReleased((event) -> {
+
+                    if (patientTransName.getEditor().getText().length() == 0) {
+                        patientTransName.setItems(transferData);
+                    } else {
+                        transferDataSearch = FXCollections.observableArrayList();
+
+                        for (TransferOrganization a : transferData) {
+                            if (a.getName().contains(patientTransName.getEditor().getText())) {
+                                transferDataSearch.add(a);
+                            }
+                        }
+                        patientTransName.setItems(transferDataSearch);
+                        patientTransName.show();
+                    }
+                });
+                patientTransName.setConverter(new StringConverter<TransferOrganization>() {
+                    public String toString(TransferOrganization contract) {
+                        return contract.getName();
+                    }
+
+                    public TransferOrganization fromString(String string) {
+                        return null;
+                    }
+                });
+                patientTransName.setCellFactory(cell -> new ListCell<TransferOrganization>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    protected void updateItem(TransferOrganization person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            setGraphic((Node) this.gridPane);
+                        } else {
+
+                            setGraphic(null);
+                        }
+                    }
+                });
+                super.succeeded();
             }
-        });
-        this.patientDoctor.setItems(Doctors.getData());
-        this.patientDoctor.setConverter(new StringConverter<Doctors>() {
-            public String toString(Doctors contract) {
-                return contract.getName();
-            }
+        };
+        service.start();
 
-            public Doctors fromString(String string) {
-                return null;
-            }
-        });
-        this.patientDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
-
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblQuali = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblQuali, 2, 1);
-
-            }
-
-            protected void updateItem(Doctors person, boolean empty) {
-                super.updateItem(person, empty);
-
-                if (!empty && person != null) {
-
-                    this.lblid.setText("م: " + Integer.toString(person.getId()));
-                    this.lblName.setText("الاسم: " + person.getName());
-                    this.lblQuali.setText("التخصص: " + person.getQualification_name());
-
-                    setGraphic((Node) this.gridPane);
-                } else {
-
-                    setGraphic(null);
-                }
-            }
-        });
     }
 
     @FXML
@@ -428,10 +493,10 @@ public class DrugsScreenPatientController
 
     @FXML
     private void patientEdite(ActionEvent event) {
-        if (this.patientName.getText().isEmpty() || this.patientName.getText() == null) {
+        if (patientName.getText().isEmpty() || this.patientName.getText() == null) {
             AlertDialogs.showError("اسم المريض لا يجب ان يكون فارغا!!");
         } else {
-            this.progress.setVisible(true);
+            progress.setVisible(true);
             Service<Void> service = new Service<Void>() {
                 boolean isDone = false;
                 DrugsPatients patient = new DrugsPatients();
@@ -451,43 +516,43 @@ public class DrugsScreenPatientController
 
                                             Optional<ButtonType> result = alert.showAndWait();
                                             if (result.get() == ButtonType.OK) {
-                                                if (DrugsScreenPatientController.this.patientPhoto.getText().isEmpty() || DrugsScreenPatientController.this.patientPhoto.getText() == null) {
-                                                    patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
-                                                    patient.setName(DrugsScreenPatientController.this.patientName.getText());
-                                                    patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
-                                                    patient.setAge(DrugsScreenPatientController.this.patientAge.getText());
-                                                    patient.setNational_id(DrugsScreenPatientController.this.patientNational.getText());
-                                                    patient.setDoctor_id(((Doctors) DrugsScreenPatientController.this.patientDoctor.getSelectionModel().getSelectedItem()).getId());
-                                                    patient.setDiagnosis(DrugsScreenPatientController.this.patientGiagnose.getText());
-                                                    patient.setGovernment(DrugsScreenPatientController.this.patientGovernment.getText());
+                                                if (patientPhoto.getText().isEmpty() || patientPhoto.getText() == null) {
+                                                    patient.setId(Integer.parseInt(patientId.getText()));
+                                                    patient.setName(patientName.getText());
+                                                    patient.setAddress(patientAddress.getText());
+                                                    patient.setAge(patientAge.getText());
+                                                    patient.setNational_id(patientNational.getText());
+                                                    patient.setDoctor_id(patientDoctor.getItems().get(patientDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                                    patient.setDiagnosis(patientGiagnose.getText());
+                                                    patient.setGovernment(patientGovernment.getText());
                                                     DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                                    patient.setDateOfBirth(((LocalDate) DrugsScreenPatientController.this.patientDateOfBirth.getValue()).format(f));
-                                                    patient.setTranportOrgId(((TransferOrganization) DrugsScreenPatientController.this.patientTransName.getSelectionModel().getSelectedItem()).getId());
-                                                    patient.setTele1(DrugsScreenPatientController.this.patientTele1.getText());
-                                                    patient.setTele2(DrugsScreenPatientController.this.patientTele2.getText());
-                                                    patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
+                                                    patient.setDateOfBirth(patientDateOfBirth.getValue().format(f));
+                                                    patient.setTranportOrgId(patientTransName.getItems().get(patientTransName.getSelectionModel().getSelectedIndex()).getId());
+                                                    patient.setTele1(patientTele1.getText());
+                                                    patient.setTele2(patientTele2.getText());
+                                                    patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                     patient.Edite();
                                                     isDone = true;
                                                 } else {
-                                                    patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
-                                                    patient.setName(DrugsScreenPatientController.this.patientName.getText());
-                                                    patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
-                                                    patient.setAge(DrugsScreenPatientController.this.patientAge.getText());
-                                                    patient.setNational_id(DrugsScreenPatientController.this.patientNational.getText());
-                                                    patient.setDoctor_id(((Doctors) DrugsScreenPatientController.this.patientDoctor.getSelectionModel().getSelectedItem()).getId());
-                                                    patient.setDiagnosis(DrugsScreenPatientController.this.patientGiagnose.getText());
-                                                    patient.setTele1(DrugsScreenPatientController.this.patientTele1.getText());
-                                                    patient.setTele2(DrugsScreenPatientController.this.patientTele2.getText());
-                                                    patient.setGovernment(DrugsScreenPatientController.this.patientGovernment.getText());
+                                                    patient.setId(Integer.parseInt(patientId.getText()));
+                                                    patient.setName(patientName.getText());
+                                                    patient.setAddress(patientAddress.getText());
+                                                    patient.setAge(patientAge.getText());
+                                                    patient.setNational_id(patientNational.getText());
+                                                    patient.setDoctor_id(patientDoctor.getItems().get(patientDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                                    patient.setDiagnosis(patientGiagnose.getText());
+                                                    patient.setTele1(patientTele1.getText());
+                                                    patient.setTele2(patientTele2.getText());
+                                                    patient.setGovernment(patientGovernment.getText());
                                                     DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                                    patient.setDateOfBirth(((LocalDate) DrugsScreenPatientController.this.patientDateOfBirth.getValue()).format(f));
-                                                    patient.setTranportOrgId(((TransferOrganization) DrugsScreenPatientController.this.patientTransName.getSelectionModel().getSelectedItem()).getId());
-                                                    InputStream in = new FileInputStream(new File(DrugsScreenPatientController.this.patientPhoto.getText()));
+                                                    patient.setDateOfBirth(patientDateOfBirth.getValue().format(f));
+                                                    patient.setTranportOrgId(patientTransName.getItems().get(patientTransName.getSelectionModel().getSelectedIndex()).getId());
+                                                    InputStream in = new FileInputStream(new File(patientPhoto.getText()));
                                                     patient.setPhoto(in);
 
-                                                    String[] st = DrugsScreenPatientController.this.patientPhoto.getText().split(Pattern.quote("."));
+                                                    String[] st = patientPhoto.getText().split(Pattern.quote("."));
                                                     patient.setPhotoExt(st[st.length - 1]);
-                                                    patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
+                                                    patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                     patient.EditeWithPhoto();
                                                     isDone = true;
                                                 }
@@ -542,49 +607,51 @@ public class DrugsScreenPatientController
                                 public void run() {
                                     try {
                                         try {
-                                            if (DrugsScreenPatientController.this.patientPhoto.getText().isEmpty() || DrugsScreenPatientController.this.patientPhoto.getText() == null) {
-                                                patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
-                                                patient.setName(DrugsScreenPatientController.this.patientName.getText());
-                                                patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
-                                                patient.setAge(DrugsScreenPatientController.this.patientAge.getText());
-                                                patient.setNational_id(DrugsScreenPatientController.this.patientNational.getText());
-                                                patient.setDoctor_id(((Doctors) DrugsScreenPatientController.this.patientDoctor.getSelectionModel().getSelectedItem()).getId());
-                                                patient.setDiagnosis(DrugsScreenPatientController.this.patientGiagnose.getText());
-                                                patient.setGovernment(DrugsScreenPatientController.this.patientGovernment.getText());
+                                            if (patientPhoto.getText().isEmpty() || patientPhoto.getText() == null) {
+                                                patient.setId(Integer.parseInt(patientId.getText()));
+                                                patient.setName(patientName.getText());
+                                                patient.setAddress(patientAddress.getText());
+                                                patient.setAge(patientAge.getText());
+                                                patient.setNational_id(patientNational.getText());
+                                                patient.setDoctor_id(patientDoctor.getItems().get(patientDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                                patient.setDiagnosis(patientGiagnose.getText());
+                                                patient.setGovernment(patientGovernment.getText());
                                                 DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                                patient.setDateOfBirth(((LocalDate) DrugsScreenPatientController.this.patientDateOfBirth.getValue()).format(f));
-                                                patient.setTranportOrgId(((TransferOrganization) DrugsScreenPatientController.this.patientTransName.getSelectionModel().getSelectedItem()).getId());
-                                                patient.setTele1(DrugsScreenPatientController.this.patientTele1.getText());
-                                                patient.setTele2(DrugsScreenPatientController.this.patientTele2.getText());
-                                                patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
+                                                patient.setDateOfBirth(patientDateOfBirth.getValue().format(f));
+                                                patient.setTranportOrgId(patientTransName.getItems().get(patientTransName.getSelectionModel().getSelectedIndex()).getId());
+                                                patient.setTele1(patientTele1.getText());
+                                                patient.setTele2(patientTele2.getText());
+                                                patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                 patient.Add();
                                                 isDone = true;
                                             } else {
-                                                patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
-                                                patient.setName(DrugsScreenPatientController.this.patientName.getText());
-                                                patient.setAddress(DrugsScreenPatientController.this.patientAddress.getText());
-                                                patient.setAge(DrugsScreenPatientController.this.patientAge.getText());
-                                                patient.setNational_id(DrugsScreenPatientController.this.patientNational.getText());
-                                                patient.setDoctor_id(((Doctors) DrugsScreenPatientController.this.patientDoctor.getSelectionModel().getSelectedItem()).getId());
-                                                patient.setDiagnosis(DrugsScreenPatientController.this.patientGiagnose.getText());
-                                                patient.setTele1(DrugsScreenPatientController.this.patientTele1.getText());
-                                                patient.setTele2(DrugsScreenPatientController.this.patientTele2.getText());
-                                                patient.setGovernment(DrugsScreenPatientController.this.patientGovernment.getText());
+                                                patient.setId(Integer.parseInt(patientId.getText()));
+                                                patient.setName(patientName.getText());
+                                                patient.setAddress(patientAddress.getText());
+                                                patient.setAge(patientAge.getText());
+                                                patient.setNational_id(patientNational.getText());
+                                                patient.setDoctor_id(patientDoctor.getItems().get(patientDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                                patient.setDiagnosis(patientGiagnose.getText());
+                                                patient.setTele1(patientTele1.getText());
+                                                patient.setTele2(patientTele2.getText());
+                                                patient.setGovernment(patientGovernment.getText());
                                                 DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                                patient.setDateOfBirth(((LocalDate) DrugsScreenPatientController.this.patientDateOfBirth.getValue()).format(f));
-                                                patient.setTranportOrgId(((TransferOrganization) DrugsScreenPatientController.this.patientTransName.getSelectionModel().getSelectedItem()).getId());
-                                                InputStream in = new FileInputStream(new File(DrugsScreenPatientController.this.patientPhoto.getText()));
+                                                patient.setDateOfBirth(patientDateOfBirth.getValue().format(f));
+                                                patient.setTranportOrgId(patientTransName.getItems().get(patientTransName.getSelectionModel().getSelectedIndex()).getId());
+                                                InputStream in = new FileInputStream(new File(patientPhoto.getText()));
                                                 patient.setPhoto(in);
 
-                                                String[] st = DrugsScreenPatientController.this.patientPhoto.getText().split(Pattern.quote("."));
+                                                String[] st = patientPhoto.getText().split(Pattern.quote("."));
                                                 patient.setPhotoExt(st[st.length - 1]);
-                                                patient.setGender((String) DrugsScreenPatientController.this.patientGender.getSelectionModel().getSelectedItem());
+                                                patient.setGender(patientGender.getSelectionModel().getSelectedItem());
                                                 patient.AddWithPhoto();
                                                 isDone = true;
                                             }
                                             DrugsAccounts da = new DrugsAccounts();
                                             da.setId(Integer.parseInt(DrugsAccounts.getAutoNum()));
-                                            da.setPaitent_id(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
+                                            DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                            da.setDateOfEntrance(LocalDate.now().format(f));
+                                            da.setPaitent_id(Integer.parseInt(patientId.getText()));
                                             da.setTotal_paied("0");
                                             da.setTotal_spended("0");
                                             da.setRemaining("0");
@@ -643,10 +710,10 @@ public class DrugsScreenPatientController
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            patient.setId(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
+                                            patient.setId(Integer.parseInt(patientId.getText()));
                                             patient.Delete();
                                             DrugsAccounts da = new DrugsAccounts();
-                                            da.setPaitent_id(Integer.parseInt(DrugsScreenPatientController.this.patientId.getText()));
+                                            da.setPaitent_id(Integer.parseInt(patientId.getText()));
                                             da.Delete();
                                             isDone = true;
                                         }
@@ -698,10 +765,12 @@ public class DrugsScreenPatientController
         this.patientGiagnose.setText("");
         this.patientPhoto.setText("");
         this.patientDoctor.getSelectionModel().clearSelection();
+        patientDoctor.getEditor().setText("");
         this.patientDateOfBirth.setValue(null);
         this.patientGovernment.setText("");
         this.patientGender.getSelectionModel().clearSelection();
         this.patientTransName.getSelectionModel().clearSelection();
+        patientTransName.getEditor().setText("");
         this.patientTele1.setText("");
         this.patientTele2.setText("");
         this.patientAdd.setDisable(false);
@@ -746,20 +815,20 @@ public class DrugsScreenPatientController
     }
 
     private void setTableColumns() {
-        this.patientTabId.setCellValueFactory((Callback) new PropertyValueFactory("id"));
-        this.patientTabName.setCellValueFactory((Callback) new PropertyValueFactory("name"));
-        this.patientTabDiagnoses.setCellValueFactory((Callback) new PropertyValueFactory("diagnosis"));
-        this.patientTabDoctor.setCellValueFactory((Callback) new PropertyValueFactory("doctor_name"));
-        this.patientTabTele1.setCellValueFactory((Callback) new PropertyValueFactory("tele1"));
-        this.patientTabTele2.setCellValueFactory((Callback) new PropertyValueFactory("tele2"));
+        this.patientTabId.setCellValueFactory(new PropertyValueFactory("id"));
+        this.patientTabName.setCellValueFactory(new PropertyValueFactory("name"));
+        this.patientTabDiagnoses.setCellValueFactory(new PropertyValueFactory("diagnosis"));
+        this.patientTabDoctor.setCellValueFactory(new PropertyValueFactory("doctor_name"));
+        this.patientTabTele1.setCellValueFactory(new PropertyValueFactory("tele1"));
+        this.patientTabTele2.setCellValueFactory(new PropertyValueFactory("tele2"));
 
-        this.escortTabNational.setCellValueFactory((Callback) new PropertyValueFactory("id"));
-        this.escortTabName.setCellValueFactory((Callback) new PropertyValueFactory("name"));
-        this.escortTabId.setCellValueFactory((Callback) new PropertyValueFactory("id"));
-        this.escortTabTele2.setCellValueFactory((Callback) new PropertyValueFactory("tele2"));
-        this.escortTabTele1.setCellValueFactory((Callback) new PropertyValueFactory("tele1"));
-        this.escortTabAddress.setCellValueFactory((Callback) new PropertyValueFactory("Address"));
-        this.escortTabRelation.setCellValueFactory((Callback) new PropertyValueFactory("relation"));
+        this.escortTabNational.setCellValueFactory(new PropertyValueFactory("id"));
+        this.escortTabName.setCellValueFactory(new PropertyValueFactory("name"));
+        this.escortTabId.setCellValueFactory(new PropertyValueFactory("id"));
+        this.escortTabTele2.setCellValueFactory(new PropertyValueFactory("tele2"));
+        this.escortTabTele1.setCellValueFactory(new PropertyValueFactory("tele1"));
+        this.escortTabAddress.setCellValueFactory(new PropertyValueFactory("Address"));
+        this.escortTabRelation.setCellValueFactory(new PropertyValueFactory("relation"));
     }
 
     private void getDataToTable() {
@@ -773,7 +842,7 @@ public class DrugsScreenPatientController
                             public void run() {
                                 try {
                                     try {
-                                        DrugsScreenPatientController.this.patientTable.setItems(DrugsPatients.getData());
+                                        patientTable.setItems(DrugsPatients.getData());
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
                                     }
@@ -790,8 +859,8 @@ public class DrugsScreenPatientController
             }
 
             protected void succeeded() {
-                DrugsScreenPatientController.this.items = DrugsScreenPatientController.this.patientTable.getItems();
-                DrugsScreenPatientController.this.progress.setVisible(false);
+                items = patientTable.getItems();
+                progress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -813,8 +882,8 @@ public class DrugsScreenPatientController
         });
 
         SortedList<DrugsPatients> sortedData = new SortedList((ObservableList) filteredData);
-        sortedData.comparatorProperty().bind((ObservableValue) this.patientTable.comparatorProperty());
-        this.patientTable.setItems((ObservableList) sortedData);
+        sortedData.comparatorProperty().bind(patientTable.comparatorProperty());
+        patientTable.setItems((ObservableList) sortedData);
     }
 
     @FXML
@@ -841,7 +910,7 @@ public class DrugsScreenPatientController
                                 try {
                                     try {
                                         try {
-                                            DrugsPatients tab = (DrugsPatients) DrugsScreenPatientController.this.patientTable.getSelectionModel().getSelectedItem();
+                                            DrugsPatients tab = patientTable.getSelectionModel().getSelectedItem();
                                             DrugsPatients cont = new DrugsPatients();
                                             cont.setId(tab.getId());
                                             cont.setName(tab.getName());
@@ -866,7 +935,7 @@ public class DrugsScreenPatientController
             }
 
             protected void succeeded() {
-                DrugsScreenPatientController.this.progress.setVisible(false);
+                progress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -914,29 +983,29 @@ public class DrugsScreenPatientController
                                                 if (DrugsScreenPatientController.this.escortPhoto.getText().isEmpty() || DrugsScreenPatientController.this.escortPhoto.getText() == null) {
                                                     DrugsPatientsEscort patient = new DrugsPatientsEscort();
                                                     patient.setId(Integer.parseInt(DrugsScreenPatientController.this.escortId.getText()));
-                                                    patient.setPatientId(((DrugsPatients) DrugsScreenPatientController.this.patientTable.getSelectionModel().getSelectedItem()).getId());
-                                                    patient.setName(DrugsScreenPatientController.this.escortName.getText());
-                                                    patient.setRelation(DrugsScreenPatientController.this.escortRelation.getText());
-                                                    patient.setAddress(DrugsScreenPatientController.this.escortAddress.getText());
-                                                    patient.setNationaId(DrugsScreenPatientController.this.escortNational.getText());
-                                                    patient.setTele1(DrugsScreenPatientController.this.escortTele1.getText());
-                                                    patient.setTele2(DrugsScreenPatientController.this.escortTele2.getText());
+                                                    patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
+                                                    patient.setName(escortName.getText());
+                                                    patient.setRelation(escortRelation.getText());
+                                                    patient.setAddress(escortAddress.getText());
+                                                    patient.setNationaId(escortNational.getText());
+                                                    patient.setTele1(escortTele1.getText());
+                                                    patient.setTele2(escortTele2.getText());
                                                     patient.EditeWithoutPhoto();
                                                 } else {
                                                     DrugsPatientsEscort patient = new DrugsPatientsEscort();
-                                                    patient.setId(Integer.parseInt(DrugsScreenPatientController.this.escortId.getText()));
-                                                    patient.setPatientId(((DrugsPatients) DrugsScreenPatientController.this.patientTable.getSelectionModel().getSelectedItem()).getId());
-                                                    patient.setName(DrugsScreenPatientController.this.escortName.getText());
-                                                    patient.setRelation(DrugsScreenPatientController.this.escortRelation.getText());
-                                                    patient.setAddress(DrugsScreenPatientController.this.escortAddress.getText());
-                                                    patient.setNationaId(DrugsScreenPatientController.this.escortNational.getText());
-                                                    patient.setTele1(DrugsScreenPatientController.this.escortTele1.getText());
-                                                    patient.setTele2(DrugsScreenPatientController.this.escortTele2.getText());
+                                                    patient.setId(Integer.parseInt(escortId.getText()));
+                                                    patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
+                                                    patient.setName(escortName.getText());
+                                                    patient.setRelation(escortRelation.getText());
+                                                    patient.setAddress(escortAddress.getText());
+                                                    patient.setNationaId(escortNational.getText());
+                                                    patient.setTele1(escortTele1.getText());
+                                                    patient.setTele2(escortTele2.getText());
 
-                                                    InputStream in = new FileInputStream(new File(DrugsScreenPatientController.this.escortPhoto.getText()));
+                                                    InputStream in = new FileInputStream(new File(escortPhoto.getText()));
                                                     patient.setPhoto(in);
 
-                                                    String[] st = DrugsScreenPatientController.this.escortPhoto.getText().split(Pattern.quote("."));
+                                                    String[] st = escortPhoto.getText().split(Pattern.quote("."));
                                                     patient.setPhotoExt(st[st.length - 1]);
 
                                                     patient.Edite();
@@ -958,10 +1027,10 @@ public class DrugsScreenPatientController
                 }
 
                 protected void succeeded() {
-                    DrugsScreenPatientController.this.clearEscort();
-                    DrugsScreenPatientController.this.clear();
-                    DrugsScreenPatientController.this.getDataToTable();
-                    DrugsScreenPatientController.this.escortProgress.setVisible(false);
+                    clearEscort();
+                    clear();
+                    getDataToTable();
+                    escortProgress.setVisible(false);
                     super.succeeded();
                 }
             };
@@ -992,7 +1061,7 @@ public class DrugsScreenPatientController
                                             Optional<ButtonType> result = alert.showAndWait();
                                             if (result.get() == ButtonType.OK) {
                                                 DrugsPatientsEscort patient = new DrugsPatientsEscort();
-                                                patient.setId(Integer.parseInt(DrugsScreenPatientController.this.escortId.getText()));
+                                                patient.setId(Integer.parseInt(escortId.getText()));
 
                                                 patient.Delete();
                                             }
@@ -1013,10 +1082,10 @@ public class DrugsScreenPatientController
                 }
 
                 protected void succeeded() {
-                    DrugsScreenPatientController.this.clearEscort();
-                    DrugsScreenPatientController.this.clear();
-                    DrugsScreenPatientController.this.getDataToTable();
-                    DrugsScreenPatientController.this.escortProgress.setVisible(false);
+                    clearEscort();
+                    clear();
+                    getDataToTable();
+                    escortProgress.setVisible(false);
                     super.succeeded();
                 }
             };
@@ -1039,32 +1108,32 @@ public class DrugsScreenPatientController
                                 public void run() {
                                     try {
                                         try {
-                                            if (DrugsScreenPatientController.this.escortPhoto.getText().isEmpty() || DrugsScreenPatientController.this.escortPhoto.getText() == null) {
+                                            if (escortPhoto.getText().isEmpty() || escortPhoto.getText() == null) {
                                                 DrugsPatientsEscort patient = new DrugsPatientsEscort();
-                                                patient.setId(Integer.parseInt(DrugsScreenPatientController.this.escortId.getText()));
-                                                patient.setPatientId(((DrugsPatients) DrugsScreenPatientController.this.patientTable.getSelectionModel().getSelectedItem()).getId());
-                                                patient.setName(DrugsScreenPatientController.this.escortName.getText());
-                                                patient.setRelation(DrugsScreenPatientController.this.escortRelation.getText());
-                                                patient.setAddress(DrugsScreenPatientController.this.escortAddress.getText());
-                                                patient.setNationaId(DrugsScreenPatientController.this.escortNational.getText());
-                                                patient.setTele1(DrugsScreenPatientController.this.escortTele1.getText());
-                                                patient.setTele2(DrugsScreenPatientController.this.escortTele2.getText());
+                                                patient.setId(Integer.parseInt(escortId.getText()));
+                                                patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
+                                                patient.setName(escortName.getText());
+                                                patient.setRelation(escortRelation.getText());
+                                                patient.setAddress(escortAddress.getText());
+                                                patient.setNationaId(escortNational.getText());
+                                                patient.setTele1(escortTele1.getText());
+                                                patient.setTele2(escortTele2.getText());
                                                 patient.AddWithoutPhoto();
                                             } else {
                                                 DrugsPatientsEscort patient = new DrugsPatientsEscort();
-                                                patient.setId(Integer.parseInt(DrugsScreenPatientController.this.escortId.getText()));
-                                                patient.setPatientId(((DrugsPatients) DrugsScreenPatientController.this.patientTable.getSelectionModel().getSelectedItem()).getId());
-                                                patient.setName(DrugsScreenPatientController.this.escortName.getText());
-                                                patient.setRelation(DrugsScreenPatientController.this.escortRelation.getText());
-                                                patient.setAddress(DrugsScreenPatientController.this.escortAddress.getText());
-                                                patient.setNationaId(DrugsScreenPatientController.this.escortNational.getText());
-                                                patient.setTele1(DrugsScreenPatientController.this.escortTele1.getText());
-                                                patient.setTele2(DrugsScreenPatientController.this.escortTele2.getText());
+                                                patient.setId(Integer.parseInt(escortId.getText()));
+                                                patient.setPatientId(patientTable.getSelectionModel().getSelectedItem().getId());
+                                                patient.setName(escortName.getText());
+                                                patient.setRelation(escortRelation.getText());
+                                                patient.setAddress(escortAddress.getText());
+                                                patient.setNationaId(escortNational.getText());
+                                                patient.setTele1(escortTele1.getText());
+                                                patient.setTele2(escortTele2.getText());
 
-                                                InputStream in = new FileInputStream(new File(DrugsScreenPatientController.this.escortPhoto.getText()));
+                                                InputStream in = new FileInputStream(new File(escortPhoto.getText()));
                                                 patient.setPhoto(in);
 
-                                                String[] st = DrugsScreenPatientController.this.escortPhoto.getText().split(Pattern.quote("."));
+                                                String[] st = escortPhoto.getText().split(Pattern.quote("."));
                                                 patient.setPhotoExt(st[st.length - 1]);
 
                                                 patient.Add();
@@ -1086,10 +1155,10 @@ public class DrugsScreenPatientController
                 }
 
                 protected void succeeded() {
-                    DrugsScreenPatientController.this.clearEscort();
-                    DrugsScreenPatientController.this.clear();
-                    DrugsScreenPatientController.this.getDataToTable();
-                    DrugsScreenPatientController.this.escortProgress.setVisible(false);
+                    clearEscort();
+                    clear();
+                    getDataToTable();
+                    escortProgress.setVisible(false);
                     super.succeeded();
                 }
             };
@@ -1102,23 +1171,23 @@ public class DrugsScreenPatientController
             if (this.patientTable.getSelectionModel().getSelectedIndex() == -1) {
                 this.escortTable.setItems(null);
             } else {
-                this.escortTable.setItems(DrugsPatientsEscort.getData(Integer.toString(((DrugsPatients) this.patientTable.getSelectionModel().getSelectedItem()).getId())));
+                this.escortTable.setItems(DrugsPatientsEscort.getData(Integer.toString(patientTable.getSelectionModel().getSelectedItem().getId())));
             }
 
             setEscortAutoNum();
-            this.escortProgress.setVisible(false);
-            this.escortAdd.setDisable(false);
-            this.escortEdite.setDisable(true);
-            this.escortDelete.setDisable(true);
-            this.escortNew.setDisable(true);
+            escortProgress.setVisible(false);
+            escortAdd.setDisable(false);
+            escortEdite.setDisable(true);
+            escortDelete.setDisable(true);
+            escortNew.setDisable(true);
 
-            this.escortName.setText("");
-            this.escortRelation.setText("");
-            this.escortAddress.setText("");
-            this.escortNational.setText("");
-            this.escortPhoto.setText("");
-            this.escortTele1.setText("");
-            this.escortTele2.setText("");
+            escortName.setText("");
+            escortRelation.setText("");
+            escortAddress.setText("");
+            escortNational.setText("");
+            escortPhoto.setText("");
+            escortTele1.setText("");
+            escortTele2.setText("");
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
         }
@@ -1141,7 +1210,7 @@ public class DrugsScreenPatientController
                                 try {
                                     try {
                                         try {
-                                            DrugsPatientsEscort tab = (DrugsPatientsEscort) DrugsScreenPatientController.this.escortTable.getSelectionModel().getSelectedItem();
+                                            DrugsPatientsEscort tab = escortTable.getSelectionModel().getSelectedItem();
                                             DrugsPatientsEscort cont = new DrugsPatientsEscort();
                                             cont.setId(tab.getId());
                                             cont.setName(tab.getName());
@@ -1166,7 +1235,7 @@ public class DrugsScreenPatientController
             }
 
             protected void succeeded() {
-                DrugsScreenPatientController.this.progress.setVisible(false);
+                progress.setVisible(false);
                 super.succeeded();
             }
         };
@@ -1271,7 +1340,8 @@ public class DrugsScreenPatientController
     }
 
     @FXML
-    private void setBirthDateFromNational(ActionEvent event) { if (patientNational.getText().length() == 14) {
+    private void setBirthDateFromNational(ActionEvent event) {
+        if (patientNational.getText().length() == 14) {
             String national = patientNational.getText();
             String year;
             if (national.substring(0, 1).equals("2")) {
@@ -1286,7 +1356,8 @@ public class DrugsScreenPatientController
     }
 
     @FXML
-    private void setBithdateFromAge(ActionEvent event) { LocalDate lo = LocalDate.now();
+    private void setBithdateFromAge(ActionEvent event) {
+        LocalDate lo = LocalDate.now();
         patientDateOfBirth.setValue(LocalDate.of(lo.getYear() - Integer.parseInt(patientAge.getText()), lo.getMonth(), lo.getDayOfMonth()));
     }
 }

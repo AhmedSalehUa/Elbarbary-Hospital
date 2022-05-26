@@ -30,69 +30,13 @@ public class template {
 
     public template() {
         ObservableList<String> d = FXCollections.observableArrayList();
-        /**
-         * CREATE TABLE `admission_surgies_medicine` ( `id` int(11) NOT NULL
-         * AUTO_INCREMENT, `admission_id` int(11) NOT NULL, `medicine_id`
-         * int(11) NOT NULL, `amount` varchar(700) NOT NULL, PRIMARY KEY (`id`),
-         * KEY `admission_id` (`admission_id`), KEY `medicine_id`
-         * (`medicine_id`), CONSTRAINT `admission_surgies_medicine_ibfk_1`
-         * FOREIGN KEY (`admission_id`) REFERENCES `admission` (`id`),
-         * CONSTRAINT `admission_surgies_medicine_ibfk_2` FOREIGN KEY
-         * (`medicine_id`) REFERENCES `stores_medicines` (`id`) ) ENGINE=InnoDB
-         * AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-         *
-         * CREATE TABLE `elbarbary_hospital`.`att_employee_solfa` ( `id` INT(11)
-         * NOT NULL AUTO_INCREMENT , `emp_id` INT(11) NOT NULL , `acc_id`
-         * INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `date` DATE NOT
-         * NULL , PRIMARY KEY (`id`), INDEX (`emp_id`), INDEX (`acc_id`)) ENGINE
-         * = InnoDB;
-         *
-         * CREATE TABLE `elbarbary_hospital`.`att_report` ( `id` INT(11) NOT
-         * NULL AUTO_INCREMENT , `emp_id` INT(11) NOT NULL , `emp_name`
-         * VARCHAR(700) NOT NULL , `date` DATE NOT NULL , `shift_name`
-         * VARCHAR(700) NOT NULL , `shift_start` TIME NOT NULL , `shift_end`
-         * TIME NOT NULL , `emp_att` TIME NOT NULL , `emp_leave` TIME NOT NULL ,
-         * `overtime` VARCHAR(700) NULL , `late` VARCHAR(700) NULL ,
-         * `earlyLeave` VARCHAR(700) NULL , `salary_calc` VARCHAR(700) NULL ,
-         * `statue` VARCHAR(700) NOT NULL , `notes` VARCHAR(700) NULL , PRIMARY
-         * KEY (`id`)) ENGINE = InnoDB;
-         *
-         * ALTER TABLE `att_report` ADD UNIQUE( `emp_id`, `date`);
-         *
-         *
-         * ALTER TABLE `att_report` CHANGE `shift_name` `shift_name`
-         * VARCHAR(700) CHARACTER SET utf8 COLLATE utf8_general_ci NULL, CHANGE
-         * `shift_start` `shift_start` TIME NULL, CHANGE `shift_end` `shift_end`
-         * TIME NULL, CHANGE `emp_att` `emp_att` TIME NULL, CHANGE `emp_leave`
-         * `emp_leave` TIME NULL, CHANGE `statue` `statue` VARCHAR(700)
-         * CHARACTER SET utf8 COLLATE utf8_general_ci NULL;
-         *
-         * create TABLE drg_patient like patients;
-         *
-         * create TABLE drg_patient_escort like patient_escort;
-         *
-         * create TABLE drg_patient_photo like patients_photo;
-         *
-         * CREATE TABLE `elbarbary_hospital`.`drg_accounts` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `total_paied` VARCHAR(700) NOT NULL , `total_spended` VARCHAR(700) NOT NULL , `remaining` VARCHAR(700) NOT NULL , PRIMARY KEY (`id`), UNIQUE (`patient_id`)) ENGINE = InnoDB;
+        /** 
          * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_expense_cat` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `name` VARCHAR(700) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
-         * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_patient_expenses` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `acc_id` INT(11) NOT NULL , `cat_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `date` DATE NOT NULL , PRIMARY KEY (`id`), INDEX (`patient_id`), INDEX (`acc_id`), INDEX (`cat_id`)) ENGINE = InnoDB;
-         * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_money_in` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `escort_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `date` DATE NOT NULL , PRIMARY KEY (`id`), INDEX (`patient_id`), INDEX (`escort_id`)) ENGINE = InnoDB;
-         * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_money_out` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `escort_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `date` DATE NOT NULL , PRIMARY KEY (`id`), INDEX (`patient_id`), INDEX (`escort_id`)) ENGINE = InnoDB;
-         * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_patient_service` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `acc_id` INT(11) NOT NULL , `doctor_id` INT(11) NOT NULL , `service_id` INT(11) NOT NULL , `cost` VARCHAR(700) NOT NULL , `date` DATE NOT NULL , PRIMARY KEY (`id`), INDEX (`patient_id`), INDEX (`acc_id`), INDEX (`doctor_id`), INDEX (`service_id`)) ENGINE = InnoDB;
-         * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_patient_medicine` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `patient_id` INT(11) NOT NULL , `acc_id` INT(11) NOT NULL , `medicine_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `cost_for_one` VARCHAR(700) NOT NULL , `total_cost` VARCHAR(700) NOT NULL , PRIMARY KEY (`id`), INDEX (`patient_id`), INDEX (`acc_id`), INDEX (`medicine_id`)) ENGINE = InnoDB;
-         * 
-         * CREATE TABLE `elbarbary_hospital`.`drg_accounts_transactions` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `acc_id_from` INT(11) NOT NULL , `acc_id_to` INT(11) NOT NULL , `user_id` INT(11) NOT NULL , `amount` VARCHAR(700) NOT NULL , `date` DATE NOT NULL , PRIMARY KEY (`id`), INDEX (`acc_id_from`), INDEX (`acc_id_to`), INDEX (`user_id`)) ENGINE = InnoDB;
-         * 
+         *
 
             *   
          */
-        d.add("");
+        d.add("ALTER TABLE `drg_accounts` ADD `date_of_entrance` DATE NULL AFTER `patient_id`, ADD `date_of_exite` DATE NULL AFTER `date_of_entrance`;");
         d.add("");
         d.add("");
         d.add("");

@@ -9,8 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1240.0" stylesheets="@../../assets/styles/darkMode.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="screens.drugs.DrugsScreenShowAccController">
+<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1240.0" stylesheets="@../../assets/styles/darkMode.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.drugs.DrugsScreenShowAccController">
    <children>
       <HBox alignment="CENTER_RIGHT" layoutX="196.0" layoutY="254.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="62.0" prefWidth="957.0" spacing="10.0">
          <children>
@@ -26,7 +25,7 @@
             </Label>
             <ProgressIndicator fx:id="progress" />
             <Button id="btnAdd" mnemonicParsing="false" onAction="#show" text="عرض" />
-            <ComboBox fx:id="patient" nodeOrientation="RIGHT_TO_LEFT" prefHeight="38.0" prefWidth="200.0" />
+            <ComboBox fx:id="patient" nodeOrientation="RIGHT_TO_LEFT" prefHeight="38.0" prefWidth="247.0" />
             <Label text="المريض">
                <font>
                   <Font size="20.0" />

@@ -9,8 +9,7 @@ import java.sql.ResultSet;
 import java.util.prefs.Preferences;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javax.swing.JTable;
-import screens.accounts.assets.AccountTransactions;
+import javax.swing.JTable; 
 import screens.store.assets.StoreProdcts;
 
 public class DrugsMedicines {
@@ -112,8 +111,7 @@ public class DrugsMedicines {
         Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
 
         DrugsAccounts.removeFromRemaining(Integer.parseInt(getPatientAccId(this.patient_id)), this.total_cost);
-        DrugsAccounts.addToTotalSpended(Integer.parseInt(getPatientAccId(this.patient_id)), this.total_cost);
-        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), this.total_cost);
+        DrugsAccounts.addToTotalSpended(Integer.parseInt(getPatientAccId(this.patient_id)), this.total_cost); 
         PreparedStatement ps = get.Prepare("INSERT INTO `drg_patient_medicine`(`id`, `patient_id`, `acc_id`, `medicine_id`, `amount`, `cost_for_one`, `total_cost`) VALUES (?,?,?,?,?,?,?)");
         StoreProdcts.reduceAmount(this.medicine_id, this.amount);
         ps.setInt(1, this.id);
@@ -130,8 +128,7 @@ public class DrugsMedicines {
     public boolean Edite() throws Exception {
         Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
 
-        JTable am = get.getTableData("SELECT `patient_id`,`total_cost`,`acc_id`, `medicine_id`, `amount` FROM `drg_patient_medicine` WHERE `id`='" + this.id + "'");
-        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), am.getValueAt(0, 1).toString());
+        JTable am = get.getTableData("SELECT `patient_id`,`total_cost`,`acc_id`, `medicine_id`, `amount` FROM `drg_patient_medicine` WHERE `id`='" + this.id + "'"); 
 
         DrugsAccounts.removeFromTotalSpended(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
         DrugsAccounts.addToRemaining(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
@@ -146,8 +143,7 @@ public class DrugsMedicines {
         ps.setString(5, this.cost_of_one);
         ps.setString(6, this.total_cost);
         DrugsAccounts.removeFromRemaining(getPatientAccId(Integer.toString(this.patient_id)), this.total_cost);
-        DrugsAccounts.addToTotalSpended(getPatientAccId(Integer.toString(this.patient_id)), this.total_cost);
-        AccountTransactions.removeAmountFromAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), this.total_cost);
+        DrugsAccounts.addToTotalSpended(getPatientAccId(Integer.toString(this.patient_id)), this.total_cost); 
         StoreProdcts.reduceAmount(this.medicine_id, this.amount);
         ps.execute();
         return true;
@@ -157,8 +153,7 @@ public class DrugsMedicines {
         Preferences prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
 
         JTable am = get.getTableData("SELECT `patient_id`,`total_cost`,`acc_id`, `medicine_id`, `amount` FROM `drg_patient_medicine` WHERE `id`='" + this.id + "'");
-        DrugsAccounts.removeFromTotalSpended(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
-        AccountTransactions.addAmountToAccount(Integer.parseInt(prefs.get(DRUGS_BRANCH_ACCOUNT_ID, "4")), am.getValueAt(0, 1).toString());
+        DrugsAccounts.removeFromTotalSpended(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString()); 
         DrugsAccounts.addToRemaining(getPatientAccId(am.getValueAt(0, 0).toString()), am.getValueAt(0, 1).toString());
         StoreProdcts.AddAmount(Integer.parseInt(am.getValueAt(0, 3).toString()), am.getValueAt(0, 4).toString());
 

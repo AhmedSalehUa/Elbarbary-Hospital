@@ -23,18 +23,18 @@
 	</style>
 	<parameter name="patient_id" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT * FROM `drg_patient_room` WHERE `patient_id`=$P{patient_id}]]>
+		<![CDATA[SELECT `id`, `patient_id`,CONCAT(' للفترة من', min(`date`),' الى ',max(`date`)) as 'date',sum(cast( `cost`as unsigned)) as 'cost' FROM `drg_patient_room` WHERE patient_id = $P{patient_id} GROUP by patient_id]]>
 	</queryString>
-	<field name="date" class="java.sql.Date">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="cost" class="java.lang.String">
+	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="patient_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="id" class="java.lang.Integer">
+	<field name="date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<pageHeader>

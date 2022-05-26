@@ -14,6 +14,8 @@ public class DrugsAccounts {
     int id;
     int paitent_id;
     String patient_name;
+    String DateOfEntrance;
+    String DateOfExite;
     String total_paied;
     String total_spended;
     String remaining;
@@ -22,9 +24,9 @@ public class DrugsAccounts {
     public DrugsAccounts() {
     }
 
-    public DrugsAccounts(int id, String patient_name, String total_paied, String total_spended, String remaining, String room, int paitent_id) {
+    public DrugsAccounts(int id, String patient_name, String DateOfEntrance, String DateOfExite, String total_paied, String total_spended, String remaining, String room, int paitent_id) {
         this.id = id;
-        this.patient_name = patient_name;
+        this.patient_name = patient_name; this.DateOfEntrance = DateOfEntrance; this.DateOfExite = DateOfExite;
         this.total_paied = total_paied;
         this.total_spended = total_spended;
         this.remaining = remaining;
@@ -84,34 +86,67 @@ public class DrugsAccounts {
         return this.room;
     }
 
+    public String getDateOfEntrance() {
+        return DateOfEntrance;
+    }
+
+    public void setDateOfEntrance(String DateOfEntrance) {
+        this.DateOfEntrance = DateOfEntrance;
+    }
+
+    public String getDateOfExite() {
+        return DateOfExite;
+    }
+
+    public void setDateOfExite(String DateOfExite) {
+        this.DateOfExite = DateOfExite;
+    }
+
     public void setRoom(String room) {
         this.room = room;
     }
 
     public boolean Add() throws Exception {
-        PreparedStatement ps = get.Prepare("INSERT INTO `drg_accounts`(`id`, `patient_id`, `total_paied`, `total_spended`, `remaining`,`daily_room`) VALUES (?,?,?,?,?,?)");
-        ps.setInt(1, this.id);
-        ps.setInt(2, this.paitent_id);
-        ps.setString(3, this.total_paied);
-        ps.setString(4, this.total_spended);
-        ps.setString(5, this.remaining);
-        ps.setString(6, this.room);
+        PreparedStatement ps = get.Prepare("INSERT INTO `drg_accounts`(`id`, `patient_id`,`date_of_entrance`,`date_of_exite`, `total_paied`, `total_spended`, `remaining`,`daily_room`) VALUES (?,?,?,?,?,?,?,?)");
+        ps.setInt(1, id);
+        ps.setInt(2, paitent_id);
+        ps.setString(3,  DateOfEntrance);
+        ps.setString(4,  DateOfExite);
+        ps.setString(5,  total_paied);
+        ps.setString(6,  total_spended);
+        ps.setString(7,  remaining);
+        ps.setString(8,   room);
         ps.execute();
         return true;
     }
 
     public boolean Edite() throws Exception {
-        PreparedStatement ps = get.Prepare("UPDATE `drg_accounts` SET `patient_id`=?,`total_paied`=?,`total_spended`=?,`remaining`=?,`daily_room`=? WHERE `id`=?");
-        ps.setInt(6, this.id);
-        ps.setInt(1, this.paitent_id);
-        ps.setString(2, this.total_paied);
-        ps.setString(3, this.total_spended);
-        ps.setString(4, this.remaining);
-        ps.setString(5, this.room);
+        PreparedStatement ps = get.Prepare("UPDATE `drg_accounts` SET `patient_id`=?,`total_paied`=?,`total_spended`=?,`remaining`=?,`daily_room`=?,`date_of_entrance`=?,`date_of_exite`=? WHERE `id`=?");
+        ps.setInt(8, id);
+        ps.setInt(1, paitent_id);
+        ps.setString(2,total_paied);
+        ps.setString(3,total_spended);
+        ps.setString(4,remaining);
+        ps.setString(5,room); 
+        ps.setString(6,  DateOfEntrance);
+        ps.setString(7,  DateOfExite);
         ps.execute();
         return true;
     }
-
+ public static boolean UpdateEntrance(int id,String date) throws Exception {
+        PreparedStatement ps = get.Prepare("UPDATE `drg_accounts` SET  `date_of_entrance`=? WHERE `id`=?");
+        ps.setInt(2, id); 
+        ps.setString(1,  date); 
+        ps.execute();
+        return true;
+    }
+ public static   boolean UpdateExite(int id,String date) throws Exception {
+        PreparedStatement ps = get.Prepare("UPDATE `drg_accounts` SET  `date_of_exite`=? WHERE `id`=?");
+        ps.setInt(2, id); 
+        ps.setString(1,  date); 
+        ps.execute();
+        return true;
+    }
     public boolean Delete() throws Exception {
         PreparedStatement ps = get.Prepare("DELETE FROM `drg_accounts` WHERE `id`=?");
         ps.setInt(1, this.id);
@@ -127,18 +162,18 @@ public class DrugsAccounts {
 
     public static ObservableList<DrugsAccounts> getData() throws Exception {
         ObservableList<DrugsAccounts> data = FXCollections.observableArrayList();
-        ResultSet rs = get.getReportCon().createStatement().executeQuery("SELECT `drg_accounts`.`id`, `drg_patient`.`name`, `drg_accounts`.`total_paied`, `drg_accounts`.`total_spended`, `drg_accounts`.`remaining`,`drg_accounts`.`daily_room`,`drg_accounts`.`patient_id` FROM `drg_accounts`,`drg_patient` WHERE `drg_accounts`.`patient_id` =`drg_patient`.`id`");
+        ResultSet rs = get.getReportCon().createStatement().executeQuery("SELECT `drg_accounts`.`id`, `drg_patient`.`name`, `drg_accounts`.`date_of_entrance`, `drg_accounts`.`date_of_exite`, `drg_accounts`.`total_paied`, `drg_accounts`.`total_spended`, `drg_accounts`.`remaining`,`drg_accounts`.`daily_room`,`drg_accounts`.`patient_id` FROM `drg_accounts`,`drg_patient` WHERE `drg_accounts`.`patient_id` =`drg_patient`.`id`");
         while (rs.next()) {
-            data.add(new DrugsAccounts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7)));
+            data.add(new DrugsAccounts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9)));
         }
         return data;
     }
 
     public static ObservableList<DrugsAccounts> getData(int patientId) throws Exception {
         ObservableList<DrugsAccounts> data = FXCollections.observableArrayList();
-        ResultSet rs = get.getReportCon().createStatement().executeQuery("SELECT `drg_accounts`.`id`, `drg_patient`.`name`, `drg_accounts`.`total_paied`, `drg_accounts`.`total_spended`, `drg_accounts`.`remaining`,`drg_accounts`.`daily_room`,`drg_accounts`.`patient_id` FROM `drg_accounts`,`drg_patient` WHERE `drg_accounts`.`patient_id` =`drg_patient`.`id` and `drg_accounts`.`patient_id`='" + patientId + "'");
+        ResultSet rs = get.getReportCon().createStatement().executeQuery("SELECT `drg_accounts`.`id`, `drg_patient`.`name`,`drg_accounts`.`date_of_entrance`, `drg_accounts`.`date_of_exite`, `drg_accounts`.`total_paied`, `drg_accounts`.`total_spended`, `drg_accounts`.`remaining`,`drg_accounts`.`daily_room`,`drg_accounts`.`patient_id` FROM `drg_accounts`,`drg_patient` WHERE `drg_accounts`.`patient_id` =`drg_patient`.`id` and `drg_accounts`.`patient_id`='" + patientId + "'");
         while (rs.next()) {
-            data.add(new DrugsAccounts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7)));
+            data.add(new DrugsAccounts(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9)));
         }
         return data;
     }

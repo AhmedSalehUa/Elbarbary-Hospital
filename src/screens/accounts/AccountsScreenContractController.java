@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -203,6 +204,7 @@ public class AccountsScreenContractController implements Initializable {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
             ObservableList<Contract> data;
+            ObservableList<Contract> dataSearch;
 
             @Override
             protected Task<Void> createTask() {
@@ -225,6 +227,23 @@ public class AccountsScreenContractController implements Initializable {
             protected void succeeded() {
                 progress.setVisible(false);
                 contracts.setItems(data);
+                contracts.setEditable(true);
+                contracts.setOnKeyReleased((event) -> {
+
+                    if (contracts.getEditor().getText().length() == 0) {
+                        contracts.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (Contract a : data) {
+                            if (a.getName().contains(contracts.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        contracts.setItems(dataSearch);
+                        contracts.show();
+                    }
+                });
                 contracts.setConverter(new StringConverter<Contract>() {
                     @Override
                     public String toString(Contract patient) {
@@ -289,11 +308,11 @@ public class AccountsScreenContractController implements Initializable {
             try {
                 DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 if (from.getValue() == null && to.getValue() == null) {
-                    admissionTable.setItems(Admission.getDataOfCotract(contracts.getSelectionModel().getSelectedItem().getId(), null, null));
+                    admissionTable.setItems(Admission.getDataOfCotract(contracts.getItems().get(contracts.getSelectionModel().getSelectedIndex()).getId(), null, null));
                 } else if (from.getValue() == null || to.getValue() == null) {
                     AlertDialogs.showError("اختار الفترة كاملة او بدون فترة");
                 } else {
-                    admissionTable.setItems(Admission.getDataOfCotract(contracts.getSelectionModel().getSelectedItem().getId(), from.getValue().format(format), to.getValue().format(format)));
+                    admissionTable.setItems(Admission.getDataOfCotract(contracts.getItems().get(contracts.getSelectionModel().getSelectedIndex()).getId(), from.getValue().format(format), to.getValue().format(format)));
                 }
                 ObservableList<Admission> items = admissionTable.getItems();
                 if (items.size() == 0) {
