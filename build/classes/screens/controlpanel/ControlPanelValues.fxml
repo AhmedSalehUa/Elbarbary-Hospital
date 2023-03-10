@@ -663,13 +663,14 @@
                               <Font size="25.0" />
                            </font>
                         </Label>
-                        <HBox prefHeight="213.0" prefWidth="1331.0" spacing="10.0">
+                        <HBox prefHeight="271.0" prefWidth="1331.0" spacing="10.0">
                            <children>
                               <VBox prefHeight="251.0" prefWidth="886.0" spacing="5.0" HBox.hgrow="ALWAYS">
                                  <children>
                                     <HBox spacing="50.0" />
-                                    <TableView id="contractTable" fx:id="categorysTab" prefHeight="193.0" prefWidth="886.0">
+                                    <TableView id="contractTable" fx:id="categorysTab" prefHeight="193.0" prefWidth="886.0" VBox.vgrow="ALWAYS">
                                        <columns>
+                                          <TableColumn fx:id="categorysTabSec" editable="false" prefWidth="300.0" text="التصنيف الرئيسي" />
                                           <TableColumn fx:id="categorysTabName" editable="false" prefWidth="300.0" text="التصنيف" />
                                           <TableColumn fx:id="categorysTabId" editable="false" minWidth="0.0" prefWidth="48.0" text="م" />
                                        </columns>
@@ -681,13 +682,14 @@
                               </VBox>
                               <VBox alignment="BOTTOM_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                                  <children>
-                                    <GridPane prefHeight="132.0" prefWidth="415.0" vgap="10.0">
+                                    <GridPane prefHeight="132.0" prefWidth="415.0" vgap="10.0" VBox.vgrow="ALWAYS">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="246.0" minWidth="10.0" prefWidth="246.0" />
                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="134.0" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
@@ -707,6 +709,12 @@
                                              </font>
                                           </Label>
                                           <TextField id="contractFields" fx:id="categorysName" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="1" />
+                                          <TextField id="contractFields" fx:id="categorysSec" prefHeight="34.0" prefWidth="179.0" GridPane.rowIndex="2" />
+                                          <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="143.0" text="التصنيف الرئيسي" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </GridPane>
                                     <HBox spacing="5.0">

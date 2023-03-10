@@ -26,7 +26,7 @@
 	<parameter name="date_to" class="java.lang.String"/>
 	<parameter name="subrepo" class="java.lang.Boolean"/>
 	<queryString>
-		<![CDATA[SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name` as 'group', `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`date`>=$P{date_from} and `expenses`.`date`<=$P{date_to} ORDER by 'group' asc]]>
+		<![CDATA[SELECT `expenses`.`id`,`accounts`.`name`,`categorys`.`name` as 'group', `expenses`.`date`, `expenses`.`amount`,`users`.`user_name`, `expenses`.`notes` FROM `expenses`,`users`,`categorys`,`accounts` WHERE `categorys`.`id`=`expenses`.`cat_id` and  `expenses`.`user_id`=`users`.`id` and `accounts`.`id` = `expenses`.`acc_id` and `expenses`.`date`>=$P{date_from} and `expenses`.`date`<=$P{date_to} ORDER by `categorys`.`name` ASC]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -136,7 +136,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
 				<reportElement style="style2" x="66" y="0" width="111" height="20" uuid="6e00a136-b8b4-45b7-9ff3-b9d94677a8be"/>
 				<textFieldExpression><![CDATA[$F{user_name}]]></textFieldExpression>
@@ -156,16 +156,16 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="36">
+		<band height="21">
 			<staticText>
-				<reportElement style="style1" x="399" y="16" width="111" height="20" uuid="8ae493ef-1420-4801-af95-8ddcb56576a0"/>
+				<reportElement style="style1" x="399" y="1" width="111" height="20" uuid="8ae493ef-1420-4801-af95-8ddcb56576a0"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[الاجمالي]]></text>
 			</staticText>
 			<textField>
-				<reportElement style="style2" x="288" y="16" width="111" height="20" uuid="ded5ae55-631d-4fc4-a3df-eebf6a7cfc30"/>
+				<reportElement style="style2" x="288" y="1" width="111" height="20" uuid="ded5ae55-631d-4fc4-a3df-eebf6a7cfc30"/>
 				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
 			</textField>
 		</band>

@@ -87,23 +87,23 @@
 		<band height="21" splitType="Stretch">
 			<staticText>
 				<reportElement style="style1" x="0" y="0" width="111" height="20" uuid="0b61a6a7-1a28-4149-8764-4ebb3483d7f5"/>
-				<text><![CDATA[amount]]></text>
+				<text><![CDATA[المبلغ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="style1" x="111" y="0" width="111" height="20" uuid="776114a7-af7d-44f0-b165-fcb643a44b19"/>
-				<text><![CDATA[date]]></text>
+				<text><![CDATA[التاريخ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="style1" x="222" y="0" width="111" height="20" uuid="de49cd03-f305-4c1b-b05e-0c5951c6f882"/>
-				<text><![CDATA[user_name]]></text>
+				<text><![CDATA[المستخدم]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="style1" x="333" y="0" width="111" height="20" uuid="8ed93320-ac2d-4f23-830a-ae26c2097909"/>
-				<text><![CDATA[acc_id]]></text>
+				<text><![CDATA[رقم الحساب]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="style1" x="444" y="0" width="111" height="20" uuid="3dcae044-e7bd-4e31-947c-64e3d7a9f2e6"/>
-				<text><![CDATA[admission_id]]></text>
+				<text><![CDATA[رقم التذكرة]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -113,7 +113,7 @@
 				<reportElement style="style2" x="0" y="0" width="111" height="20" uuid="9d2dbe09-4d61-4059-9ef5-ffa5cb0807da"/>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="dd/MM/yyyy">
 				<reportElement style="style2" x="111" y="0" width="111" height="20" uuid="2b1de895-b5eb-440e-907a-97751d487bcc"/>
 				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
 			</textField>

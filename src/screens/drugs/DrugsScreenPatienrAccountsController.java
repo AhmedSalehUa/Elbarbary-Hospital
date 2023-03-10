@@ -330,7 +330,7 @@ public class DrugsScreenPatienrAccountsController
                 DrugsAccounts selected = accountTable.getSelectionModel().getSelectedItem();
 
                 selectedAccount = selected;
-
+ 
                 configDailyExpense(selected.getPaitent_id());
                 configMedicines(selected.getPaitent_id());
                 configServices(selected.getPaitent_id());

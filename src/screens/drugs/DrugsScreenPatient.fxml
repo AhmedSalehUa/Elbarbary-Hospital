@@ -56,7 +56,9 @@
                                                       <TableColumn fx:id="patientTabTele2" editable="false" prefWidth="72.0" text="رقم 2" />
                                                       <TableColumn fx:id="patientTabTele1" editable="false" prefWidth="74.0" text="رقم 1" />
                                                   </columns>
-                                              </TableColumn>
+                                              </TableColumn> 
+                                              <TableColumn fx:id="patientTabDateIn" editable="false" prefWidth="169.0" text="تاريخ الخروج" />
+                                              <TableColumn fx:id="patientTabDateOut" editable="false" prefWidth="169.0" text="تاريخ الدخول" />
                                               <TableColumn fx:id="patientTabDiagnoses" editable="false" minWidth="0.0" prefWidth="70.0" text="التشخيص" />
                                               <TableColumn fx:id="patientTabDoctor" editable="false" minWidth="0.0" prefWidth="70.0" text="الطبيب المعالج" />
                                               <TableColumn fx:id="patientTabName" editable="false" prefWidth="156.0" text="الاسم" />

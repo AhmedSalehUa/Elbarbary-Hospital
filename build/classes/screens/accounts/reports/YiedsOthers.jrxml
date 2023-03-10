@@ -102,7 +102,7 @@
 				<reportElement style="style2" x="138" y="0" width="138" height="20" uuid="e909ef7c-4442-41f0-bdbc-5316272c1df2"/>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="dd/MM/yyyy">
 				<reportElement style="style2" x="276" y="0" width="138" height="20" uuid="37a89410-e8b6-4984-b553-c0b90a2db7c9"/>
 				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
 			</textField>

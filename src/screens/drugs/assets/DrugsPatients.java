@@ -22,6 +22,8 @@ public class DrugsPatients {
     int tranportOrgId;
     String tranportOrg;
     String dateOfBirth;
+    String dateOfEntrance;
+    String dateOfExit;
     String national_id;
     String gender;
     String diagnosis;
@@ -61,6 +63,24 @@ public class DrugsPatients {
         this.tele1 = tele1;
         this.tele2 = tele2;
         this.gender = gender;
+    }
+
+    public DrugsPatients(int id, String name, String government, String address, String dateOfBirth, String age, String national_id, String doctor_name, String tranportOrg, String diagnosis, String tele1, String tele2, String gender, String dateOfEntrance, String dateOfExit) {
+        this.id = id;
+        this.name = name;
+        this.government = government;
+        this.address = address;
+        this.age = age;
+        this.tranportOrg = tranportOrg;
+        this.dateOfBirth = dateOfBirth;
+        this.national_id = national_id;
+        this.diagnosis = diagnosis;
+        this.doctor_name = doctor_name;
+        this.tele1 = tele1;
+        this.tele2 = tele2;
+        this.gender = gender;
+        this.dateOfEntrance = dateOfEntrance;
+        this.dateOfExit = dateOfExit; 
     }
 
     public DrugsPatients(int id, String name, String address, String age, String national_id, String doctor_name, String diagnosis, String tele1, String tele2) {
@@ -122,6 +142,23 @@ public class DrugsPatients {
     public String getName() {
         return this.name;
     }
+
+    public String getDateOfEntrance() {
+        return dateOfEntrance;
+    }
+
+    public void setDateOfEntrance(String dateOfEntrance) {
+        this.dateOfEntrance = dateOfEntrance;
+    }
+
+    public String getDateOfExit() {
+        return dateOfExit;
+    }
+
+    public void setDateOfExit(String dateOfExit) {
+        this.dateOfExit = dateOfExit;
+    }
+    
 
     public void setName(String name) {
         this.name = name;
@@ -306,7 +343,7 @@ public class DrugsPatients {
         PreparedStatement sta = get.Prepare("DELETE FROM `drg_patient_photo` WHERE `patient_id`=?");
         sta.setInt(1, this.id);
         sta.execute();
-        DrugsAccounts dg =new DrugsAccounts();
+        DrugsAccounts dg = new DrugsAccounts();
         dg.setPaitent_id(id);
         dg.DeleteByPatient();
         st.execute();
@@ -322,6 +359,19 @@ public class DrugsPatients {
 
         while (rs.next()) {
             data.add(new DrugsPatients(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13)));
+        }
+        return data;
+    }
+
+    public static ObservableList<DrugsPatients> getOverrideData() throws Exception {
+        ObservableList<DrugsPatients> data = FXCollections.observableArrayList();
+
+        String SQL = "SELECT `drg_patient`.`id`, `drg_patient`.`name`, `drg_patient`.`government`, `drg_patient`.`address`, `drg_patient`.`date_of_birth`, `drg_patient`.`age`, `drg_patient`.`national_id`, `doctors`.`name`, `patient_transporting_org`.`name`, `drg_patient`.`diagnosis`, `drg_patient`.`tele1`, `drg_patient`.`tele2`, `drg_patient`.`gender`, `drg_accounts`.`date_of_entrance`, `drg_accounts`.`date_of_exite` FROM `patient_transporting_org`, `drg_patient`, `doctors`,`drg_accounts` WHERE `doctors`.`id` = `drg_patient`.`doctor_id` AND `patient_transporting_org`.`id` = `drg_patient`.`transport_org_id` AND `drg_accounts`.`patient_id` = `drg_patient`.`id`";
+
+        ResultSet rs = get.getReportCon().createStatement().executeQuery(SQL);
+
+        while (rs.next()) { 
+            data.add(new DrugsPatients(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14), rs.getString(15)));
         }
         return data;
     }

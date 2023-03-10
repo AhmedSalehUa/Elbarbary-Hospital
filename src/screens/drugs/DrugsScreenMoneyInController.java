@@ -35,6 +35,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import screens.drugs.assets.DrugsAccounts;
 import screens.drugs.assets.DrugsMoneyIn;
 import screens.drugs.assets.DrugsPatients;
 import screens.drugs.assets.DrugsPatientsEscort;
@@ -74,6 +75,12 @@ public class DrugsScreenMoneyInController
     private TableColumn<DrugsMoneyIn, String> tabId;
     @FXML
     private ProgressIndicator progress;
+    @FXML
+    private Label remains;
+    @FXML
+    private Label paied;
+    @FXML
+    private Label total;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -173,6 +180,12 @@ public class DrugsScreenMoneyInController
 
         add.setDisable(false);
         amount.setText("");
+        
+        remains.setText("0");
+
+        paied.setText("0");
+
+        total.setText("0");
         date.setValue(null);
 
         escort.getSelectionModel().clearSelection();
@@ -536,6 +549,12 @@ public class DrugsScreenMoneyInController
     private void getData(int patien) {
         try {
             table.setItems(DrugsMoneyIn.getData(patien));
+            DrugsAccounts data = DrugsAccounts.getData(patien).get(0);
+        total.setText(data.getTotal_spended());
+
+        paied.setText(data.getTotal_paied());
+ 
+        remains.setText(data.getRemaining()); 
             items = table.getItems();
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
@@ -550,7 +569,7 @@ public class DrugsScreenMoneyInController
 
             int id1 = patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId();
             fillEscortCombo(id1);
-            getData(id1);
+            getData(id1); 
         }
     }
 

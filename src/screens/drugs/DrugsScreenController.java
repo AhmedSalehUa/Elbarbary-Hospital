@@ -1,5 +1,6 @@
 package screens.drugs;
 
+import Navigator.HomeController;
 import assets.animation.ZoomInLeft;
 import assets.animation.ZoomInRight;
 import assets.classes.AlertDialogs;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -23,10 +26,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import screens.drugs.assets.DrugsStatics;
 
 public class DrugsScreenController
         implements Initializable {
@@ -44,12 +55,25 @@ public class DrugsScreenController
     Preferences prefs;
     @FXML
     private Button AccShow;
+    @FXML
+    private HBox Static3;
+    @FXML
+    private Label currentPatient;
+    @FXML
+    private HBox Static4;
+    @FXML
+    private Label allPatient;
+    @FXML
+    private HBox pieCharts;
+    @FXML
+    private VBox statisticsPane;
 
     public void initialize(URL url, ResourceBundle rb) {
         this.prefs = Preferences.userNodeForPackage(ElBarbaryHospital.class);
 
         (new ZoomInLeft((Node) this.dailyExpenses)).play();
-        (new ZoomInRight((Node) this.patient)).play(); (new ZoomInRight((Node) this.AccShow)).play();
+        (new ZoomInRight((Node) this.patient)).play();
+        (new ZoomInRight((Node) this.AccShow)).play();
 
         Service<Void> service = new Service<Void>() {
             protected Task<Void> createTask() {
@@ -60,12 +84,14 @@ public class DrugsScreenController
                             public void run() {
                                 try {
                                     DrugsScreenController.this.configDrawer();
+                                    configStatics();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
                                 } finally {
                                     latch.countDown();
                                 }
                             }
+
                         });
 
                         latch.await();
@@ -135,6 +161,30 @@ public class DrugsScreenController
         } catch (Exception ex) {
             ex.printStackTrace();
             AlertDialogs.showErrors(ex);
+        }
+    }
+
+    private void configStatics() {
+        try {
+            allPatient.setText(DrugsStatics.getAllPatient());
+            currentPatient.setText(DrugsStatics.getCurrentPatient());
+            
+            LineChart clientLineChart = DrugsStatics.getEntranceLineChart();
+            statisticsPane.getChildren().add(clientLineChart);
+            statisticsPane.setVgrow(clientLineChart, Priority.ALWAYS);
+
+            PieChart DoctorCatPie = DrugsStatics.getDoctorCatPie();
+            pieCharts.getChildren().add(DoctorCatPie);
+
+            PieChart PatientCatPie = DrugsStatics.getPatientCatPie();
+            pieCharts.getChildren().add(PatientCatPie);
+
+            new ZoomInRight(Static3).play();
+            new ZoomInRight(Static4).play();
+            new ZoomInRight(pieCharts).play();
+            new ZoomInRight(statisticsPane).play();
+        } catch (Exception ex) {
+            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

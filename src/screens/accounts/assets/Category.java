@@ -18,10 +18,12 @@ public class Category {
 
     int id;
     String name;
+    int parentId;
 
-    public Category(int id, String name) {
+    public Category(int id, String name, int parentId) {
         this.id = id;
         this.name = name;
+        this.parentId = parentId;
     }
 
     public Category() {
@@ -39,15 +41,31 @@ public class Category {
         return name;
     }
 
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public static boolean Add(String cat) throws Exception {
-        PreparedStatement ps = db.get.Prepare("INSERT INTO `categorys`(`name`) VALUES (?)");
-        ps.setString(1, cat);
-        ps.execute();
-        return true;
+    public static boolean Add(String cat, int parentId) throws Exception {
+        if (parentId == 0) {
+            PreparedStatement ps = db.get.Prepare("INSERT INTO `categorys`(`name`) VALUES (?)");
+            ps.setString(1, cat);
+            ps.execute();
+            return true;
+        } else {
+            PreparedStatement ps = db.get.Prepare("INSERT INTO `categorys`(`name`,`parent_cat`) VALUES (?,?)");
+            ps.setString(1, cat);
+            ps.setInt(2, parentId);
+            ps.execute();
+            return true;
+        }
     }
 
     public static boolean AddFromRecption(String cat) throws Exception {
@@ -62,9 +80,10 @@ public class Category {
     }
 
     public boolean Edite() throws Exception {
-        PreparedStatement ps = db.get.Prepare("UPDATE `categorys` SET `name`=? WHERE `id`=?");
+        PreparedStatement ps = db.get.Prepare("UPDATE `categorys` SET `name`=?,`parent_cat` WHERE `id`=?");
         ps.setString(1, name);
-        ps.setInt(2, id);
+        ps.setInt(2, parentId);
+        ps.setInt(3, id);
         ps.execute();
         return true;
     }
@@ -78,18 +97,36 @@ public class Category {
 
     public static ObservableList<Category> getData() throws Exception {
         ObservableList<Category> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `id`, `name` FROM `categorys`");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `id`, `name`,`parent_cat` FROM `categorys`");
         while (rs.next()) {
-            data.add(new Category(rs.getInt(1), rs.getString(2)));
+            data.add(new Category(rs.getInt(1), rs.getString(2), rs.getInt(3)));
+        }
+        return data;
+    }
+
+    public static ObservableList<Category> getMainData() throws Exception {
+        ObservableList<Category> data = FXCollections.observableArrayList();
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `id`, `name`, `parent_cat` FROM `categorys` WHERE `parent_cat` IS Null");
+        while (rs.next()) {
+            data.add(new Category(rs.getInt(1), rs.getString(2), rs.getInt(3)));
+        }
+        return data;
+    }
+
+    public static ObservableList<Category> getSecData(int id) throws Exception {
+        ObservableList<Category> data = FXCollections.observableArrayList();
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `id`, `name`, `parent_cat` FROM `categorys` WHERE `parent_cat` ='" + id + "'");
+        while (rs.next()) {
+            data.add(new Category(rs.getInt(1), rs.getString(2), rs.getInt(3)));
         }
         return data;
     }
 
     public static ObservableList<Category> getRecptionData() throws Exception {
         ObservableList<Category> data = FXCollections.observableArrayList();
-        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `id`, `name` FROM `categorys` where id in (SELECT `cat_id` FROM `reception_cat`)");
+        ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `id`, `name`, `parent_cat` FROM `categorys` where id in (SELECT `cat_id` FROM `reception_cat`)");
         while (rs.next()) {
-            data.add(new Category(rs.getInt(1), rs.getString(2)));
+            data.add(new Category(rs.getInt(1), rs.getString(2), rs.getInt(3)));
         }
         return data;
     }

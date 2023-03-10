@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -97,7 +99,7 @@ public class AccountsScreenExpensesController implements Initializable {
     @FXML
     private TableColumn<Expenses, String> accTabUser;
     @FXML
-    private ComboBox<Accounts> yieldAccFrom;
+    private ComboBox<Category> accSecCategory;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -181,17 +183,46 @@ public class AccountsScreenExpensesController implements Initializable {
                 accNotes.setText(selected.getNotes());
                 accDetails.setText(selected.getDetails());
                 accDate.setValue(LocalDate.parse(selected.getDate()));
+                accCategory.getSelectionModel().clearSelection();
+                accCategory.getEditor().setText("");
+                accSecCategory.getSelectionModel().clearSelection();
+                accSecCategory.getEditor().setText("");
                 ObservableList<Category> items1 = accCategory.getItems();
+                boolean found = false;
                 for (Category a : items1) {
                     if (a.getName().equals(selected.getCat())) {
+                        found = true;
                         accCategory.getSelectionModel().select(a);
+                        try {
+                            fillSecCombo(a.getId());
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
                     }
                 }
-                ObservableList<Accounts> items = yieldAccFrom.getItems();
-                for (Accounts a : items) {
-                    if (a.getName().equals(selected.getAcc())) {
-                        yieldAccFrom.getSelectionModel().select(a);
+                if (!found) {
+                    try {
+                        ObservableList<Category> allItems = Category.getData();
+
+                        for (Category a : allItems) {
+                            if (a.getName().equals(selected.getCat())) {
+                                for (Category b : items1) {
+                                    if (b.getId() == a.getParentId()) {
+                                        accCategory.getSelectionModel().select(b);
+                                        ObservableList<Category> secItem = accSecCategory.getItems();
+                                        for (Category s : secItem) {
+                                            if (s.getId() == a.getId()) {
+                                                accSecCategory.getSelectionModel().select(a);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception ex) {
+                        AlertDialogs.showErrors(ex);
                     }
+
                 }
             }
         });
@@ -201,7 +232,7 @@ public class AccountsScreenExpensesController implements Initializable {
         accTabUser.setCellValueFactory(new PropertyValueFactory<>("user"));
 
         accTabDetails.setCellValueFactory(new PropertyValueFactory<>("details"));
-        
+
         accTabNotes.setCellValueFactory(new PropertyValueFactory<>("notes"));
 
         accTabDate.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -303,11 +334,12 @@ public class AccountsScreenExpensesController implements Initializable {
     }
     ObservableList<Expenses> items;
 
-    private void fillCombo() throws Exception {
+    private void fillSecCombo(int id) throws Exception {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
-            ObservableList<Category> catData; ObservableList<Accounts> accData;
- ObservableList<Category> catDataSearch; ObservableList<Accounts> accDataSearch;
+            ObservableList<Category> catSecData;
+            ObservableList<Category> catSecDataSearch;
+
             @Override
             protected Task<Void> createTask() {
                 return new Task<Void>() {
@@ -315,8 +347,7 @@ public class AccountsScreenExpensesController implements Initializable {
                     protected Void call() throws Exception {
                         try {
 
-                            catData = Category.getData();
-                           accData = Accounts.getData();
+                            catSecData = Category.getSecData(id);
                         } catch (Exception ex) {
                             AlertDialogs.showErrors(ex);
                         }
@@ -329,36 +360,37 @@ public class AccountsScreenExpensesController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                yieldAccFrom.setItems(accData);
-                yieldAccFrom.setEditable(true);
-                yieldAccFrom.setOnKeyReleased((event) -> {
+                accSecCategory.setItems(catSecData);
+                accSecCategory.setEditable(true);
+                accSecCategory.setOnKeyReleased((event) -> {
 
-                    if (yieldAccFrom.getEditor().getText().length() == 0) {
-                        yieldAccFrom.setItems(accData);
+                    if (accSecCategory.getEditor().getText().length() == 0) {
+                        accSecCategory.setItems(catSecData);
                     } else {
-                        accDataSearch = FXCollections.observableArrayList();
+                        catSecDataSearch = FXCollections.observableArrayList();
 
-                        for (Accounts a : accData) {
-                            if (a.getName().contains(yieldAccFrom.getEditor().getText()) ) {
-                                accDataSearch.add(a);
+                        for (Category a : catSecData) {
+                            if (a.getName().contains(accSecCategory.getEditor().getText())) {
+                                catSecDataSearch.add(a);
                             }
                         }
-                        yieldAccFrom.setItems(accDataSearch);
-                        yieldAccFrom.show();
+                        accSecCategory.setItems(catSecDataSearch);
+                        accSecCategory.show();
                     }
                 });
-                yieldAccFrom.setConverter(new StringConverter<Accounts>() {
+                accSecCategory.setConverter(new StringConverter<Category>() {
                     @Override
-                    public String toString(Accounts patient) {
-                        return patient.getName();
+                    public String toString(Category patient) {
+                        return patient != null ? patient.getName() : "";
                     }
 
                     @Override
-                    public Accounts fromString(String string) {
-                        return null;
+                    public Category fromString(String string) {
+                        return accSecCategory.getItems().stream().filter(object
+                                -> object.getName().equals(string)).findFirst().orElse(null);
                     }
                 });
-                yieldAccFrom.setCellFactory(cell -> new ListCell<Accounts>() {
+                accSecCategory.setCellFactory(cell -> new ListCell<Category>() {
 
                     // Create our layout here to be reused for each ListCell
                     GridPane gridPane = new GridPane();
@@ -380,13 +412,14 @@ public class AccountsScreenExpensesController implements Initializable {
 
                     // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
                     @Override
-                    protected void updateItem(Accounts person, boolean empty) {
+                    protected void updateItem(Category person, boolean empty) {
                         super.updateItem(person, empty);
 
                         if (!empty && person != null) {
- 
-                            lblid.setText("الحساب: " + person.getName());
-                            lblName.setText("االرصيد: " + person.getCredite());
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("التصنيف: " + person.getName());
 
                             // Set this ListCell's graphicProperty to display our GridPane
                             setGraphic(gridPane);
@@ -396,6 +429,38 @@ public class AccountsScreenExpensesController implements Initializable {
                         }
                     }
                 });
+                super.succeeded();
+            }
+        };
+        service.start();
+    }
+
+    private void fillCombo() throws Exception {
+        progress.setVisible(true);
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Category> catData;
+            ObservableList<Category> catDataSearch;
+
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+
+                            catData = Category.getMainData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
+            }
+
+            @Override
+            protected void succeeded() {
+                progress.setVisible(false);
                 accCategory.setItems(catData);
                 accCategory.setEditable(true);
                 accCategory.setOnKeyReleased((event) -> {
@@ -406,7 +471,7 @@ public class AccountsScreenExpensesController implements Initializable {
                         catDataSearch = FXCollections.observableArrayList();
 
                         for (Category a : catData) {
-                            if (a.getName().contains(accCategory.getEditor().getText()) ) {
+                            if (a.getName().contains(accCategory.getEditor().getText())) {
                                 catDataSearch.add(a);
                             }
                         }
@@ -417,24 +482,27 @@ public class AccountsScreenExpensesController implements Initializable {
                 accCategory.setConverter(new StringConverter<Category>() {
                     @Override
                     public String toString(Category patient) {
-                        return patient.getName();
+                        try {
+                            fillSecCombo(patient != null ? patient.getId() : 0);
+                        } catch (Exception ex) {
+                            Logger.getLogger(AccountsScreenExpensesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        return patient != null ? patient.getName() : "";
                     }
 
                     @Override
                     public Category fromString(String string) {
-                        return null;
+                        return accCategory.getItems().stream().filter(object
+                                -> object.getName().equals(string)).findFirst().orElse(null);
                     }
-                }); 
+                });
                 accCategory.setCellFactory(cell -> new ListCell<Category>() {
 
-                    // Create our layout here to be reused for each ListCell
                     GridPane gridPane = new GridPane();
                     Label lblid = new Label();
                     Label lblName = new Label();
 
-                    // Static block to configure our layout
                     {
-                        // Ensure all our column widths are constant
                         gridPane.getColumnConstraints().addAll(
                                 new ColumnConstraints(100, 100, 100),
                                 new ColumnConstraints(100, 100, 100)
@@ -516,7 +584,7 @@ public class AccountsScreenExpensesController implements Initializable {
                                     final CountDownLatch latch = new CountDownLatch(1);
                                     Platform.runLater(() -> {
                                         try {
-                                            Category.Add(results);
+                                            Category.Add(results, 0);
                                         } catch (Exception ex) {
                                             AlertDialogs.showErrors(ex);
                                         } finally {
@@ -640,12 +708,15 @@ public class AccountsScreenExpensesController implements Initializable {
                                         Expenses ex = new Expenses();
                                         ex.setId(Integer.parseInt(accId.getText()));
                                         ex.setAmount(accCredit.getText());
-                                        ex.setCat_id(accCategory.getItems().get(accCategory.getSelectionModel().getSelectedIndex()).getId());
+                                        int catId = accSecCategory.getSelectionModel().getSelectedItem() == null ? 
+                                            accCategory.getSelectionModel().getSelectedItem().getId() 
+                                            : accSecCategory.getSelectionModel().getSelectedItem().getId();
+                                    ex.setCat_id(catId);
                                         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                        ex.setDate(accDate.getValue().format(format)); 
+                                        ex.setDate(accDate.getValue().format(format));
                                         ex.setDetails(accDetails.getText());
                                         ex.setNotes(accNotes.getText());
-                                        ex.setAcc_id(yieldAccFrom.getItems().get(yieldAccFrom.getSelectionModel().getSelectedIndex()).getId());
+                                        ex.setAcc_id(Integer.parseInt(prefs.get(MAIN_ACC_ID, "0")));
                                         ex.Edite();
                                     }
                                 } catch (Exception ex) {
@@ -698,13 +769,15 @@ public class AccountsScreenExpensesController implements Initializable {
                                     Expenses ex = new Expenses();
                                     ex.setId(Integer.parseInt(accId.getText()));
                                     ex.setAmount(accCredit.getText());
-                                    
-                                    ex.setCat_id(accCategory.getItems().get(accCategory.getSelectionModel().getSelectedIndex()).getId());
+                                    int catId = accSecCategory.getSelectionModel().getSelectedItem() == null ? 
+                                            accCategory.getSelectionModel().getSelectedItem().getId() 
+                                            : accSecCategory.getSelectionModel().getSelectedItem().getId();
+                                    ex.setCat_id(catId);
                                     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                                     ex.setDate(accDate.getValue().format(format));
-                                        ex.setDetails(accDetails.getText());
+                                    ex.setDetails(accDetails.getText());
                                     ex.setNotes(accNotes.getText());
-                                    ex.setAcc_id(yieldAccFrom.getItems().get(yieldAccFrom.getSelectionModel().getSelectedIndex()).getId());
+                                    ex.setAcc_id(Integer.parseInt(prefs.get(MAIN_ACC_ID, "0")));
                                     ex.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);
@@ -734,6 +807,64 @@ public class AccountsScreenExpensesController implements Initializable {
             }
         };
         service.start();
+    }
+
+    @FXML
+    private void addSecCategory(MouseEvent event) {
+        if (accCategory.getSelectionModel().getSelectedItem() == null) {
+            AlertDialogs.showError("اختار التصنيف الرئيسي اولا");
+        } else {
+            TextInputDialog dialog = new TextInputDialog("");
+            dialog.setTitle("Add Cat Name");
+            dialog.setHeaderText("اضافة تصنيف جديد");
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                if (result.get().isEmpty() || result.get() == null) {
+                    AlertDialogs.showError("خطا!! يرجي ادخال اسم نوع");
+                } else {
+                    final String results = result.get();
+                    try {
+                        Service service = new Service() {
+                            @Override
+                            protected Task createTask() {
+                                return new Task() {
+                                    @Override
+                                    protected Object call() throws Exception {
+                                        final CountDownLatch latch = new CountDownLatch(1);
+                                        Platform.runLater(() -> {
+                                            try {
+                                                Category.Add(results, accCategory.getSelectionModel().getSelectedItem().getId());
+                                            } catch (Exception ex) {
+                                                AlertDialogs.showErrors(ex);
+                                            } finally {
+                                                latch.countDown();
+                                            }
+                                        });
+                                        latch.await();
+
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void succeeded() {
+                                        try {
+                                            fillCombo();
+                                        } catch (Exception ex) {
+                                            AlertDialogs.showErrors(ex);
+                                        }
+                                    }
+                                };
+                            }
+                        };
+                        service.start();
+
+                    } catch (Exception ex) {
+                        AlertDialogs.showErrors(ex);
+                    }
+                }
+            }
+        }
     }
 
 }

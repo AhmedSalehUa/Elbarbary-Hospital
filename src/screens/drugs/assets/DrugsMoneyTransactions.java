@@ -155,7 +155,7 @@ public class DrugsMoneyTransactions {
         AccountTransactions.removeAmountFromAccount(Integer.parseInt(am.getValueAt(0, 1).toString()), am.getValueAt(0, 2).toString());
         AccountTransactions.addAmountToAccount(Integer.parseInt(am.getValueAt(0, 0).toString()), am.getValueAt(0, 2).toString());
 
-        PreparedStatement ps = db.get.Prepare("DELETE FROM `drg_accounts_transactions` WHERE id`=?");
+        PreparedStatement ps = db.get.Prepare("DELETE FROM `drg_accounts_transactions` WHERE `id`=?");
         ps.setInt(1, id);
         ps.execute();
         return true;

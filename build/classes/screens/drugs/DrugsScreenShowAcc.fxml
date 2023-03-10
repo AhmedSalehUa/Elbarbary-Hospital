@@ -5,36 +5,211 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1240.0" stylesheets="@../../assets/styles/darkMode.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.drugs.DrugsScreenShowAccController">
    <children>
-      <HBox alignment="CENTER_RIGHT" layoutX="196.0" layoutY="254.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="62.0" prefWidth="957.0" spacing="10.0">
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label fx:id="total" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="291.0" text="0" textAlignment="RIGHT">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <Label prefHeight="30.0" prefWidth="171.0" text="حساب المريض">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <ProgressIndicator fx:id="progress" />
-            <Button id="btnAdd" mnemonicParsing="false" onAction="#show" text="عرض" />
-            <ComboBox fx:id="patient" nodeOrientation="RIGHT_TO_LEFT" prefHeight="38.0" prefWidth="247.0" />
-            <Label text="المريض">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
+            <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="62.0" prefWidth="957.0" spacing="10.0" VBox.vgrow="NEVER">
+               <children>
+                  <ProgressIndicator fx:id="progress" />
+                  <Button id="btnEdite" mnemonicParsing="false" onAction="#print" text="طباعة" />
+                  <Button id="btnAdd" mnemonicParsing="false" onAction="#show" text="عرض" />
+                  <ComboBox fx:id="patient" nodeOrientation="RIGHT_TO_LEFT" prefHeight="38.0" prefWidth="247.0" />
+                  <Label text="المريض">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="1.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fx:id="viewReport" fitToWidth="true" style="-fx-background-color: #060;" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="1556.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="57.0" prefWidth="1225.0">
+                           <children>
+                              <Label fx:id="remains" prefHeight="41.0" prefWidth="201.0" text="0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="41.0" prefWidth="201.0" text="المبلغ الباقي">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="paied" prefHeight="41.0" prefWidth="201.0" text="0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="41.0" prefWidth="201.0" text="المبلغ المدفوع">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="total" prefHeight="41.0" prefWidth="201.0" text="0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="41.0" prefWidth="201.0" text="اجمالي المبلغ">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label text="مصاريف يومية">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <TableView id="contractTable" fx:id="dailyTable" prefWidth="1224.0" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="dailyTabNotes" prefWidth="407.0" text="ملاحظات" />
+                              <TableColumn fx:id="dailyTabDate" prefWidth="407.0" text="التاريخ" />
+                              <TableColumn fx:id="dailyTabCat" prefWidth="407.0" text="التصنيف" />
+                              <TableColumn fx:id="dailyTabAmount" editable="false" prefWidth="300.0" text="المبلغ" />
+                              <TableColumn fx:id="dailyTabId" editable="false" minWidth="0.0" prefWidth="48.0" text="م" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <VBox.margin>
+                              <Insets bottom="50.0" />
+                           </VBox.margin>
+                        </TableView>
+                        <Label layoutX="517.0" layoutY="10.0" text="الادوية">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <TableView id="formTable" fx:id="admissionMedicineTable" prefWidth="1224.0" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="admissionMedicineTabtotalCost" prefWidth="75.0" text="اجمالى السعر" />
+                              <TableColumn fx:id="admissionMedicineTabCost" prefWidth="75.0" text="سعر الوحدة" />
+                              <TableColumn fx:id="admissionMedicineTabAmount" prefWidth="75.0" text="الكمية" />
+                              <TableColumn fx:id="admissionMedicineTabMedicine" prefWidth="75.0" text="اسم الدواء" />
+                              <TableColumn fx:id="admissionMedicineTabId" prefWidth="75.0" text="م" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <VBox.margin>
+                              <Insets bottom="50.0" />
+                           </VBox.margin>
+                        </TableView>
+                        <Label layoutX="576.0" layoutY="422.0" text="خدمات طبية">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <TableView fx:id="serviceTable" prefWidth="977.0" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="serviceTabDate" prefWidth="75.0" text="التاريخ" />
+                              <TableColumn fx:id="serviceTabCost" prefWidth="75.0" text="التكلفة" />
+                              <TableColumn fx:id="serviceTabService" prefWidth="75.0" text="اسم الخدمة" />
+                              <TableColumn fx:id="serviceTabDoctor" prefWidth="75.0" text="اسم الطبيب" />
+                              <TableColumn fx:id="serviceTabId" prefWidth="75.0" text="م" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <VBox.margin>
+                              <Insets bottom="50.0" />
+                           </VBox.margin>
+                        </TableView>
+                        <Label layoutX="576.0" layoutY="472.0" text="الاقامة اليومية">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <TableView fx:id="roomTable" prefWidth="977.0" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="roomTabCost" prefWidth="75.0" text="التكلفة" />
+                              <TableColumn fx:id="roomTabDate" prefWidth="75.0" text="التاريخ" />
+                              <TableColumn fx:id="roomTabId" prefWidth="75.0" text="م" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <VBox.margin>
+                              <Insets bottom="50.0" />
+                           </VBox.margin>
+                        </TableView>
+                        <Label layoutX="524.0" layoutY="496.0" text="المبالغ المدفوعة">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <TableView fx:id="tableIn" prefWidth="977.0" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="tabInDate" prefWidth="75.0" text="التاريخ" />
+                              <TableColumn fx:id="tabInAmount" prefWidth="75.0" text="المبلغ" />
+                              <TableColumn fx:id="tabInEscort" prefWidth="75.0" text="مستلم من" />
+                              <TableColumn fx:id="tabInId" prefWidth="75.0" text="م" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <VBox.margin>
+                              <Insets bottom="50.0" />
+                           </VBox.margin>
+                        </TableView>
+                        <Label layoutX="524.0" layoutY="547.0" text="المبالغ المستردة">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <TableView fx:id="tableOut" prefWidth="977.0" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="tabOutDate" prefWidth="75.0" text="التاريخ" />
+                              <TableColumn fx:id="tabOutAmount" prefWidth="75.0" text="المبلغ" />
+                              <TableColumn fx:id="tabOutEscort" prefWidth="75.0" text="مٌسلم الي" />
+                              <TableColumn fx:id="tabOutId" prefWidth="75.0" text="م" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <VBox.margin>
+                              <Insets bottom="50.0" />
+                           </VBox.margin>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
          </children>
-         <padding>
-            <Insets left="1.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
+      </VBox>
    </children>
 </AnchorPane>

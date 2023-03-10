@@ -172,6 +172,10 @@ public class DrugsScreenPatientController
     private JFXDrawer drawer;
     ObservableList<DrugsPatientsEscort> Escortitems;
     ObservableList<DrugsPatients> items;
+    @FXML
+    private TableColumn<DrugsPatients,String> patientTabDateIn;
+    @FXML
+    private TableColumn<DrugsPatients,String> patientTabDateOut;
 
     public void initialize(URL url, ResourceBundle rb) {
         patientDateOfBirth.setConverter(new StringConverter<LocalDate>() {
@@ -417,7 +421,7 @@ public class DrugsScreenPatientController
                             setGraphic(null);
                         }
                     }
-                }); 
+                });
                 patientTransName.setItems(transferData);
                 patientTransName.setEditable(true);
                 patientTransName.setOnKeyReleased((event) -> {
@@ -821,7 +825,9 @@ public class DrugsScreenPatientController
         this.patientTabDoctor.setCellValueFactory(new PropertyValueFactory("doctor_name"));
         this.patientTabTele1.setCellValueFactory(new PropertyValueFactory("tele1"));
         this.patientTabTele2.setCellValueFactory(new PropertyValueFactory("tele2"));
-
+        this.patientTabDateIn.setCellValueFactory(new PropertyValueFactory("dateOfEntrance"));
+        this.patientTabDateOut.setCellValueFactory(new PropertyValueFactory("dateOfExit"));
+        
         this.escortTabNational.setCellValueFactory(new PropertyValueFactory("id"));
         this.escortTabName.setCellValueFactory(new PropertyValueFactory("name"));
         this.escortTabId.setCellValueFactory(new PropertyValueFactory("id"));
@@ -833,7 +839,7 @@ public class DrugsScreenPatientController
 
     private void getDataToTable() {
         this.progress.setVisible(true);
-        Service<Void> service = new Service<Void>() {
+        Service<Void> service = new Service<Void>() {ObservableList<DrugsPatients> overrideData;
             protected Task<Void> createTask() {
                 return new Task<Void>() {
                     protected Void call() throws Exception {
@@ -842,7 +848,8 @@ public class DrugsScreenPatientController
                             public void run() {
                                 try {
                                     try {
-                                        patientTable.setItems(DrugsPatients.getData());
+                                        overrideData = DrugsPatients.getOverrideData();
+                                       
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
                                     }
@@ -859,7 +866,8 @@ public class DrugsScreenPatientController
             }
 
             protected void succeeded() {
-                items = patientTable.getItems();
+                 patientTable.setItems(overrideData);
+                items = overrideData; 
                 progress.setVisible(false);
                 super.succeeded();
             }

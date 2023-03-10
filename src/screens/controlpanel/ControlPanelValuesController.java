@@ -247,6 +247,10 @@ public class ControlPanelValuesController implements Initializable {
     private Button drugsEdite;
     @FXML
     private Button drugsAdd;
+    @FXML
+    private TableColumn<Category, String> categorysTabSec;
+    @FXML
+    private TextField categorysSec;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -369,6 +373,7 @@ public class ControlPanelValuesController implements Initializable {
                 Category selectedItem = categorysTab.getSelectionModel().getSelectedItem();
                 categorysId.setText(Integer.toString(selectedItem.getId()));
                 categorysName.setText(selectedItem.getName());
+                categorysSec.setText(Integer.toString(selectedItem.getParentId()));
                 categorysNew.setDisable(false);
                 categorysEdite.setDisable(false);
                 categorysDelete.setDisable(false);
@@ -454,6 +459,7 @@ public class ControlPanelValuesController implements Initializable {
         yields_catTabName.setCellValueFactory(new PropertyValueFactory<>("name"));
         yields_catTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
 
+        categorysTabSec.setCellValueFactory(new PropertyValueFactory<>("parentId"));
         categorysTabName.setCellValueFactory(new PropertyValueFactory<>("name"));
         categorysTabId.setCellValueFactory(new PropertyValueFactory<>("id"));
 
@@ -1439,6 +1445,7 @@ public class ControlPanelValuesController implements Initializable {
                                         Category a = new Category();
                                         a.setId(Integer.parseInt(categorysId.getText()));
                                         a.setName(categorysName.getText());
+                                        a.setParentId(Integer.parseInt(categorysSec.getText()));
                                         a.Edite();
                                     }
 
@@ -1481,7 +1488,7 @@ public class ControlPanelValuesController implements Initializable {
                             @Override
                             public void run() {
                                 try {
-                                    Category.Add(categorysName.getText());
+                                    Category.Add(categorysName.getText(),Integer.parseInt(categorysSec.getText()!=null?categorysSec.getText():"0"));
 
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);

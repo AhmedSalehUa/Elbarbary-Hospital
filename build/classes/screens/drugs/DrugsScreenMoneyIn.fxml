@@ -20,7 +20,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="1240.0" stylesheets="@../../assets/styles/darkMode.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="screens.drugs.DrugsScreenMoneyInController">
    <children>
-      <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="62.0" prefWidth="1240.0" spacing="10.0">
                <children>
@@ -35,11 +35,11 @@
                   <Insets left="1.0" right="10.0" top="10.0" />
                </padding>
             </HBox>
-            <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="411.0" prefWidth="1234.0">
+            <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="411.0" prefWidth="1234.0" VBox.vgrow="ALWAYS">
                <children>
-                  <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="342.0" prefWidth="377.0" spacing="5.0">
+                  <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="342.0" prefWidth="377.0" spacing="5.0" HBox.hgrow="NEVER">
                      <children>
-                        <GridPane prefHeight="263.0" prefWidth="357.0" VBox.vgrow="ALWAYS">
+                        <GridPane alignment="CENTER" prefHeight="263.0" prefWidth="357.0" VBox.vgrow="NEVER">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="248.0" minWidth="10.0" prefWidth="215.0" />
                               <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="176.0" minWidth="10.0" prefWidth="151.0" />
@@ -81,7 +81,7 @@
                               <JFXDatePicker fx:id="date" nodeOrientation="RIGHT_TO_LEFT" prefHeight="41.0" prefWidth="246.0" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
-                        <HBox alignment="CENTER" prefHeight="19.0" prefWidth="366.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                        <HBox alignment="CENTER" prefHeight="44.0" prefWidth="361.0" spacing="10.0" VBox.vgrow="NEVER">
                            <children>
                               <ProgressIndicator fx:id="progress" prefHeight="53.0" prefWidth="39.0" HBox.hgrow="NEVER" />
                               <Button id="btnNew" fx:id="New" mnemonicParsing="false" onAction="#New" text="جديد" HBox.hgrow="ALWAYS" />
@@ -98,10 +98,10 @@
                         <Insets left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
-                  <VBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="411.0" prefWidth="850.0" spacing="5.0">
+                  <VBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="411.0" prefWidth="850.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <JFXTextField fx:id="search1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#search" onKeyReleased="#search" onKeyTyped="#search" prefHeight="25.0" prefWidth="194.0" promptText="search" />
-                        <TableView fx:id="table" prefHeight="340.0" prefWidth="977.0">
+                        <TableView fx:id="table" prefHeight="340.0" prefWidth="977.0" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="tabDate" prefWidth="75.0" text="التاريخ" />
                               <TableColumn fx:id="tabAmount" prefWidth="75.0" text="المبلغ" />
@@ -117,6 +117,42 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <AnchorPane prefHeight="100.0" prefWidth="1240.0">
+                     <children>
+                        <HBox alignment="CENTER" layoutX="420.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label fx:id="remains" prefHeight="41.0" prefWidth="201.0" text="0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Label>
+                              <Label prefHeight="41.0" prefWidth="201.0" text="المبلغ الباقي">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Label>
+                              <Label fx:id="paied" prefHeight="41.0" prefWidth="201.0" text="0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Label>
+                              <Label prefHeight="41.0" prefWidth="201.0" text="المبلغ المدفوع">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Label>
+                              <Label fx:id="total" prefHeight="41.0" prefWidth="201.0" text="0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Label>
+                              <Label prefHeight="41.0" prefWidth="201.0" text="اجمالي المبلغ">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font></Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
                </children>
             </HBox>
          </children>
