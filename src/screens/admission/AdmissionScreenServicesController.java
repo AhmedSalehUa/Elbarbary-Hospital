@@ -15,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -46,6 +47,7 @@ import javafx.util.StringConverter;
 import screens.admission.assets.Admission;
 import screens.admission.assets.AdmissionServices;
 import screens.admission.assets.Services;
+import screens.mainDataScreen.assets.Clincs;
 import screens.mainDataScreen.assets.Doctors;
 import screens.mainDataScreen.assets.DoctorsServices;
 
@@ -219,67 +221,138 @@ public class AdmissionScreenServicesController implements Initializable {
     ObservableList<Services> items;
 
     public void fillCombos() throws Exception {
-        serviceDoctor.setItems(Doctors.getData());
-        serviceDoctor.setConverter(new StringConverter<Doctors>() {
-            @Override
-            public String toString(Doctors contract) {
-                return contract.getName();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Doctors> DoctorData;
+            ObservableList<Doctors> DoctorDataSearch;
 
             @Override
-            public Doctors fromString(String string) {
-                return null;
-            }
-        });
-        serviceDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
-
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblQuali = new Label();
-
-            {
-
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblQuali, 2, 1);
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            DoctorData = Doctors.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
             @Override
-            protected void updateItem(Doctors person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                serviceDoctor.setItems(DoctorData);
+                serviceDoctor.setEditable(true);
+                serviceDoctor.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (serviceDoctor.getEditor().getText().length() == 0) {
+                        serviceDoctor.setItems(DoctorData);
+                    } else {
+                        DoctorDataSearch = FXCollections.observableArrayList();
 
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-                    lblQuali.setText("التخصص: " + person.getQualification_name());
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
+                        for (Doctors a : DoctorData) {
+                            if (a.getName().contains(serviceDoctor.getEditor().getText())) {
+                                DoctorDataSearch.add(a);
+                            }
+                        }
+                        serviceDoctor.setItems(DoctorDataSearch);
+                        serviceDoctor.show();
+                    }
+                });
+                serviceDoctor.setConverter(new StringConverter<Doctors>() {
+                    @Override
+                    public String toString(Doctors patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
+
+                    @Override
+                    public Doctors fromString(String string) {
+                        Doctors b = null;
+                        for (Doctors a : (ObservableList<Doctors>) serviceDoctor.getItems()) {
+                            if (a.getName().contains(serviceDoctor.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                serviceDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblQuali = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblQuali, 2, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Doctors person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblQuali.setText("التخصص: " + person.getQualification_name());
+
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+
+                super.succeeded();
+            }
+        };
+        service.start();
+
+        serviceService.setEditable(true);
+        serviceService.setOnKeyReleased((event) -> {
+
+            if (serviceService.getEditor().getText().length() == 0) {
+
+            } else {
+                ObservableList<DoctorsServices> DoctorServiceSearch = FXCollections.observableArrayList();  
+                for (DoctorsServices a : serviceService.getItems()) {
+                    if (a.getName().contains(serviceService.getEditor().getText())) {
+                        DoctorServiceSearch.add(a);
+                    }
                 }
+                serviceService.setItems(DoctorServiceSearch);
+                serviceService.show();
             }
         });
         serviceService.setConverter(new StringConverter<DoctorsServices>() {
             @Override
-            public String toString(DoctorsServices contract) {
-                return contract.getName();
+            public String toString(DoctorsServices patient) {
+                return patient != null ? patient.getName() : "";
             }
 
             @Override
             public DoctorsServices fromString(String string) {
-                return null;
+                DoctorsServices b = null;
+                for (DoctorsServices a : (ObservableList<DoctorsServices>) serviceService.getItems()) {
+                    if (a.getName().contains(serviceService.getEditor().getText())) {
+                        b = a;
+                    }
+                }
+                return b;
             }
         });
+
         serviceService.setCellFactory(cell -> new ListCell<DoctorsServices>() {
 
             GridPane gridPane = new GridPane();
@@ -408,11 +481,11 @@ public class AdmissionScreenServicesController implements Initializable {
                                     if (result.get() == ButtonType.OK) {
                                         Services sv = new Services();
                                         sv.setId(Integer.parseInt(serviceId.getText()));
-                                        DoctorsServices a = serviceService.getSelectionModel().getSelectedItem();
+                                        DoctorsServices a = serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex());
                                         sv.setServiceId(a.getId());
                                         sv.setCost(a.getCost());
                                         sv.setAdmissionId(admission.getId());
-                                        sv.setDoctorId(serviceDoctor.getSelectionModel().getSelectedItem().getId());
+                                        sv.setDoctorId(serviceDoctor.getItems().get(serviceDoctor.getSelectionModel().getSelectedIndex()).getId());
                                         sv.Edite();
                                     }
                                 } catch (Exception ex) {
@@ -486,11 +559,12 @@ public class AdmissionScreenServicesController implements Initializable {
                                 try {
                                     Services sv = new Services();
                                     sv.setId(Integer.parseInt(serviceId.getText()));
-                                    DoctorsServices a = serviceService.getSelectionModel().getSelectedItem();
+                                     DoctorsServices a = serviceService.getItems().get(serviceService.getSelectionModel().getSelectedIndex());
                                     sv.setServiceId(a.getId());
                                     sv.setCost(a.getCost());
                                     sv.setAdmissionId(admission.getId());
-                                    sv.setDoctorId(serviceDoctor.getSelectionModel().getSelectedItem().getId());
+                                        sv.setDoctorId(serviceDoctor.getItems().get(serviceDoctor.getSelectionModel().getSelectedIndex()).getId()); 
+                                        
                                     sv.Add();
                                 } catch (Exception ex) {
                                     AlertDialogs.showErrors(ex);

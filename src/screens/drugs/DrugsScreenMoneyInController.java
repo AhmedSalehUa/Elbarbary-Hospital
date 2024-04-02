@@ -180,7 +180,7 @@ public class DrugsScreenMoneyInController
 
         add.setDisable(false);
         amount.setText("");
-        
+
         remains.setText("0");
 
         paied.setText("0");
@@ -200,7 +200,7 @@ public class DrugsScreenMoneyInController
     }
 
     private void fillCombo() {
-
+//        patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId()
         Service<Void> service = new Service<Void>() {
             ObservableList<DrugsPatients> data;
             ObservableList<DrugsPatients> dataSearch;
@@ -246,12 +246,18 @@ public class DrugsScreenMoneyInController
                 patient.setConverter(new StringConverter<DrugsPatients>() {
                     @Override
                     public String toString(DrugsPatients patient) {
-                        return patient.getName();
+                       return patient!=null?patient.getName():"";
                     }
 
                     @Override
                     public DrugsPatients fromString(String string) {
-                        return null;
+                        DrugsPatients b = null;
+                        for (DrugsPatients a : (ObservableList<DrugsPatients>) patient.getItems()) {
+                            if (a.getName().contains(patient.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
                     }
                 });
                 patient.setCellFactory(cell -> new ListCell<DrugsPatients>() {
@@ -550,11 +556,11 @@ public class DrugsScreenMoneyInController
         try {
             table.setItems(DrugsMoneyIn.getData(patien));
             DrugsAccounts data = DrugsAccounts.getData(patien).get(0);
-        total.setText(data.getTotal_spended());
+            total.setText(data.getTotal_spended());
 
-        paied.setText(data.getTotal_paied());
- 
-        remains.setText(data.getRemaining()); 
+            paied.setText(data.getTotal_paied());
+
+            remains.setText(data.getRemaining());
             items = table.getItems();
         } catch (Exception ex) {
             AlertDialogs.showErrors(ex);
@@ -569,7 +575,7 @@ public class DrugsScreenMoneyInController
 
             int id1 = patient.getItems().get(patient.getSelectionModel().getSelectedIndex()).getId();
             fillEscortCombo(id1);
-            getData(id1); 
+            getData(id1);
         }
     }
 

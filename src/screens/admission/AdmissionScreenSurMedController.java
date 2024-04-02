@@ -14,6 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -159,110 +160,215 @@ public class AdmissionScreenSurMedController implements Initializable {
     }
 
     private void fillCombo() throws Exception {
-        admissionMedicineStore.setItems(Stores.getData());
-        admissionMedicineStore.setConverter(new StringConverter<Stores>() {
-            @Override
-            public String toString(Stores patient) {
-                return patient.getName();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Stores> data;
+            ObservableList<Stores> dataSearch;
 
             @Override
-            public Stores fromString(String string) {
-                return null;
-            }
-        });
-        admissionMedicineStore.setCellFactory(cell -> new ListCell<Stores>() {
-            GridPane gridPane = new GridPane();
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            Label lblName = new Label();
-            Label lblCost = new Label();
-
-            {
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblName, 0, 1);
-                gridPane.add(lblCost, 1, 1);
+                            data = Stores.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
             @Override
-            protected void updateItem(Stores person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                admissionMedicineStore.setItems(data);
+                admissionMedicineStore.setEditable(true);
+                admissionMedicineStore.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (admissionMedicineStore.getEditor().getText().length() == 0) {
+                        admissionMedicineStore.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
 
-                    lblName.setText("اسم المخزن: " + person.getName());
-                    lblCost.setText("النوع: " + person.getType());
+                        for (Stores a : data) {
+                            if (a.getName().contains(admissionMedicineStore.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        admissionMedicineStore.setItems(dataSearch);
+                        admissionMedicineStore.show();
+                    }
+                });
+                admissionMedicineStore.setConverter(new StringConverter<Stores>() {
+                    @Override
+                    public String toString(Stores patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    @Override
+                    public Stores fromString(String string) {
+                        Stores b = null;
+                        for (Stores a : (ObservableList<Stores>) admissionMedicineStore.getItems()) {
+                            if (a.getName().contains(admissionMedicineStore.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                admissionMedicineStore.setCellFactory(cell -> new ListCell<Stores>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Stores person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
+        };
+        service.start();
     }
 
     private void getMedicine(String storeId) throws Exception {
-
-        admissionMedicineMedicines.setItems(StoreProdcts.getDataForSell(storeId));
-        admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
-            @Override
-            public String toString(StoreProdcts patient) {
-                return patient.getProduct();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<StoreProdcts> data;
+            ObservableList<StoreProdcts> dataSearch;
 
             @Override
-            public StoreProdcts fromString(String string) {
-                return null;
-            }
-        });
-        admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblCost = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblCost, 2, 1);
+                            data = StoreProdcts.getDataForSell(storeId);
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(StoreProdcts person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                admissionMedicineMedicines.setItems(data);
+                admissionMedicineMedicines.setEditable(true);
+                admissionMedicineMedicines.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (admissionMedicineMedicines.getEditor().getText().length() == 0) {
+                        admissionMedicineMedicines.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
 
-                    // Update our Labels
-                    lblid.setText("الكميةالمتاحة: " + person.getAmount());
-                    lblName.setText("الاسم: " + person.getProduct());
-                    lblCost.setText("سعر البيع: " + person.getCostOfSell());
+                        for (StoreProdcts a : data) {
+                            if (a.getProduct().contains(admissionMedicineMedicines.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        admissionMedicineMedicines.setItems(dataSearch);
+                        admissionMedicineMedicines.show();
+                    }
+                });
+                admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
+                    @Override
+                    public String toString(StoreProdcts patient) {
+                        return patient != null ? patient.getProduct() : "";
+                    }
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    @Override
+                    public StoreProdcts fromString(String string) {
+                        StoreProdcts b = null;
+                        for (StoreProdcts a : (ObservableList<StoreProdcts>) admissionMedicineMedicines.getItems()) {
+                            if (a.getProduct().contains(admissionMedicineMedicines.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblCost = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblCost, 2, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(StoreProdcts person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("الكميةالمتاحة: " + person.getAmount());
+                            lblName.setText("الاسم: " + person.getProduct());
+                            lblCost.setText("سعر البيع: " + person.getCostOfSell());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
+        };
+        service.start();
+
     }
 
     private void intialColumn() {
@@ -363,7 +469,7 @@ public class AdmissionScreenSurMedController implements Initializable {
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                            StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                             AdmisiionSurgMedicine am = new AdmisiionSurgMedicine();
                                             am.setId(Integer.parseInt(admissionMedicineId.getText()));
                                             am.setMedicineId(selectedItem.getId());
@@ -391,7 +497,7 @@ public class AdmissionScreenSurMedController implements Initializable {
                 @Override
                 protected void succeeded() {
                     progress.setVisible(false);
-                    updateParen(); 
+                    updateParen();
                     try {
                         getData();
                     } catch (Exception ex) {
@@ -429,7 +535,7 @@ public class AdmissionScreenSurMedController implements Initializable {
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                            StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                             if (Double.parseDouble(selectedItem.getAmount()) < Double.parseDouble(admissionMedicineAmount.getText())) {
                                                 AlertDialogs.showError("الكمية المتاحة لا تكفي لصرف الكمية المطلوبة");
                                             } else {
@@ -494,7 +600,7 @@ public class AdmissionScreenSurMedController implements Initializable {
                                 @Override
                                 public void run() {
                                     try {
-                                        StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                            StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                         if (Double.parseDouble(selectedItem.getAmount()) < Double.parseDouble(admissionMedicineAmount.getText())) {
                                             AlertDialogs.showError("الكمية المتاحة لا تكفي لصرف الكمية المطلوبة");
                                         } else {

@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -423,74 +424,168 @@ public class AdmissionScreenController implements Initializable {
     }
 
     private void fillStatueCombos() throws Exception {
-        admissionStatue.setItems(AdmissionStatue.getData());
-        admissionStatue.setConverter(new StringConverter<AdmissionStatue>() {
-            @Override
-            public String toString(AdmissionStatue patient) {
-                return patient.getName();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<AdmissionStatue> data;
+            ObservableList<AdmissionStatue> dataSearch;
 
             @Override
-            public AdmissionStatue fromString(String string) {
-                return null;
-            }
-        });
-        admissionStatue.setCellFactory(cell -> new ListCell<AdmissionStatue>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
+                            data = AdmissionStatue.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(AdmissionStatue person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                admissionStatue.setItems(data);
+                admissionStatue.setEditable(true);
+                admissionStatue.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (admissionStatue.getEditor().getText().length() == 0) {
+                        admissionStatue.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
 
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
+                        for (AdmissionStatue a : data) {
+                            if (a.getName().contains(admissionStatue.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        admissionStatue.setItems(dataSearch);
+                        admissionStatue.show();
+                    }
+                });
+                admissionStatue.setConverter(new StringConverter<AdmissionStatue>() {
+                    @Override
+                    public String toString(AdmissionStatue patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    @Override
+                    public AdmissionStatue fromString(String string) {
+                        AdmissionStatue b = null;
+                        for (AdmissionStatue a : (ObservableList<AdmissionStatue>) admissionStatue.getItems()) {
+                            if (a.getName().contains(admissionStatue.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                admissionStatue.setCellFactory(cell -> new ListCell<AdmissionStatue>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(AdmissionStatue person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
+        };
+        service.start();
     }
 
     private void fillTypeCombos() throws Exception {
+     Service<Void> service = new Service<Void>() {
+            ObservableList<AdmissionType> data;
+            ObservableList<AdmissionType> dataSearch;
 
-        admissionType.setItems(AdmissionType.getData());
-        admissionType.setConverter(new StringConverter<AdmissionType>() {
             @Override
-            public String toString(AdmissionType patient) {
-                return patient.getName();
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+
+                            data = AdmissionType.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
             }
 
             @Override
-            public AdmissionType fromString(String string) {
-                return null;
-            }
-        });
-        admissionType.setCellFactory(cell -> new ListCell<AdmissionType>() {
+            protected void succeeded() { 
+                admissionType.setItems(data);
+                admissionType.setEditable(true);
+                admissionType.setOnKeyReleased((event) -> {
+
+                    if (admissionType.getEditor().getText().length() == 0) {
+                        admissionType.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (AdmissionType a : data) {
+                            if (a.getName().contains(admissionType.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        admissionType.setItems(dataSearch);
+                        admissionType.show();
+                    }
+                });
+                admissionType.setConverter(new StringConverter<AdmissionType>() {
+                    @Override
+                    public String toString(AdmissionType patient) {
+                       return patient!=null?patient.getName():"";
+                    }
+
+                    @Override
+                    public AdmissionType fromString(String string) {
+                        AdmissionType b = null;
+                        for (AdmissionType a : (ObservableList<AdmissionType>) admissionType.getItems()) {
+                            if (a.getName().contains(admissionType.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                 admissionType.setCellFactory(cell -> new ListCell<AdmissionType>() {
 
             // Create our layout here to be reused for each ListCell
             GridPane gridPane = new GridPane();
@@ -529,23 +624,72 @@ public class AdmissionScreenController implements Initializable {
                 }
             }
         });
+            }
+        };
+        service.start();
+         
     }
 
     private void fillSpacificationCombos() throws Exception {
+     Service<Void> service = new Service<Void>() {
+            ObservableList<AdmissionSpacfication> data;
+            ObservableList<AdmissionSpacfication> dataSearch;
 
-        admissionSpacfication.setItems(AdmissionSpacfication.getData());
-        admissionSpacfication.setConverter(new StringConverter<AdmissionSpacfication>() {
             @Override
-            public String toString(AdmissionSpacfication patient) {
-                return patient.getName();
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+
+                            data = AdmissionSpacfication.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
+
             }
 
             @Override
-            public AdmissionSpacfication fromString(String string) {
-                return null;
-            }
-        });
-        admissionSpacfication.setCellFactory(cell -> new ListCell<AdmissionSpacfication>() {
+            protected void succeeded() { 
+                admissionSpacfication.setItems(data);
+                admissionSpacfication.setEditable(true);
+                admissionSpacfication.setOnKeyReleased((event) -> {
+
+                    if (admissionSpacfication.getEditor().getText().length() == 0) {
+                        admissionSpacfication.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (AdmissionSpacfication a : data) {
+                            if (a.getName().contains(admissionSpacfication.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        admissionSpacfication.setItems(dataSearch);
+                        admissionSpacfication.show();
+                    }
+                });
+                admissionSpacfication.setConverter(new StringConverter<AdmissionSpacfication>() {
+                    @Override
+                    public String toString(AdmissionSpacfication patient) {
+                       return patient!=null?patient.getName():"";
+                    }
+
+                    @Override
+                    public AdmissionSpacfication fromString(String string) {
+                        AdmissionSpacfication b = null;
+                        for (AdmissionSpacfication a : (ObservableList<AdmissionSpacfication>) admissionSpacfication.getItems()) {
+                            if (a.getName().contains(admissionSpacfication.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+          admissionSpacfication.setCellFactory(cell -> new ListCell<AdmissionSpacfication>() {
 
             // Create our layout here to be reused for each ListCell
             GridPane gridPane = new GridPane();
@@ -584,69 +728,125 @@ public class AdmissionScreenController implements Initializable {
                 }
             }
         });
+            }
+        };
+        service.start();
+         
     }
 
     private void fillCombos() throws Exception {
         fillStatueCombos();
         fillTypeCombos();
         fillSpacificationCombos();
+
         admissionPatient.setItems(Patients.getData());
         ComboBox<Patients> cmb = admissionPatient;
         cmb.setTooltip(new Tooltip());
-
         new ComboBoxAutoComplete(cmb);
-        admissionContract.setItems(Contract.getData());
-        admissionContract.setConverter(new StringConverter<Contract>() {
-            @Override
-            public String toString(Contract contract) {
-                return contract.getName();
-            }
+
+        Service<Void> service = new Service<Void>() {
+            ObservableList<Contract> data;
+            ObservableList<Contract> dataSearch;
 
             @Override
-            public Contract fromString(String string) {
-                return null;
-            }
-        });
-        admissionContract.setCellFactory(cell -> new ListCell<Contract>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblAge = new Label();
-
-            {
-
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblAge, 2, 1);
+                            data = Contract.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
             @Override
-            protected void updateItem(Contract person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                admissionContract.setItems(data);
+                admissionContract.setEditable(true);
+                admissionContract.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
+                    if (admissionContract.getEditor().getText().length() == 0) {
+                        admissionContract.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
 
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-                    lblAge.setText("نسبة الخصم: " + person.getDiscount() + "%");
+                        for (Contract a : data) {
+                            if (a.getName().contains(admissionContract.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        admissionContract.setItems(dataSearch);
+                        admissionContract.show();
+                    }
+                });
+                admissionContract.setConverter(new StringConverter<Contract>() {
+                    @Override
+                    public String toString(Contract patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
 
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
+                    @Override
+                    public Contract fromString(String string) {
+                        Contract b = null;
+                        for (Contract a : (ObservableList<Contract>) admissionContract.getItems()) {
+                            if (a.getName().contains(admissionContract.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                admissionContract.setCellFactory(cell -> new ListCell<Contract>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblAge = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblAge, 2, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Contract person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblAge.setText("نسبة الخصم: " + person.getDiscount() + "%");
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+
             }
-        });
+        };
+        service.start();
+
     }
 
     private void setAdmissionTableColumns() {

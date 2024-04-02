@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -162,7 +163,9 @@ public class AdmissionScreenExaminationController implements Initializable {
     public void fillCombo() {
         Service<Void> service = new Service<Void>() {
             ObservableList<Clincs> clincData;
+            ObservableList<Clincs> clincDataSearch;
             ObservableList<Doctors> DoctorData;
+            ObservableList<Doctors> DoctorDataSearch;
 
             @Override
             protected Task<Void> createTask() {
@@ -183,20 +186,42 @@ public class AdmissionScreenExaminationController implements Initializable {
 
             @Override
             protected void succeeded() {
-                examinationClinic.setItems(clincData);
                 examinationType.getItems().add("كشف");
                 examinationType.getItems().add("اعادة");
                 examinationType.getItems().add("استشارة");
                 examinationDoctor.setItems(DoctorData);
+                examinationDoctor.setEditable(true);
+                examinationDoctor.setOnKeyReleased((event) -> {
+
+                    if (examinationDoctor.getEditor().getText().length() == 0) {
+                        examinationDoctor.setItems(DoctorData);
+                    } else {
+                        DoctorDataSearch = FXCollections.observableArrayList();
+
+                        for (Doctors a : DoctorData) {
+                            if (a.getName().contains(examinationDoctor.getEditor().getText())) {
+                                DoctorDataSearch.add(a);
+                            }
+                        }
+                        examinationDoctor.setItems(DoctorDataSearch);
+                        examinationDoctor.show();
+                    }
+                });
                 examinationDoctor.setConverter(new StringConverter<Doctors>() {
                     @Override
-                    public String toString(Doctors contract) {
-                        return contract.getName();
+                    public String toString(Doctors patient) {
+                        return patient != null ? patient.getName() : "";
                     }
 
                     @Override
                     public Doctors fromString(String string) {
-                        return null;
+                        Doctors b = null;
+                        for (Doctors a : (ObservableList<Doctors>) examinationDoctor.getItems()) {
+                            if (a.getName().contains(examinationDoctor.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
                     }
                 });
                 examinationDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
@@ -234,15 +259,40 @@ public class AdmissionScreenExaminationController implements Initializable {
                         }
                     }
                 });
+
+                examinationClinic.setItems(clincData);
+                examinationClinic.setEditable(true);
+                examinationClinic.setOnKeyReleased((event) -> {
+
+                    if (examinationClinic.getEditor().getText().length() == 0) {
+                        examinationClinic.setItems(clincData);
+                    } else {
+                        clincDataSearch = FXCollections.observableArrayList();
+
+                        for (Clincs a : clincData) {
+                            if (a.getName().contains(examinationClinic.getEditor().getText())) {
+                                clincDataSearch.add(a);
+                            }
+                        }
+                        examinationClinic.setItems(clincDataSearch);
+                        examinationClinic.show();
+                    }
+                });
                 examinationClinic.setConverter(new StringConverter<Clincs>() {
                     @Override
                     public String toString(Clincs patient) {
-                        return patient.getName();
+                        return patient != null ? patient.getName() : "";
                     }
 
                     @Override
                     public Clincs fromString(String string) {
-                        return null;
+                        Clincs b = null;
+                        for (Clincs a : (ObservableList<Clincs>) examinationClinic.getItems()) {
+                            if (a.getName().contains(examinationClinic.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
                     }
                 });
                 examinationClinic.setCellFactory(cell -> new ListCell<Clincs>() {
@@ -479,8 +529,8 @@ public class AdmissionScreenExaminationController implements Initializable {
                                             ex.setId(Integer.parseInt(examinationId.getText()));
                                             ex.setAdmissionId(admission.getId());
                                             ex.setType(examinationType.getSelectionModel().getSelectedItem());
-                                            ex.setDoctor_id(examinationDoctor.getSelectionModel().getSelectedItem().getId());
-                                            ex.setClincId(examinationClinic.getSelectionModel().getSelectedItem().getId());
+                                            ex.setDoctor_id(examinationDoctor.getItems().get(examinationDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                            ex.setClincId(examinationClinic.getItems().get(examinationClinic.getSelectionModel().getSelectedIndex()).getId());
                                             ex.Edite();
                                         }
                                     } catch (Exception ex) {
@@ -521,7 +571,6 @@ public class AdmissionScreenExaminationController implements Initializable {
             AlertDialogs.showError("لا يجب ترك اختيار فارغ");
         } else {
             process.setVisible(true);
-            System.out.println(Integer.parseInt(examinationId.getText()) + " " + admission.getId() + " " + examinationType.getSelectionModel().getSelectedItem() + " " + examinationDoctor.getSelectionModel().getSelectedItem().getId() + " " + examinationClinic.getSelectionModel().getSelectedItem().getId());
 
             Service<Void> service2 = new Service<Void>() {
                 boolean ok = true;
@@ -542,8 +591,8 @@ public class AdmissionScreenExaminationController implements Initializable {
                                         ex.setId(Integer.parseInt(examinationId.getText()));
                                         ex.setAdmissionId(admission.getId());
                                         ex.setType(examinationType.getSelectionModel().getSelectedItem());
-                                        ex.setDoctor_id(examinationDoctor.getSelectionModel().getSelectedItem().getId());
-                                        ex.setClincId(examinationClinic.getSelectionModel().getSelectedItem().getId());
+                                        ex.setDoctor_id(examinationDoctor.getItems().get(examinationDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                        ex.setClincId(examinationClinic.getItems().get(examinationClinic.getSelectionModel().getSelectedIndex()).getId());
                                         ex.Add();
                                     } catch (Exception ex) {
                                         AlertDialogs.showErrors(ex);
@@ -620,7 +669,7 @@ public class AdmissionScreenExaminationController implements Initializable {
                     @Override
                     protected Void call() throws Exception {
                         try {
-                            String autoNum = Examination.getAutoNum();
+                              autoNum = Examination.getAutoNum();
 
                         } catch (Exception ex) {
                             AlertDialogs.showErrors(ex);

@@ -236,49 +236,103 @@ public class StoreScreenInvoicesController implements Initializable {
     }
 
     private void fillCombo() throws Exception {
-        companys.setItems(Company.getData());
-        companys.setConverter(new StringConverter<Company>() {
-            @Override
-            public String toString(Company contract) {
-                return contract.getName();
-            }
+         Service<Void> service = new Service<Void>() {
+            ObservableList<Company> data;
+            ObservableList<Company> dataSearch;
 
             @Override
-            public Company fromString(String string) {
-                return null;
-            }
-        });
-        companys.setCellFactory(cell -> new ListCell<Company>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblType = new Label();
+                            data = Company.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
-            {
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblType, 2, 1);
             }
 
             @Override
-            protected void updateItem(Company person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                progress.setVisible(false);
+                companys.setItems(data);
+                companys.setEditable(true);
+                companys.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-                    lblType.setText("النوع: " + person.getType());
-                    setGraphic(gridPane);
-                } else {
-                    setGraphic(null);
-                }
+                    if (companys.getEditor().getText().length() == 0) {
+                        companys.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (Company a : data) {
+                            if (a.getName().contains(companys.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        companys.setItems(dataSearch);
+                        companys.show();
+                    }
+                });
+                companys.setConverter(new StringConverter<Company>() {
+                    @Override
+                    public String toString(Company patient) {
+                        return patient.getName();
+                    }
+
+                    @Override
+                    public Company fromString(String string) {
+                        return null;
+                    }
+                });
+                companys.setCellFactory(cell -> new ListCell<Company>() {
+
+                    // Create our layout here to be reused for each ListCell
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    // Static block to configure our layout
+                    {
+                        // Ensure all our column widths are constant
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+
+                    }
+
+                    // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+                    @Override
+                    protected void updateItem(Company person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
+        };
+        service.start();
+        
+      
     }
 
     public void setTotal(String toString) {
@@ -349,8 +403,8 @@ public class StoreScreenInvoicesController implements Initializable {
                                             Invoice in = new Invoice();
                                             in.setId(Integer.parseInt(id.getText()));
                                             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                            in.setDate(date.getValue().format(format));
-                                            in.setCompanyId(companys.getSelectionModel().getSelectedItem().getId());
+                                            in.setDate(date.getValue().format(format)); 
+                                            in.setCompanyId(companys.getItems().get(companys.getSelectionModel().getSelectedIndex()).getId()); 
                                             in.setTotal(invoiceTotal.getText());
                                             in.setDiscoun(invoicedisc.getText().isEmpty() ? "0" : invoicedisc.getText());
                                             in.setDiscountPercent(invoiceDiscPercent.getText().isEmpty() ? "0" : invoiceDiscPercent.getText());

@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -267,7 +268,7 @@ public class AdmissionScreenContractController implements Initializable {
                                         AdmissionContract ad = new AdmissionContract();
                                         ad.setId(Integer.parseInt(serviceContractId.getText()));
                                         ad.setAdmissionId(admission.getId());
-                                        ad.setServiceId(serviceContractServices.getSelectionModel().getSelectedItem().getId());
+                                    ad.setServiceId( serviceContractServices.getItems().get(serviceContractServices.getSelectionModel().getSelectedIndex()).getId()   );
                                         ad.setCost(serviceContractServices.getSelectionModel().getSelectedItem().getCost());
                                         ad.Edite();
                                     }
@@ -324,7 +325,7 @@ public class AdmissionScreenContractController implements Initializable {
                                     AdmissionContract ad = new AdmissionContract();
                                     ad.setId(Integer.parseInt(serviceContractId.getText()));
                                     ad.setAdmissionId(admission.getId());
-                                    ad.setServiceId(serviceContractServices.getSelectionModel().getSelectedItem().getId());
+                                    ad.setServiceId( serviceContractServices.getItems().get(serviceContractServices.getSelectionModel().getSelectedIndex()).getId()   );
                                     ad.setCost(serviceContractServices.getSelectionModel().getSelectedItem().getCost());
                                     ad.Add();
                                 } catch (Exception ex) {
@@ -407,7 +408,8 @@ public class AdmissionScreenContractController implements Initializable {
     private void fillCombo() throws Exception {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
-            ObservableList<ContractServices> dataFromName;
+            ObservableList<ContractServices> data;
+            ObservableList<ContractServices> dataSearch;
 
             @Override
             protected Task<Void> createTask() {
@@ -415,7 +417,7 @@ public class AdmissionScreenContractController implements Initializable {
                     @Override
                     protected Void call() throws Exception {
                         try {
-                            dataFromName = ContractServices.getDataFromName(admission.getContract_name());
+                            data = ContractServices.getDataFromName(admission.getContract_name());
 
                         } catch (Exception ex) {
                             AlertDialogs.showErrors(ex);
@@ -429,16 +431,39 @@ public class AdmissionScreenContractController implements Initializable {
             @Override
             protected void succeeded() {
                 progress.setVisible(false);
-                serviceContractServices.setItems(dataFromName);
+                serviceContractServices.setItems(data);
+                serviceContractServices.setEditable(true);
+                serviceContractServices.setOnKeyReleased((event) -> {
+
+                    if (serviceContractServices.getEditor().getText().length() == 0) {
+                        serviceContractServices.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (ContractServices a : data) {
+                            if (a.getService().contains(serviceContractServices.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        serviceContractServices.setItems(dataSearch);
+                        serviceContractServices.show();
+                    }
+                });
                 serviceContractServices.setConverter(new StringConverter<ContractServices>() {
                     @Override
                     public String toString(ContractServices patient) {
-                        return patient.getService();
+                        return patient!=null?patient.getService():"";
                     }
 
                     @Override
                     public ContractServices fromString(String string) {
-                        return null;
+                        ContractServices b = null;
+                        for (ContractServices a : (ObservableList<ContractServices>) serviceContractServices.getItems()) {
+                            if (a.getService().contains(serviceContractServices.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
                     }
                 });
                 serviceContractServices.setCellFactory(cell -> new ListCell<ContractServices>() {

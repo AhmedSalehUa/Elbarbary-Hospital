@@ -11,11 +11,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell; 
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.util.StringConverter; 
+import javafx.util.StringConverter;
 import screens.mainDataScreen.assets.Medicine;
 import screens.store.StoreScreenInvoicesController;
 import screens.store.StoreScreenInvoicesEditeController;
@@ -52,32 +52,56 @@ public class InvoiceTable {
         this.costString = costString;
     }
 
-    public InvoiceTable(int id, String medic, String amountString, String costString, String costOfSell,int medicineID) {
+    public InvoiceTable(int id, String medic, String amountString, String costString, String costOfSell, int medicineID) {
         this.id = id;
         this.medic = medic;
         this.amountString = amountString;
         this.costString = costString;
-        this.costOfSell=new TextField(costOfSell); this.medicineID=medicineID;
+        this.costOfSell = new TextField(costOfSell);
+        this.medicineID = medicineID;
     }
 
     public InvoiceTable(int id, ObservableList<Medicine> data, String amount, String cost, StoreScreenInvoicesController pa) {
         this.id = id;
-        this.medicine = new ComboBox(data);
+
+        ObservableList<Medicine> allData = data; 
+        this.medicine = new ComboBox(allData);
+        this.medicine.setEditable(true);
+        this.medicine.setOnKeyReleased((event) -> {
+
+            if (this.medicine.getEditor().getText().length() == 0) {
+                this.medicine.setItems(data);
+            } else {
+                  ObservableList<Medicine> dataSearch = FXCollections.observableArrayList();
+
+                for (Medicine a : allData) {
+                    if (a.getName().contains(this.medicine.getEditor().getText())) {
+                        dataSearch.add(a);
+                    }
+                }
+                this.medicine.setItems(dataSearch);
+                this.medicine.show();
+            }
+        });
         medicine.setConverter(new StringConverter<Medicine>() {
             @Override
             public String toString(Medicine contract) {
-                return contract.getName();
+                return contract!=null?contract.getName():"";
             }
 
             @Override
             public Medicine fromString(String string) {
-                return null;
+                Medicine b=null;
+                 for (Medicine a : (ObservableList<Medicine>) medicine.getItems()) {
+                    if (a.getName().contains( medicine.getEditor().getText())) {
+                        b = a;
+                    }
+                }
+                return b;
             }
         });
         medicine.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-        medicine.setOnAction((e) -> {
-
-        });
+        
         medicine.setCellFactory(cell -> new ListCell<Medicine>() {
 
             GridPane gridPane = new GridPane();
@@ -88,7 +112,7 @@ public class InvoiceTable {
             {
 
                 gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
                         new ColumnConstraints(100, 100, 100)
                 );
 
@@ -122,25 +146,46 @@ public class InvoiceTable {
 
     public InvoiceTable(int id, ObservableList<Medicine> data, String selectedmed, String amount, String cost) {
         this.id = id;
-        this.medicine = new ComboBox(data);
+       ObservableList<Medicine> allData = data; 
+        this.medicine = new ComboBox(allData);
+        this.medicine.setEditable(true);
+        this.medicine.setOnKeyReleased((event) -> {
+
+            if (this.medicine.getEditor().getText().length() == 0) {
+                this.medicine.setItems(data);
+            } else {
+                  ObservableList<Medicine> dataSearch = FXCollections.observableArrayList();
+
+                for (Medicine a : allData) {
+                    if (a.getName().contains(this.medicine.getEditor().getText())) {
+                        dataSearch.add(a);
+                    }
+                }
+                this.medicine.setItems(dataSearch);
+                this.medicine.show();
+            }
+        });
         medicine.setConverter(new StringConverter<Medicine>() {
             @Override
             public String toString(Medicine contract) {
-                return contract.getName();
+                return contract!=null?contract.getName():"";
             }
 
             @Override
             public Medicine fromString(String string) {
-                return null;
+                Medicine b=null;
+                 for (Medicine a : (ObservableList<Medicine>) medicine.getItems()) {
+                    if (a.getName().contains( medicine.getEditor().getText())) {
+                        b = a;
+                    }
+                }
+                return b;
             }
         });
         medicine.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-        for (Medicine a : data) {
-            if (a.getName().equals(selectedmed)) {
-                medicine.getSelectionModel().select(a);
+        medicine.setOnAction((e) -> {
 
-            }
-        }
+        });
         medicine.setCellFactory(cell -> new ListCell<Medicine>() {
 
             GridPane gridPane = new GridPane();
@@ -151,7 +196,7 @@ public class InvoiceTable {
             {
 
                 gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(50, 50, 50), new ColumnConstraints(150, 150, 150),
                         new ColumnConstraints(100, 100, 100)
                 );
 
@@ -170,8 +215,7 @@ public class InvoiceTable {
                     // Update our Labels
                     lblid.setText("م: " + Integer.toString(person.getId()));
                     lblName.setText("الاسم: " + person.getName());
-                    lblQuali.setText("التخصص: " + person.getUnit());
-                    // Set this ListCell's graphicProperty to display our GridPane
+                    lblQuali.setText("الوحدة: " + person.getUnit());
                     setGraphic(gridPane);
                 } else {
                     // Nothing to display here
@@ -334,7 +378,7 @@ public class InvoiceTable {
         ObservableList<InvoiceTable> data = FXCollections.observableArrayList();
         ResultSet rs = db.get.getReportCon().createStatement().executeQuery("SELECT `medicine_invoices_details`.`invoice_id`,`medicine`.`name`, `medicine_invoices_details`.`amount`, `medicine_invoices_details`.`cost`, `medicine_invoices_details`.`cost`,`medicine_invoices_details`.`medicine_id` FROM `medicine_invoices_details`,`medicine` WHERE `medicine`.`id` =`medicine_invoices_details`.`medicine_id` AND `medicine_invoices_details`.`invoice_id`='" + invoiceid + "'");
         while (rs.next()) {
-            data.add(new InvoiceTable(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),rs.getInt(6)));
+            data.add(new InvoiceTable(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6)));
         }
         return data;
     }

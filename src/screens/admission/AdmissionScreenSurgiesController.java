@@ -10,15 +10,13 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import java.net.URL;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -28,7 +26,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -48,7 +45,6 @@ import javafx.util.StringConverter;
 import screens.admission.assets.Admission;
 import screens.admission.assets.Surgeries;
 import screens.admission.assets.SurgeriesType;
-import screens.mainDataScreen.assets.Contract;
 import screens.mainDataScreen.assets.Doctors;
 import screens.mainDataScreen.assets.PatientsEscort;
 
@@ -226,196 +222,347 @@ public class AdmissionScreenSurgiesController implements Initializable {
     }
 
     private void fillTypesCombos() throws Exception {
-        surgiesType.setItems(SurgeriesType.getData());
-        surgiesType.setConverter(new StringConverter<SurgeriesType>() {
-            @Override
-            public String toString(SurgeriesType contract) {
-                return contract.getType();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<SurgeriesType> data;
+            ObservableList<SurgeriesType> dataSearch;
 
             @Override
-            public SurgeriesType fromString(String string) {
-                return null;
-            }
-        });
-        surgiesType.setCellFactory(cell -> new ListCell<SurgeriesType>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
+                            data = SurgeriesType.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
-            {
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
             }
 
             @Override
-            protected void updateItem(SurgeriesType person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                surgiesType.setItems(data);
+                surgiesType.setEditable(true);
+                surgiesType.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getType());
-                    setGraphic(gridPane);
-                } else {
-                    setGraphic(null);
-                }
+                    if (surgiesType.getEditor().getText().length() == 0) {
+                        surgiesType.setItems(data);
+                    } else {
+                        dataSearch = FXCollections.observableArrayList();
+
+                        for (SurgeriesType a : data) {
+                            if (a.getType().contains(surgiesType.getEditor().getText())) {
+                                dataSearch.add(a);
+                            }
+                        }
+                        surgiesType.setItems(dataSearch);
+                        surgiesType.show();
+                    }
+                });
+                surgiesType.setConverter(new StringConverter<SurgeriesType>() {
+                    @Override
+                    public String toString(SurgeriesType patient) {
+                        return patient != null ? patient.getType() : "";
+                    }
+
+                    @Override
+                    public SurgeriesType fromString(String string) {
+                        SurgeriesType b = null;
+                        for (SurgeriesType a : (ObservableList<SurgeriesType>) surgiesType.getItems()) {
+                            if (a.getType().contains(surgiesType.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                surgiesType.setCellFactory(cell -> new ListCell<SurgeriesType>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+
+                    {
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                    }
+
+                    @Override
+                    protected void updateItem(SurgeriesType person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getType());
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
+        };
+        service.start();
+
     }
 
     private void fillCombos() throws Exception {
-
-        surgiesEscort.setItems(PatientsEscort.getData(admission.getPatient_name()));
-        surgiesEscort.setConverter(new StringConverter<PatientsEscort>() {
-            @Override
-            public String toString(PatientsEscort contract) {
-                return contract.getName();
-            }
+        Service<Void> service = new Service<Void>() {
+            ObservableList<PatientsEscort> PatientsEscortData;
+            ObservableList<PatientsEscort> PatientsEscortDataSearch;
+            ObservableList<Doctors> DoctorData;
+            ObservableList<Doctors> DoctorDataSearch;
 
             @Override
-            public PatientsEscort fromString(String string) {
-                return null;
-            }
-        });
-        surgiesEscort.setCellFactory(cell -> new ListCell<PatientsEscort>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
 
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblQuali = new Label();
-
-            {
-
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblQuali, 2, 1);
+                            PatientsEscortData = PatientsEscort.getData(admission.getPatient_name());
+                            DoctorData = Doctors.getData();
+                        } catch (Exception ex) {
+                            AlertDialogs.showErrors(ex);
+                        }
+                        return null;
+                    }
+                };
 
             }
 
             @Override
-            protected void updateItem(PatientsEscort person, boolean empty) {
-                super.updateItem(person, empty);
+            protected void succeeded() {
+                surgiesEscort.setItems(PatientsEscortData);
+                surgiesEscort.setEditable(true);
+                surgiesEscort.setOnKeyReleased((event) -> {
 
-                if (!empty && person != null) {
-                    lblid.setText("الاسم: " + person.getName());
-                    lblName.setText("صلة القرابة: " + person.getRelation());
-                    lblQuali.setText("رقم الموبايل: " + person.getTele1());
-                    setGraphic(gridPane);
-                } else {
-                    setGraphic(null);
-                }
+                    if (surgiesEscort.getEditor().getText().length() == 0) {
+                        surgiesEscort.setItems(PatientsEscortData);
+                    } else {
+                        PatientsEscortDataSearch = FXCollections.observableArrayList();
+
+                        for (PatientsEscort a : PatientsEscortData) {
+                            if (a.getName().contains(surgiesEscort.getEditor().getText())) {
+                                PatientsEscortDataSearch.add(a);
+                            }
+                        }
+                        surgiesEscort.setItems(PatientsEscortDataSearch);
+                        surgiesEscort.show();
+                    }
+                });
+                surgiesEscort.setConverter(new StringConverter<PatientsEscort>() {
+                    @Override
+                    public String toString(PatientsEscort patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
+
+                    @Override
+                    public PatientsEscort fromString(String string) {
+                        PatientsEscort b = null;
+                        for (PatientsEscort a : (ObservableList<PatientsEscort>) surgiesEscort.getItems()) {
+                            if (a.getName().contains(surgiesEscort.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+                surgiesEscort.setCellFactory(cell -> new ListCell<PatientsEscort>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblQuali = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblQuali, 2, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(PatientsEscort person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+                            lblid.setText("الاسم: " + person.getName());
+                            lblName.setText("صلة القرابة: " + person.getRelation());
+                            lblQuali.setText("رقم الموبايل: " + person.getTele1());
+                            setGraphic(gridPane);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                });
+
+                surgiesAnesthetization.setItems(DoctorData);
+                surgiesAnesthetization.setEditable(true);
+                surgiesAnesthetization.setOnKeyReleased((event) -> {
+
+                    if (surgiesAnesthetization.getEditor().getText().length() == 0) {
+                        surgiesAnesthetization.setItems(DoctorData);
+                    } else {
+                        DoctorDataSearch = FXCollections.observableArrayList();
+
+                        for (Doctors a : DoctorData) {
+                            if (a.getName().contains(surgiesAnesthetization.getEditor().getText())) {
+                                DoctorDataSearch.add(a);
+                            }
+                        }
+                        surgiesAnesthetization.setItems(DoctorDataSearch);
+                        surgiesAnesthetization.show();
+                    }
+                });
+                surgiesAnesthetization.setConverter(new StringConverter<Doctors>() {
+                    @Override
+                    public String toString(Doctors patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
+
+                    @Override
+                    public Doctors fromString(String string) {
+                        Doctors b = null;
+                        for (Doctors a : (ObservableList<Doctors>) surgiesAnesthetization.getItems()) {
+                            if (a.getName().contains(surgiesAnesthetization.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+
+                surgiesAnesthetization.setCellFactory(cell -> new ListCell<Doctors>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblQuali = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblQuali, 2, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Doctors person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblQuali.setText("التخصص: " + person.getQualification_name());
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
+
+                surgiesDoctor.setItems(DoctorData);
+                surgiesDoctor.setEditable(true);
+                surgiesDoctor.setOnKeyReleased((event) -> {
+
+                    if (surgiesDoctor.getEditor().getText().length() == 0) {
+                        surgiesDoctor.setItems(DoctorData);
+                    } else {
+                        DoctorDataSearch = FXCollections.observableArrayList();
+
+                        for (Doctors a : DoctorData) {
+                            if (a.getName().contains(surgiesDoctor.getEditor().getText())) {
+                                DoctorDataSearch.add(a);
+                            }
+                        }
+                        surgiesDoctor.setItems(DoctorDataSearch);
+                        surgiesDoctor.show();
+                    }
+                });
+                surgiesDoctor.setConverter(new StringConverter<Doctors>() {
+                    @Override
+                    public String toString(Doctors patient) {
+                        return patient != null ? patient.getName() : "";
+                    }
+
+                    @Override
+                    public Doctors fromString(String string) {
+                        Doctors b = null;
+                        for (Doctors a : (ObservableList<Doctors>) surgiesDoctor.getItems()) {
+                            if (a.getName().contains(surgiesDoctor.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
+                    }
+                });
+
+                surgiesDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
+
+                    GridPane gridPane = new GridPane();
+                    Label lblid = new Label();
+                    Label lblName = new Label();
+                    Label lblQuali = new Label();
+
+                    {
+
+                        gridPane.getColumnConstraints().addAll(
+                                new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
+                                new ColumnConstraints(100, 100, 100)
+                        );
+
+                        gridPane.add(lblid, 0, 1);
+                        gridPane.add(lblName, 1, 1);
+                        gridPane.add(lblQuali, 2, 1);
+
+                    }
+
+                    @Override
+                    protected void updateItem(Doctors person, boolean empty) {
+                        super.updateItem(person, empty);
+
+                        if (!empty && person != null) {
+
+                            // Update our Labels
+                            lblid.setText("م: " + Integer.toString(person.getId()));
+                            lblName.setText("الاسم: " + person.getName());
+                            lblQuali.setText("التخصص: " + person.getQualification_name());
+                            // Set this ListCell's graphicProperty to display our GridPane
+                            setGraphic(gridPane);
+                        } else {
+                            // Nothing to display here
+                            setGraphic(null);
+                        }
+                    }
+                });
             }
-        });
-        surgiesAnesthetization.setItems(Doctors.getData());
-        surgiesAnesthetization.setConverter(new StringConverter<Doctors>() {
-            @Override
-            public String toString(Doctors contract) {
-                return contract.getName();
-            }
-
-            @Override
-            public Doctors fromString(String string) {
-                return null;
-            }
-        });
-        surgiesAnesthetization.setCellFactory(cell -> new ListCell<Doctors>() {
-
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblQuali = new Label();
-
-            {
-
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblQuali, 2, 1);
-
-            }
-
-            @Override
-            protected void updateItem(Doctors person, boolean empty) {
-                super.updateItem(person, empty);
-
-                if (!empty && person != null) {
-
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-                    lblQuali.setText("التخصص: " + person.getQualification_name());
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
-            }
-        });
-        surgiesDoctor.setItems(Doctors.getData());
-        surgiesDoctor.setConverter(new StringConverter<Doctors>() {
-            @Override
-            public String toString(Doctors contract) {
-                return contract.getName();
-            }
-
-            @Override
-            public Doctors fromString(String string) {
-                return null;
-            }
-        });
-        surgiesDoctor.setCellFactory(cell -> new ListCell<Doctors>() {
-
-            GridPane gridPane = new GridPane();
-            Label lblid = new Label();
-            Label lblName = new Label();
-            Label lblQuali = new Label();
-
-            {
-
-                gridPane.getColumnConstraints().addAll(
-                        new ColumnConstraints(100, 100, 100), new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(100, 100, 100)
-                );
-
-                gridPane.add(lblid, 0, 1);
-                gridPane.add(lblName, 1, 1);
-                gridPane.add(lblQuali, 2, 1);
-
-            }
-
-            @Override
-            protected void updateItem(Doctors person, boolean empty) {
-                super.updateItem(person, empty);
-
-                if (!empty && person != null) {
-
-                    // Update our Labels
-                    lblid.setText("م: " + Integer.toString(person.getId()));
-                    lblName.setText("الاسم: " + person.getName());
-                    lblQuali.setText("التخصص: " + person.getQualification_name());
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
-            }
-        });
+        };
+        service.start();
 
     }
 
@@ -596,13 +743,13 @@ public class AdmissionScreenSurgiesController implements Initializable {
                                             Surgeries su = new Surgeries();
                                             su.setId(Integer.parseInt(surgiesId.getText()));
                                             su.setAdmissionId(admission.getId());
-                                            su.setDoctorId(surgiesDoctor.getSelectionModel().getSelectedItem().getId());
-                                            su.setAnesthetizationId(surgiesAnesthetization.getSelectionModel().getSelectedItem().getId());
+                                            su.setDoctorId(surgiesDoctor.getItems().get(surgiesDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                            su.setAnesthetizationId(surgiesAnesthetization.getItems().get(surgiesAnesthetization.getSelectionModel().getSelectedIndex()).getId());
                                             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                                             su.setDate(surgiesDate.getValue().format(format));
-                                            su.setSurgeyTypeId(surgiesType.getSelectionModel().getSelectedItem().getId());
+                                            su.setSurgeyTypeId(surgiesType.getItems().get(surgiesType.getSelectionModel().getSelectedIndex()).getId());
                                             su.setCost(surgiesCost.getText());
-                                            su.setEscortId(surgiesEscort.getSelectionModel().getSelectedItem().getId());
+                                            su.setEscortId(surgiesEscort.getItems().get(surgiesEscort.getSelectionModel().getSelectedIndex()).getId());
                                             su.Edite();
                                         }
 
@@ -651,13 +798,13 @@ public class AdmissionScreenSurgiesController implements Initializable {
                                         Surgeries su = new Surgeries();
                                         su.setId(Integer.parseInt(surgiesId.getText()));
                                         su.setAdmissionId(admission.getId());
-                                        su.setDoctorId(surgiesDoctor.getSelectionModel().getSelectedItem().getId());
-                                        su.setAnesthetizationId(surgiesAnesthetization.getSelectionModel().getSelectedItem().getId());
+                                        su.setDoctorId(surgiesDoctor.getItems().get(surgiesDoctor.getSelectionModel().getSelectedIndex()).getId());
+                                        su.setAnesthetizationId(surgiesAnesthetization.getItems().get(surgiesAnesthetization.getSelectionModel().getSelectedIndex()).getId());
                                         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                                         su.setDate(surgiesDate.getValue().format(format));
-                                        su.setSurgeyTypeId(surgiesType.getSelectionModel().getSelectedItem().getId());
+                                        su.setSurgeyTypeId(surgiesType.getItems().get(surgiesType.getSelectionModel().getSelectedIndex()).getId());
                                         su.setCost(surgiesCost.getText());
-                                        su.setEscortId(surgiesEscort.getSelectionModel().getSelectedItem().getId());
+                                        su.setEscortId(surgiesEscort.getItems().get(surgiesEscort.getSelectionModel().getSelectedIndex()).getId());
                                         su.Add();
 
                                     } catch (Exception ex) {

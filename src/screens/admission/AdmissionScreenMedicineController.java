@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -152,6 +153,7 @@ public class AdmissionScreenMedicineController implements Initializable {
         progress.setVisible(true);
         Service<Void> service = new Service<Void>() {
             ObservableList<StoreProdcts> dataForSell;
+            ObservableList<StoreProdcts> dataForSellSearch;
 
             @Override
             protected Task<Void> createTask() {
@@ -174,17 +176,41 @@ public class AdmissionScreenMedicineController implements Initializable {
             protected void succeeded() {
                 progress.setVisible(false);
                 admissionMedicineMedicines.setItems(dataForSell);
-                admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
+                admissionMedicineMedicines.setItems(dataForSell);
+               admissionMedicineMedicines.setEditable(true);
+               admissionMedicineMedicines.setOnKeyReleased((event) -> {
+
+                    if (admissionMedicineMedicines.getEditor().getText().length() == 0) {
+                       admissionMedicineMedicines.setItems(dataForSell);
+                    } else {
+                        dataForSellSearch = FXCollections.observableArrayList();
+
+                        for (StoreProdcts a : dataForSell) {
+                            if (a.getProduct().contains(admissionMedicineMedicines.getEditor().getText())) {
+                                dataForSellSearch.add(a);
+                            }
+                        }
+                       admissionMedicineMedicines.setItems(dataForSellSearch);
+                       admissionMedicineMedicines.show();
+                    }
+                });
+               admissionMedicineMedicines.setConverter(new StringConverter<StoreProdcts>() {
                     @Override
                     public String toString(StoreProdcts patient) {
-                        return patient.getProduct();
+                       return patient!=null?patient.getProduct():"";
                     }
 
                     @Override
                     public StoreProdcts fromString(String string) {
-                        return null;
+                        StoreProdcts b = null;
+                        for (StoreProdcts a : (ObservableList<StoreProdcts>)admissionMedicineMedicines.getItems()) {
+                            if (a.getProduct().contains(admissionMedicineMedicines.getEditor().getText())) {
+                                b = a;
+                            }
+                        }
+                        return b;
                     }
-                });
+                }); 
                 admissionMedicineMedicines.setCellFactory(cell -> new ListCell<StoreProdcts>() {
 
                     // Create our layout here to be reused for each ListCell
@@ -361,7 +387,7 @@ public class AdmissionScreenMedicineController implements Initializable {
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                            StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
 
                                             AdmissionMedicines am = new AdmissionMedicines();
                                             am.setAdmissionId(admission.getId());
@@ -436,7 +462,7 @@ public class AdmissionScreenMedicineController implements Initializable {
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK) {
-                                            StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                            StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                             if (Double.parseDouble(selectedItem.getAmount()) < Double.parseDouble(admissionMedicineAmount.getText())) {
                                                 AlertDialogs.showError("الكمية المتاحة لا تكفي لصرف الكمية المطلوبة");
                                             } else {
@@ -506,7 +532,7 @@ public class AdmissionScreenMedicineController implements Initializable {
                                 @Override
                                 public void run() {
                                     try {
-                                        StoreProdcts selectedItem = admissionMedicineMedicines.getSelectionModel().getSelectedItem();
+                                        StoreProdcts selectedItem = admissionMedicineMedicines.getItems().get(admissionMedicineMedicines.getSelectionModel().getSelectedIndex());
                                         if (Double.parseDouble(selectedItem.getAmount()) < Double.parseDouble(admissionMedicineAmount.getText())) {
                                             AlertDialogs.showError("الكمية المتاحة لا تكفي لصرف الكمية المطلوبة");
                                         } else {

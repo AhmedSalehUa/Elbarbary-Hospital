@@ -148,8 +148,8 @@ public class Invoice {
         PreparedStatement ps = db.get.Prepare("INSERT INTO `medicine_invoices_details`(`invoice_id`, `medicine_id`, `amount`, `cost`) VALUES (?,?,?,?)");
 
         for (InvoiceTable a : invoiceData) {
-            ps.setInt(1, id);
-            Medicine b = (Medicine) a.getMedicine().getSelectionModel().getSelectedItem();
+            ps.setInt(1, id); 
+            Medicine b = ((Medicine) a.getMedicine().getItems().get(a.getMedicine().getSelectionModel().getSelectedIndex()));
             ps.setInt(2, b.getId());
             ps.setString(3, a.getAmount().getText());
             ps.setString(4, a.getCost().getText());

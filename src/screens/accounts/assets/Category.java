@@ -80,7 +80,7 @@ public class Category {
     }
 
     public boolean Edite() throws Exception {
-        PreparedStatement ps = db.get.Prepare("UPDATE `categorys` SET `name`=?,`parent_cat` WHERE `id`=?");
+        PreparedStatement ps = db.get.Prepare("UPDATE `categorys` SET `name`=?,`parent_cat`=? WHERE `id`=?");
         ps.setString(1, name);
         ps.setInt(2, parentId);
         ps.setInt(3, id);
